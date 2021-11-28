@@ -4,5 +4,5 @@ Depends: kernel (=4.4.60-1-5fafac9592dacdd4ddea8e68ff0daa95), kmod-qca-nss-drv-v
 Source: qca_qsdk/qca_qsdk_spf10.0/feeds/nss-host/qca-nss-clients
 Section: kernel
 Architecture: aarch64_cortex-a53
-Installed-Size: 11501
+Installed-Size: 11499
 Description:  Kernel driver for NSS bridge manager

@@ -40,11 +40,11 @@ board_prepare_upgrade() {
     # call shutdown scripts with some exceptions
     wait_stat=0
     klogger "@Shutdown service "
-    for i in /etc/rc.d/K*; do
-        # filter out K01reboot-wdt and K99umount
+    for i in /etc/rc.d/*; do
+        # filter out K01reboot-wdt and K99umount network dnsmasq
 
         case $i in
-            *reboot-wdt | *umount)
+            *reboot-wdt | *umount | *network | *dnsmasq)
                 klogger "$i skipped"
                 continue
             ;;
@@ -64,26 +64,6 @@ board_prepare_upgrade() {
         else
             klogger "  service $i shutdown 2>&1 &"
             $i shutdown 2>&1 &
-        fi
-    done
-
-    # try to kill all userspace processes
-    # at this point the process tree should look like
-    # init(1)---sh(***)---flash.sh(***)
-    klogger "@Killing user process "
-    for i in $(ps w | grep -v "flash.sh" | grep -v "/bin/ash" | grep -v "PID" | grep -v watchdog | awk '{print $1}'); do
-        if [ $i -gt 100 ]; then
-            # skip if kthread
-            [ -f "/proc/${i}/cmdline" ] || continue
-
-            [ -z "`cat /proc/${i}/cmdline`" ] && {
-                klogger " $i is kthread, skip"
-                continue
-            }
-            klogger " kill user process {`ps -w | grep $i | grep -v grep`} "
-            kill $i 2>/dev/null
-            # TODO: Revert to SIGKILL after watchdog bug is fixed
-            # kill -9 $i 2>/dev/null
         fi
     done
 

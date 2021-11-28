@@ -1,0 +1,9 @@
+Package: qca-acd
+Version: master.131
+Depends: libc, qca-ieee1905-init, kmod-qca-hyfi-bridge, qca-hyctl
+Source: qca_qsdk/qca_qsdk_spf10.0/feeds/hyfi/qca-hyfi-networking/qca-acd
+Section: QCA
+Maintainer: Qualcomm Atheros, Inc.
+Architecture: aarch64_cortex-a53
+Installed-Size: 5019
+Description:  This package installs the Hy-Fi Auto-configuration scripts

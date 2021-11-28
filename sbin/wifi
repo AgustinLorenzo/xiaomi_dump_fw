@@ -4,11 +4,16 @@
 . /lib/functions.sh
 . /usr/share/libubox/jshn.sh
 
+wifi_qca_lock="/var/run/wifi.lock"
+wifi_xqwhc_lock="/var/run/xqwhc_wifi.lock"
+xqwhc_init_lock="/var/lock/xqwhc_initting.lock"
+XQLOGTAG="xqwhc_wifi"
 usage() {
 	cat <<EOF
 Usage: $0 [down|detect|reload|status]
 enables (default), disables or detects a wifi configuration.
 EOF
+	lock -u $wifi_qca_lock
 	exit 1
 }
 
@@ -274,12 +279,90 @@ wifi_trap() {
 	); done
 }
 
+update_lbd_config()
+{
+    local ssid_2g="`uci -q get wireless.@wifi-iface[1].ssid`"
+    local dis_2g="`uci -q get wireless.@wifi-iface[1].disabled`"
+    local ssid_5g="`uci -q get wireless.@wifi-iface[0].ssid`"
+    local dis_5g="`uci -q get wireless.@wifi-iface[0].disabled`"
+    local ssid_lbd="`uci -q get lbd.config.MatchingSSID`"
+
+    logger -p 1 -t "$XQLOGTAG" "   lbd MatchSSID changed, $ssid_lbd -> $ssid_2g,$ssid_5g"
+    uci -q delete lbd.config.MatchingSSID
+    # assign public wifi-iface ssid, exclude minet_ready from hyd Wlanif
+    [ "0$dis_2g" -ne "1" ] && uci add_list lbd.config.MatchingSSID="$ssid_2g"
+    [ "$ssid_5g" != "$ssid_2g" ] && {
+        [ "0$dis_5g" -ne "1" ] && uci add_list lbd.config.MatchingSSID="$ssid_5g"
+    }
+    # assign bh ssid
+    . /lib/xqwhc/xqwhc_public.sh
+    [ "$BH_METHOD" -eq "$USE_ONLY_5G_IND_VAP_BH" -o "$BH_METHOD" -eq "$USE_DUAL_BAND_IND_VAP_BH" ] && {
+        local bh_ifname="`uci get misc.backhauls.backhaul_5g_ap_iface`"
+        local bh_ssid="`uci get "$(uci show wireless | awk -F 'ifname' '/'$bh_ifname'/{print $1}')ssid"`"
+        [ -n "$bh_ssid" ] && uci add_list lbd.config.MatchingSSID="$bh_ssid"
+    }
+    uci commit lbd
+    # NONEED hyd restart, cause in wifi context, hyd restart will trigger in hotplug later
+}
+## generic xqwhc process in wifi
+# f1. CAP&RE: check plc nmk & lbd MatchingSSID, they all relay on whc wifi ap ssid
+# f2. CAP: launch whc_sync to notice all REs
+# return: 0  need handle whc_sync; 
+#         ~0 no need, equvilent to normal wifi process
+whc_handle()
+{
+    [ "1" = "`nvram get QSDK_SON`" ] && return 11
+    # check mode in xqwhc
+    local mode="`uci -q get xiaoqiang.common.NETMODE`" 
+    [ "whc_cap" != "$mode" -a "whc_re" != "$mode" ] && {
+        logger -p 1 -t "$XQLOGTAG" " run in NON xqwhc mode, ignore whc_handle! "
+        return 9
+    }
+    if ! lock -n $xqwhc_init_lock; then
+        logger -p 1 -t "$XQLOGTAG" " run in xqwhc init context, ignore whc_handle! "
+        return 10
+    fi
+    lock -u $xqwhc_init_lock
+    # in booting context, NO need handle whc here, cause repacd start will call wifi again
+    echo -n "$ppcmd" | grep -q "rc.common.*network.*boot" && {
+        logger -p 1 -t "$XQLOGTAG" "  *ignore whc_handle in network boot context"
+        return 12
+    }
+    update_lbd_config
+    #3600 not support plc backhaul
+    #plc_lbd_handle
+    # lock to indicate that first calling wifi by upper layer
+        if lock -n $wifi_xqwhc_lock 2>/dev/null ; then
+                # if CAP, launch whc_sync and exit this instance
+                if whcal iscap; then
+                        logger -p 1 -t "$XQLOGTAG" "   CAP, launch whc sync before wifi up"
+                        whcal sync
+                # CAP wifi up active cfg will be reforked in whc_sync
+                        # nomatter sync ok or error?
+                        lock -u $wifi_qca_lock
+                        return 0
+                else
+                        logger -p 1 -t "$XQLOGTAG" "   NONCAP, continue "
+                fi
+        else
+                logger -p 1 -t "$XQLOGTAG" "   call from whc, instant continue"
+        fi
+        return 1
+}
 DEVICES=
 DRIVERS=
 include /lib/wifi
+trap "lock -u $wifi_qca_lock; lock -u $wifi_xqwhc_lock; lock -u $xqwhc_init_lock; exit 1" SIGHUP SIGINT SIGTERM
+lock $wifi_qca_lock
 scan_wifi
 
 trap 'wifi_trap; exit' INT TERM ABRT QUIT ALRM
+# miwifi: check if caller from /etc/init.d/network on rcS boot, thus we ignore whc_handle
+ppid=$PPID
+ppcmd="`cat /proc/${ppid}/cmdline 2>/dev/null`"
+logger -p 1 -t "$XQLOGTAG" "**arg=$@, ppid $ppid, cmd=<$ppcmd>"
+ppid=`cat /proc/${ppid}/status 2>/dev/null| grep PPid | grep -o "[0-9]*"`
+logger -p 1 -t "$XQLOGTAG" " *parent ppid $ppid, cmd=<`cat /proc/${ppid}/cmdline 2>/dev/null`>"
 
 case "$1" in
 	down) wifi_updown "disable" "$2";;
@@ -291,5 +374,12 @@ case "$1" in
 	unload) wifi_unload "$2";;
 	recover) wifi_recover "$2";;
 	--help|help) usage;;
-	*) ubus call network reload; wifi_updown "enable" "$2";;
+	*) 
+	    whc_handle && exit 0
+	    ubus call network reload
+	    wifi_updown "enable" "$2"
+            /usr/sbin/update_whc_ob_bssid &
+	;;
 esac
+lock -u $wifi_xqwhc_lock
+lock -u $wifi_qca_lock

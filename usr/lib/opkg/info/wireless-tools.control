@@ -6,6 +6,6 @@ License: GPL-2.0
 Section: net
 Maintainer: Felix Fietkau <nbd@nbd.name>
 Architecture: aarch64_cortex-a53
-Installed-Size: 26358
+Installed-Size: 26355
 Description:  This package contains a collection of tools for configuring wireless
  adapters implementing the "Linux Wireless Extensions".

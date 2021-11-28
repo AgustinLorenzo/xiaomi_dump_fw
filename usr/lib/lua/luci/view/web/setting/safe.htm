@@ -11,6 +11,16 @@ local mac = luci.sys.net.ip4mac(remote_addr)
 local lanType = wifiUtil.getDeviceWifiIndex(mac)
 local XQSysUtil = require "xiaoqiang.util.XQSysUtil"
 local hardware = string.lower( XQSysUtil.getHardware() )
+
+local XQFunction = require("xiaoqiang.common.XQFunction")
+local netmod = 0
+local netmod = XQFunction.getnetmode()
+--2 有线中继
+--1 无线中继
+--4 mesh主设备  whc_cap
+--3 mesh从设备  whc_re
+--0 router
+
 %>
 <%include("web/inc/head")%>
 <title><%:小米路由器%></title>
@@ -30,7 +40,7 @@ local hardware = string.lower( XQSysUtil.getHardware() )
                 </div>
             </div>
             <div class="bd">
-                <%if hardware ~= "d01" then%>
+                <%if netmod == 0 or netmod == 4 then%>
                 <div class="section" style="display:none;">
                     <h4><%:控制模式%>：</h4>
                     <p>
@@ -71,7 +81,7 @@ local hardware = string.lower( XQSysUtil.getHardware() )
         </div>
         <%include( "web/inc/password")%>
 
-        <%if hardware ~= "d01" then%>
+        <%if netmod == 0 then%>
         <div class="mod-set mod-manage-filter">
             <div class="hd">
                 <h3><%:管理后台访问控制%></h3>
@@ -186,6 +196,8 @@ local hardware = string.lower( XQSysUtil.getHardware() )
         var lanType = '<%=lanType%>';
         var switchbtn = $('#macfilterswitch');
         var hardware = '<%=hardware%>';
+        var netmod = '<%=netmod%>';
+        var isMesh = netmod == '3' || netmod == '4';
 
         var getWifiFilterInfo = function (data, callback) {
             $.getJSON('<%=luci.dispatcher.build_url("api", "xqnetwork", "wifi_macfilter_info")%>', data, function (rsp) {
@@ -219,12 +231,16 @@ local hardware = string.lower( XQSysUtil.getHardware() )
         var getOnlineList = function () {
             var model = $('.filtertype:checked').val();
             getWifiFilterInfo({model: model}, function (res) {
-                var list = res.list;
+                //改动lyt
+                var list = res.flist;
                 var trarr = [];
                 var tpl = $('#tmplOnlineDevice').html();
                 if ($.isArray(list) && list.length > 0) {
                     for (var i = 0, len = list.length; i < len; i++) {
-                        if(list[i].added == 0){
+
+                        //改动lyt
+                        // if(list[i].added == 0){
+                        if(list[i].isap != 8){
                             var tr = StringH.tmpl(tpl, {
                                 name: StringH.encode4Html(list[i].name),
                                 ip: list[i].ip,
@@ -264,9 +280,9 @@ local hardware = string.lower( XQSysUtil.getHardware() )
                 requestURL = '<%=luci.dispatcher.build_url("api", "xqnetwork", "set_wifi_macfilter")%>',
                 enable = $('#macfilterswitch').attr('data-enable') == '1' ? 0 : 1;
                 //D01 没有白名单 所以没有model参数 默认设置成0 表示黑名单
-                if(typeof(model) == 'undefined'  && hardware == 'd01'){
-                    model = 0
-                }
+                // if(typeof(model) == 'undefined'  && isMesh){
+                //     model = 0
+                // }
              var  requestData = {
                     model: model,
                     enable: enable
@@ -366,10 +382,10 @@ local hardware = string.lower( XQSysUtil.getHardware() )
                     name = $('#macname').val(),
                     model = $('.filtertype:checked').val(),
                     option = 0;
-                    //d01 没有白名单 
-                    if(hardware=='d01'){
-                        model = 0
-                    }
+                    //mesh 没有白名单
+                    // if(isMesh){
+                    //     model = 0
+                    // }
                 $.ajax({
                     url: $('#' + formName).attr('action'),
                     type: 'GET',
@@ -409,10 +425,10 @@ local hardware = string.lower( XQSysUtil.getHardware() )
             var mac = '';
             var valarr = [];
             var model = $('.filtertype:checked').val();
-            //d01 没有白名单 
-            if(hardware=='d01'){
-               model = 0
-            }
+            //mesh 没有白名单
+            // if(isMesh){
+            //    model = 0
+            // }
             var option = 0;
 
             var inputs = $('.onlinemacinput:checked');
@@ -460,17 +476,17 @@ local hardware = string.lower( XQSysUtil.getHardware() )
             var model = $('.filtertype:checked').val();
             var option = 1;
             var requestURL = '<%=luci.dispatcher.build_url("api", "xqnetwork", "edit_device")%>';
-            //d01 没有白名单 
-            if(hardware=='d01'){
-               model = 0
-            }
+            //mesh 没有白名单
+            // if(isMesh){
+            //    model = 0
+            // }
             var requestData = {
                 mac: mac,
                 model: model,
                 option: option
             };
 
-           
+
             $.getJSON(requestURL, requestData, function (res) {
                 if (res.code == 0) {
                     getWifiFilterInfo({
@@ -608,6 +624,8 @@ local hardware = string.lower( XQSysUtil.getHardware() )
     var apiOpt = '<%=luci.dispatcher.build_url("api", "misystem", "web_access_opt")%>';
     var apiGet = '<%=luci.dispatcher.build_url("api", "misystem", "web_access_info")%>';
     var hardware = '<%=hardware%>';
+    var netmod = '<%=netmod%>';
+    var isMesh = netmod == '3' || netmod == '4';
 
     function getInfo(){
         $.get(apiGet, function(rsp){
@@ -627,7 +645,8 @@ local hardware = string.lower( XQSysUtil.getHardware() )
                     $('#manageFilterBody .isoff').hide();
                     $('#manageFilterBody .ison').show();
                 } else {
-                    if(hardware == 'd01'){
+
+                    if(isMesh ){
 
                     }else{
                          switchbtn[0].className = 'btn-switch btn-switch-off';

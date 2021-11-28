@@ -70,16 +70,27 @@ load_ecm() {
 		[ ! -e /proc/device-tree/MP_256 ] && {
 			[ -d /sys/kernel/debug/ecm/ecm_sfe_ipv4 ] && load_sfe || unload_sfe 
 		}
+		local netmode
+		netmode=`uci -q -S get xiaoqiang.common.NETMODE`
+		if [ "$netmode" = "whc_cap" -o "$netmode" = "whc_re" ]; then
+			/etc/init.d/hyd stop
+		fi
 		insmod ecm front_end_selection=$(get_front_end_mode)
+		sleep 1
 	}
 
 	support_bridge && {
 		sysctl -w net.bridge.bridge-nf-call-ip6tables=1
 		sysctl -w net.bridge.bridge-nf-call-iptables=1
 	}
+	if [ "$netmode" = "whc_cap" -o "$netmode" = "whc_re" ]; then
+       		/etc/init.d/hyd start
+    	fi
 }
 
 unload_ecm() {
+	local netmode
+    netmode=`uci -q -S get xiaoqiang.common.NETMODE`
 	sysctl -w net.bridge.bridge-nf-call-ip6tables=0
 	sysctl -w net.bridge.bridge-nf-call-iptables=0
 
@@ -94,10 +105,16 @@ unload_ecm() {
 		# Defunct the connections
 		#
 	    echo 1 > /sys/kernel/debug/ecm/ecm_db/defunct_all
+		if [ "$netmode" = "whc_cap" -o "$netmode" = "whc_re" ]; then
+		 	/etc/init.d/hyd stop
+		fi
 		sleep 5;
 
 		rmmod ecm
 		sleep 1
+		if [ "$netmode" = "whc_cap" -o "$netmode" = "whc_re" ]; then
+			/etc/init.d/hyd start
+		fi
 	fi
 }
 

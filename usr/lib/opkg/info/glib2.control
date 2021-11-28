@@ -5,5 +5,5 @@ Source: feeds/packages/libs/glib2
 Section: libs
 Maintainer: Peter Wagner <tripolar@gmx.at>
 Architecture: aarch64_cortex-a53
-Installed-Size: 856940
+Installed-Size: 856925
 Description:  The GLib library of C routines

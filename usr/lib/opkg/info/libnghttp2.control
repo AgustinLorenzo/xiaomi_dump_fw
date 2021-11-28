@@ -7,5 +7,5 @@ LicenseFiles: COPYING
 Section: libs
 Maintainer: Hans Dedecker <dedeckeh@gmail.com>
 Architecture: aarch64_cortex-a53
-Installed-Size: 163024
+Installed-Size: 163017
 Description:  C library implementing the framing layer of the HTTP/2 protocol. It can be used to build a HTTP/2-capable HTTP client or server

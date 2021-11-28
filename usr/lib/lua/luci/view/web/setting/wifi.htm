@@ -21,6 +21,12 @@ local ccode = xqCountryCode.getBDataCountryCode()
 
 local romChannel = XQSysUtil.getChannel()
 
+local netmod = 0
+local netmod = XQFunction.getnetmode()
+--4 mesh主设备  whc_cap
+--3 mesh从设备  whc_re
+--0 router
+local isMesh = (netmod == 3 or netmod == 4) and 'true'  or  'false'
 local uci = require("luci.model.uci").cursor()
 local features = require("xiaoqiang.XQFeatures").FEATURES
 local hardware = string.lower( XQSysUtil.getHardware() )
@@ -35,7 +41,7 @@ local hardware = string.lower( XQSysUtil.getHardware() )
 <div id="doc">
     <%include("web/inc/header")%>
     <div id="bd">
-        <%if features["wifi"]["wifimerge"] == "1" and hardware ~= "r1cl" and hardware ~= "d01" then%>
+
         <div class="mod-set mod-wifi">
             <div class="hd">
                 <h3><%:Wi-Fi双频合一%></h3>
@@ -47,7 +53,7 @@ local hardware = string.lower( XQSysUtil.getHardware() )
                 <p><%:开启后，2.4G和5G会使用同一名称，路由器会自动为终端选择最佳WiFi网络，如离路由器较近，会切换至5G网络，反之会切换至2.4G网络。但由于终端设备存在差异，可能存在：自动切换信号源时网络会短暂中断，甚至频繁掉线等问题。%></p>
             </div>
         </div>
-        <%end%>
+
 <!-- fixed password autocomplete bug -->
 <input type="text" style="display:none">
 <input type="password" style="display:none">
@@ -141,7 +147,18 @@ local hardware = string.lower( XQSysUtil.getHardware() )
             </div>
         </div>
 
-
+        <!-- 多终端接入优先 -->
+<!--        <div class="mod-set mod-wifi">-->
+<!--            <div class="hd">-->
+<!--                <h3><%:多终端接入优先%></h3>-->
+<!--                <div class="switch">-->
+<!--                    <a href="#deviceSwitch" id="deviceSwitch" class="btn-switch btn-switch-off" data-on="0"></a>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div class="bd">-->
+<!--                <p><%:开启此功能，2.4GHz频段将被优先用于保障终端的接入稳定性。当网络中接入终端较多时，建议保持此功能开启。%></p>-->
+<!--            </div>-->
+<!--        </div>-->
 
     </div>
     <%include("web/inc/footer")%>
@@ -162,15 +179,20 @@ local hardware = string.lower( XQSysUtil.getHardware() )
     </form>
 </script>
 <script type="text/tmpl" id="tplWifiBsdTop">
-    <%if hardware ~= "d01" then%>
+
     <div class="item">
+     <%if netmod ~= 4 then%>
         <span class="k"><%:开关%></span>
         <span class="v">
             <label><input type="radio" name="on" value="1"{if ($status == 1)} checked{/if}> <span><%:开启%></span></label>
             <label><input type="radio" name="on" value="0"{if ($status == 0)} checked{/if}> <span><%:关闭%></span></label>
         </span>
+     <%else%>
+        <%:在Mesh模式下不支持关闭Wi-Fi开关%>
+     <%end%>
+
     </div>
-    <%end%>
+
     <div class="form-item">
         <label class="k"><%:名称%></label>
         <span class="v"><input type="text" name="ssid" value="{$ssid}" class="ipt-text" autocomplete="off" datatype="ssid" maxLength="28" minLength="1" reqMsg="<%:Wi-Fi名称%>" /></span>
@@ -223,16 +245,21 @@ local hardware = string.lower( XQSysUtil.getHardware() )
     {if ($wifitype == 2)}
     <input type="hidden" value="{$wifiIndex}" name="wifiIndex">
     <div class="item">
-        <span class="k"><%:开关%></span>
-        <span class="v">
-        {if ($wifitype == 2)}
-            <label><input type="radio" name="on" value="1"{if ($enabled == 1 && $status == 1)} checked{/if}> <span><%:开启%></span></label>
-            <label><input type="radio" name="on" value="0"{if ($enabled == 0 || $status == 0)} checked{/if}> <span><%:关闭%></span></label>
-        {else}
-            <label><input type="radio" name="on" value="1"{if ($status == 1)} checked{/if}> <span><%:开启%></span></label>
-            <label><input type="radio" name="on" value="0"{if ($status == 0)} checked{/if}> <span><%:关闭%></span></label>
-        {/if}
-        </span>
+        <%if netmod ~= 4 then%>
+            <span class="k"><%:开关%></span>
+            <span class="v">
+            {if ($wifitype == 2)}
+                <label><input type="radio" name="on" value="1"{if ($enabled == 1 && $status == 1)} checked{/if}> <span><%:开启%></span></label>
+                <label><input type="radio" name="on" value="0"{if ($enabled == 0 || $status == 0)} checked{/if}> <span><%:关闭%></span></label>
+            {else}
+                <label><input type="radio" name="on" value="1"{if ($status == 1)} checked{/if}> <span><%:开启%></span></label>
+                <label><input type="radio" name="on" value="0"{if ($status == 0)} checked{/if}> <span><%:关闭%></span></label>
+            {/if}
+            </span>
+         <%else%>
+            <%:在Mesh模式下不支持关闭Wi-Fi开关%>
+         <%end%>
+
     </div>
     <div class="form-item">
         <label class="k"><%:名称%></label>
@@ -269,6 +296,7 @@ local hardware = string.lower( XQSysUtil.getHardware() )
         <label class="k"><%:无线信道%></label>
         <span class="v">
         <select name="channel" class="beautify channel" data-id="{$wifitype}">
+            <%if netmod ~= 4 then%>
             {for(var i=0, len=$channels.length; i<len; i++)}
                 <option value="{$channels[i]['c']}" {if ($channel==$channels[i]['c'])}selected{/if}>
                 {if ($channels[i]['c']==0)}<%:自动%>
@@ -279,11 +307,33 @@ local hardware = string.lower( XQSysUtil.getHardware() )
                     {$channels[i]['c']}
                 {/if}
                 </option>
+             {/for}
+            <%else%>
+            {for(var i=0, len=$channels.length; i<len; i++)}
+                {if ($channels[i]['c'] < 52 || $channels[i]['c'] > 64)}
+                    <option value="{$channels[i]['c']}" {if ($channel==$channels[i]['c'])}selected{/if}>
+                    {if ($channels[i]['c']==0)}<%:自动%>
+                        {if ($channelInfo["channel"] != "0")}
+                            ({$channelInfo["channel"]})
+                        {/if}
+                    {else}
+                        {$channels[i]['c']}
+                    {/if}
+                    </option>
+                {/if}
             {/for}
+            <%end%>
         </select>
         </span>
-        <em class="t"></em>
+        <%if netmod ~= 4 then%>
+             <em class="t"></em>
+        <%else%>
+        {if ($wifilei == 1)}
+             <em class="t">Mesh模式下不支持DFS信道选择（52-64）</em>
+        {/if}
+        <%end%>
     </div>
+
     <div class="form-item-select itemBandwidth" >
         <label class="k"><%:频段带宽%></label>
         <span class="v">
@@ -324,17 +374,24 @@ local hardware = string.lower( XQSysUtil.getHardware() )
 <script type="text/tmpl" id="tplWifi">
     <input type="hidden" value="{$wifiIndex}" name="wifiIndex">
     <div class="item">
-        <span class="k"><%:开关%></span>
-        <span class="v">
-        {if ($wifitype == 2)}
-            <label><input type="radio" name="on" value="1"{if ($enabled == 1 && $status == 1)} checked{/if}> <span><%:开启%></span></label>
-            <label><input type="radio" name="on" value="0"{if ($enabled == 0 || $status == 0)} checked{/if}> <span><%:关闭%></span></label>
-        {else}
-            <label><input type="radio" name="on" value="1"{if ($status == 1)} checked{/if}> <span><%:开启%></span></label>
-            <label><input type="radio" name="on" value="0"{if ($status == 0)} checked{/if}> <span><%:关闭%></span></label>
-        {/if}
-        </span>
+        <%if netmod ~= 4 then%>
+            <span class="k"><%:开关%></span>
+            <span class="v">
+            {if ($wifitype == 2)}
+                <label><input type="radio" name="on" value="1"{if ($enabled == 1 && $status == 1)} checked{/if}> <span><%:开启%></span></label>
+                <label><input type="radio" name="on" value="0"{if ($enabled == 0 || $status == 0)} checked{/if}> <span><%:关闭%></span></label>
+            {else}
+                <label><input type="radio" name="on" value="1"{if ($status == 1)} checked{/if}> <span><%:开启%></span></label>
+                <label><input type="radio" name="on" value="0"{if ($status == 0)} checked{/if}> <span><%:关闭%></span></label>
+            {/if}
+            </span>
+         <%else%>
+            <%:在Mesh模式下不支持关闭Wi-Fi开关%>
+         <%end%>
+
+
     </div>
+
     <div class="form-item">
         <label class="k"><%:名称%></label>
         <span class="v"><input type="text" name="ssid" value="{$ssid}" class="ipt-text" autocomplete="off" datatype="ssid" maxLength="28" minLength="1" reqMsg="<%:Wi-Fi名称%>" /></span>
@@ -373,6 +430,7 @@ local hardware = string.lower( XQSysUtil.getHardware() )
         <label class="k"><%:无线信道%></label>
         <span class="v">
         <select name="channel" class="beautify channel" data-id="{$wifitype}">
+            <%if netmod ~= 4 then%>
             {for(var i=0, len=$channels.length; i<len; i++)}
                 <option value="{$channels[i]['c']}" {if ($channel==$channels[i]['c'])}selected{/if}>
                 {if ($channels[i]['c']==0)}<%:自动%>
@@ -384,9 +442,31 @@ local hardware = string.lower( XQSysUtil.getHardware() )
                 {/if}
                 </option>
             {/for}
+            <%else%>
+            {for(var i=0, len=$channels.length; i<len; i++)}
+                {if ($channels[i]['c'] < 52 || $channels[i]['c'] > 64)}
+                <option value="{$channels[i]['c']}" {if ($channel==$channels[i]['c'])}selected{/if}>
+                {if ($channels[i]['c']==0)}<%:自动%>
+                    {if ($channelInfo["channel"] != "0")}
+                        ({$channelInfo["channel"]})
+                    {/if}
+                {else}
+                    {$channels[i]['c']}
+                {/if}
+                </option>
+                {/if}
+            {/for}
+            <%end%>
         </select>
         </span>
-        <em class="t"></em>
+        <%if netmod ~= 4 then%>
+             <em class="t"></em>
+        <%else%>
+        {if ($wifilei == 1)}
+             <em class="t">Mesh模式下不支持DFS信道选择（52-64）</em>
+        {/if}
+        <%end%>
+
     </div>
     <div class="form-item-select itemBandwidth" >
         <label class="k"><%:频段带宽%></label>
@@ -424,6 +504,8 @@ local hardware = string.lower( XQSysUtil.getHardware() )
     </div>
 </script>
 <script>
+  var isMesh = <%=isMesh%>;
+  var netmod = <%=netmod%>;
 (function(){
     var global = {};
     var generateMixed = function (n) {
@@ -438,6 +520,24 @@ local hardware = string.lower( XQSysUtil.getHardware() )
     function onControlFocus() {
         $(this).parents('form').find('.btn-primary').removeClass('hidden');
     }
+
+//get device config
+
+  $.getJSON('<%=luci.dispatcher.build_url("api","xqnetwork","get_son_backhaul_mode")%>')
+    .done(function( rsp ){
+      if ( rsp.code == 0 ) {
+        if ( rsp.mode  == 1 || rsp.mode  == "1") {
+          $('#deviceSwitch')
+            .removeClass('btn-switch-off')
+            .addClass('btn-switch-on')
+            .attr('data-on', '1');
+        }
+      }else{
+
+        $.alert( '<%:网络异常，请检查是否联网%>' );
+
+      }
+    })
     $.sub( 'wifi:init', function(evt, data){
         global.wifi = {
             configs: [],
@@ -478,7 +578,7 @@ local hardware = string.lower( XQSysUtil.getHardware() )
         $.getJSON('<%=luci.dispatcher.build_url("api","xqnetwork","wifi_detail_all")%>')
         .done(function( rsp ){
             if ( rsp.code == 0 ) {
-                if( hardware == 'd01' || rsp.bsd == 1 ){
+                if( rsp.bsd == 1 ){
                     $('#bsdswitch')
                     .removeClass('btn-switch-off')
                     .addClass('btn-switch-on')
@@ -490,15 +590,9 @@ local hardware = string.lower( XQSysUtil.getHardware() )
                         .delegate('.ipt-text', 'click', onControlFocus);
                     tpl = $('#tplWifiBsd').html();
                 }
-
-                // if( rsp.bsd == 1 ){
-                //    //bsd=1 双频合一
-                //     $('#wifiset50').hide();
-                // }
-
-
                 var wifiinfo = rsp.info;
                 var haswifi50 = $('#wifiset50').length > 0 ? true : false;
+
 
                 if ( wifiinfo[0].ax == 1 || wifiinfo[0].ax == "1") {
                          $('#WIFI6switch')
@@ -521,11 +615,7 @@ local hardware = string.lower( XQSysUtil.getHardware() )
                                 .attr('data-on', '0');
                             }
 
-
-
                         }
-
-
                         container = $(document.getElementById(id));
                     //}
                     var wifiitem = wifiinfo[i];
@@ -547,13 +637,13 @@ local hardware = string.lower( XQSysUtil.getHardware() )
                         channelInfo: wifiitem.channelInfo,
                         weakenable: wifiitem.weakenable,
                         weakthreshold: wifiitem.weakthreshold,
-                        kickthreshold:wifiitem.kickthreshold,
+                        kickthreshold: wifiitem.kickthreshold,
                         hidden: wifiitem.hidden,
                         txpwr: wifiitem.txpwr,
                         txbf: wifiitem.txbf,
-                        enabled: wifiitem.enabled
+                        enabled: wifiitem.enabled,
+                        wifilei:i
                     };
-
 
                     // if(i==0 && (encryption == 'ccmp'||encryption == 'psk2+ccmp')){//2.4G zhangpan
                     //     $('#wifiset24 .t0').html('<%:仅支持WPA加密方式的设备将无法连接%>').show();
@@ -565,7 +655,10 @@ local hardware = string.lower( XQSysUtil.getHardware() )
                         $('#wifisetbsdtop').html( $('#tplWifiBsdTop').html().tmpl(tplData) );
                     }
 
-                    container.html( tpl.tmpl(tplData) );
+                        container.html( tpl.tmpl(tplData) );
+
+
+                    //debugger;
                     global.wifi.configs[i+1] = tplData;
                 }
             }
@@ -755,7 +848,7 @@ local hardware = string.lower( XQSysUtil.getHardware() )
 
             if ( validator) {
                 var wifiIndex = $( 'input[name=wifiIndex]', formOjb ).val(),
-                    on = $( 'input[name=on]:checked', formOjb ).val()
+                    on = $( 'input[name=on]:checked', formOjb ).val(),
                     pwd =  $( 'input[name=pwd]', formOjb ).val(),
                     ssid = $( 'input[name=ssid]', formOjb ).val(),
                     encryption = $( 'select[name=encryption]', formOjb ).val(),
@@ -813,9 +906,9 @@ local hardware = string.lower( XQSysUtil.getHardware() )
                             url : formAction
                         } );
                     },
-                    cancel : function(){}
+                    cancel : function(){},
+                    requestData : requestData
                 } );
-
             }
         }
 
@@ -921,18 +1014,18 @@ local hardware = string.lower( XQSysUtil.getHardware() )
                 //txpwr2 = $( 'select[name=txpwr]', form2 ).val();
                 txpwr2 = $( 'select[name=txpwr]', form2 ).val(),
                hardware = '<%=hardware%>';
-                // if(typeof(on1) == "undefined"){
-                //     on1 = 1;
-                //     on2 = on1
-                // };
+                if(typeof(on1) == "undefined"){
+                    on1 = 1;
+                    on2 = on1
+                };
                 // if(typeof(bsd) == "undefined"){
                 //     bsd = 1
                 // };
-                if(hardware == 'd01'){
-                    on1 = 1;
-                    on2 = on1;
-                    bsd = 1;
-                }
+                // if(isMesh){
+                //     on1 = 1;
+                //     on2 = on1;
+                //     bsd = 1;
+                // }
 
                 var isDFS;
 
@@ -1247,11 +1340,129 @@ local hardware = string.lower( XQSysUtil.getHardware() )
 
         });
 
+        $('#deviceSwitch').on('click', function(e){
+        e.preventDefault();
+        var mode = $(this).attr('data-on') == 1 ? 0 : 1;
+        var self = this;
 
+        var requestData = {
+          mode: mode
+        };
+
+
+        if(mode == 1){//开启
+
+          var dialog = $.dialog({
+            id : "confirm",
+            width: 390,
+            title : "<%:多终端接入优先%>",
+            content : '<p>1.开启此功能，可能会影响Mesh路由器之间回程链路的稳定性，建议在子Mesh路由指示灯为蓝色时开启；</p><p>2.开启此功能，可能会造成接入终端短暂断开连接，一般可自动重连，或重启终端设备。</p> ',
+            ok: function(){
+              $.ajax({
+                url: '<%=luci.dispatcher.build_url("api", "xqnetwork", "set_son_backhaul_mode")%>',
+                dataType: 'json',
+                timeout: 5000,
+                type: 'POST',
+                data: requestData,
+                success: function( rsp ){
+                  dialog.close();
+                  if( rsp.code === 0 ){
+                    if(mode == 0) {
+                      $(self)
+                        .removeClass('btn-switch-on')
+                        .addClass('btn-switch-off')
+                        .attr('data-on', '0');
+                    }else {
+                      $(self)
+                        .removeClass('btn-switch-off')
+                        .addClass('btn-switch-on')
+                        .attr('data-on', '1');
+                    }
+
+                    $.alert( '成功开启多终端接入优先' ).lock();
+
+
+                  } else {
+
+                    $.alert( '开启多终端接入优先失败' ).lock();
+
+                  }
+                },
+                error: function() {
+                  dialog.close();
+                  $.alert( '<%:网络异常，请检查是否联网%>' );
+                }
+              });
+            },
+            cancel: function () {
+              dialog.close();
+            }
+          }).lock();
+
+        }else{// 关闭
+
+          var dialog1 = $.dialog({
+            id : "confirm",
+            width: 390,
+            title : "<%:多终端接入优先%>",
+            content : '<%:关闭此功能，可能会造成接入终端短暂断开连接，一般可自动重连，或重启终端设备。%>',
+            ok: function(){
+
+              $.ajax({
+                url: '<%=luci.dispatcher.build_url("api", "xqnetwork", "set_son_backhaul_mode")%>',
+                dataType: 'json',
+                timeout: 5000,
+                type: 'POST',
+                data: requestData,
+                success: function( rsp ){
+                  dialog1.close();
+                  if( rsp.code === 0 ){
+                    if(mode == 0) {
+                      $(self)
+                        .removeClass('btn-switch-on')
+                        .addClass('btn-switch-off')
+                        .attr('data-on', '0');
+                    }else {
+                      $(self)
+                        .removeClass('btn-switch-off')
+                        .addClass('btn-switch-on')
+                        .attr('data-on', '1');
+                    }
+
+                    $.alert( '成功关闭多终端接入优先' ).lock();
+
+
+                  } else {
+
+                    $.alert( '关闭多终端接入优先失败' ).lock();
+
+                  }
+                },
+                error: function() {
+                  dialog1.close();
+                  $.alert( '<%:网络异常，请检查是否联网%>' );
+                }
+              });
+            },
+            cancel: function(){
+              dialog1.close();
+
+            }
+          }).lock();
+
+
+
+
+        }
+
+
+
+      });
         $('#bsdswitch').on('click', function(e){
             e.preventDefault();
             var on = $(this).attr('data-on');
             var self = this;
+            console.log(global.wifi.configs[2]);
             if ((global.wifi.configs[2].channel >= 52 && global.wifi.configs[2].channel <= 64)
                 || ( global.wifi.configs[2].bandwidth == 0))
             {
@@ -1360,16 +1571,18 @@ local hardware = string.lower( XQSysUtil.getHardware() )
             }, 30*1000 );
         }
     } );
-
     $.sub( 'wifi:confirm', function( evt, data ){
         var ok = data.ok || function(){},
             cancel = data.cancel || function(){};
-
+        var content = '<%:该操作将重启 Wi-Fi 并导致 Wi-Fi 下的所有设备失去连接，是否确认修改？%>';
+        if (data.requestData  && data.requestData.wifiIndex == 2 && data.requestData.on == 0) {
+          content = '<div style="text-align: left">1.该操作将重启Wi-Fi并导致Wi-Fi下的所有设备失去连接；<br/>2.关闭5GHz Wi-Fi，将无法添加子Mesh节点；<br/>是否确认修改？</div>';
+        }
         $.dialog({
             id : "confirm",
             width: 390,
             title : "<%:修改Wi-Fi设置%>",
-            content : '<%:该操作将重启 Wi-Fi 并导致 Wi-Fi 下的所有设备失去连接，是否确认修改？%>',
+            content : content,
             ok: function(){
                 ok();
             },
@@ -1382,7 +1595,6 @@ local hardware = string.lower( XQSysUtil.getHardware() )
     $.sub( 'wifi:modify', function( evt, data ){
         var requestData =  data.requestData;
         var url = data.url;
-
         $.ajax({
             url: url,
             dataType: 'json',
@@ -1405,7 +1617,6 @@ local hardware = string.lower( XQSysUtil.getHardware() )
                 $.alert( '<%:网络异常，请检查是否联网%>' );
             }
         });
-
     });
 
     $.sub( 'wifi:txpwr', function( evt, data ){

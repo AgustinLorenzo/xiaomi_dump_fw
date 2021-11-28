@@ -1,0 +1,69 @@
+#!/bin/sh
+
+. /lib/functions.sh
+. /lib/xqwhc/network_lal.sh
+
+XQLOGTAG="xqwhc_hyd_hotp"
+
+hyd_restart_aggr() {
+	local fileflag="/tmp/.hyd.restart.pending"
+
+	touch "$fileflag"
+
+	sleep 7
+
+	[ -f "$fileflag" ] || return
+
+	a=`stat -c %Y $fileflag`
+	b=`date +%s`
+	c=`expr $b - $a`
+	[ "$c" -ge 7 ] || return
+
+	[ -f "$fileflag" ] || return
+	rm -f $fileflag
+
+	logger -p 1 -t "$XQLOGTAG" "  launch hyd restart, no kidding! "
+	#/etc/init.d/hyfi-bridging restart
+	/etc/init.d/hyd restart
+}
+
+hyd_restart() {
+	local exescript
+
+	exescript=`ls /etc/hotplug.d/net/*hyd* 2>&-`
+	[ -n "$exescript" ] || return
+
+	# Restart with aggregation(background)
+	exescript="$exescript &"
+	eval $exescript
+}
+
+trap '' INT TERM ABRT QUIT ALRM
+
+enabled
+config_load 'hyd'
+config_get_bool enabled config 'Enable' '0'
+[ "$enabled" -eq 0 ] && return
+
+
+if [ -n "$1" ] ; then # Called by hotplugd
+
+	local hyd_iflist=""
+	# get all hyfi ifaces no matter enable flag
+	nlal_get_hyfi_ifaces_raw lan hyd_iflist
+
+	logger -p 1 -t "$XQLOGTAG" " with [$@], $INTERFACE, $ACTION, [$hyd_iflist]"
+	for ifa in $hyd_iflist; do
+		[ "$INTERFACE" = "$ifa" ] && hyd_restart
+	done
+
+else                  # Called directly
+	# trace caller
+	ppid=$PPID
+	#logger -p 2 -t "$XQLOGTAG" " direct call **ppid=$ppid, cmd=<`cat /proc/${ppid}/cmdline`>"
+	ppid=`cat /proc/${ppid}/status | grep PPid | grep -o "[0-9]*"`
+	#logger -p 2 -t "$XQLOGTAG" " direct call *parent ppid $ppid, cmd=<`cat /proc/${ppid}/cmdline`>"
+ 
+	hyd_restart_aggr
+fi
+

@@ -1,7 +1,7 @@
 #
 # @@-COPYRIGHT-START-@@
 #
-# Copyright (c) 2015-2018 Qualcomm Technologies, Inc.
+# Copyright (c) 2015-2019 Qualcomm Technologies, Inc.
 #
 # All Rights Reserved.
 # Confidential and Proprietary - Qualcomm Technologies, Inc.
@@ -233,6 +233,8 @@ __lbd_cfg_add_interface() {
 
 	# Get the list of wlan interfaces, seperated by comma
 	config_list_foreach "${section}" "${option}" whc_get_wlan_ifaces all_wlan_ifaces ssid_to_match "$br_name"
+	# miwifi add base64 for special character ssid
+	ssid_to_match="`echo $ssid_to_match | base64 -d`"
 
 	# get the excluded interface list
 	if [ ! -z "$ssid_to_match" ]; then
@@ -378,6 +380,7 @@ lbd_create_config() {
 	__lbd_cfg_add_str	StaMonitor_Adv	RSSIMeasureSamples_W2 $filename
 	__lbd_cfg_add_str	StaMonitor_Adv	RSSIMeasureSamples_W5 $filename
 	__lbd_cfg_add_str	config_Adv	AgeLimit $filename
+	__lbd_cfg_add_str	config_Adv	LegacyClientAgeLimit $filename
 	__lbd_cfg_add_str_new_key	ActiveSteer	TxRateXingThreshold_UG	HighTxRateXingThreshold $filename
 	__lbd_cfg_add_str_new_key	ActiveSteer	RateRSSIXingThreshold_UG	HighRateRSSIXingThreshold $filename
 	__lbd_cfg_add_str_new_key	ActiveSteer	TxRateXingThreshold_DG	LowTxRateXingThreshold $filename
@@ -385,6 +388,9 @@ lbd_create_config() {
 	if [ -n "$multi_ap_mode" ]; then
 		# Parameters only relevant for multi-AP setup
 		__lbd_cfg_add_str	IdleSteer	RSSISteeringPoint_DG	$filename
+		__lbd_cfg_add_str       APSteer         DisableSteeringInactiveLegacyClients $filename
+		__lbd_cfg_add_str       APSteer         DisableSteeringActiveLegacyClients $filename
+		__lbd_cfg_add_str       APSteer         DisableSteering11kUnfriendlyClients $filename
 		if [ "$multi_ap_mode" = 'map' ]; then
 			__lbd_cfg_add_ap_steering_thresh	APSteer	LowRSSIAPSteerThreshold_SIG_W2	LowRSSIAPSteerThreshold_SIG	LowRSSIAPSteeringThreshold_W2	$filename
 			__lbd_cfg_add_ap_steering_thresh	APSteer	LowRSSIAPSteerThreshold_SIG_W5	LowRSSIAPSteerThreshold_SIG	LowRSSIAPSteeringThreshold_W5	$filename
@@ -424,6 +430,7 @@ lbd_create_config() {
 	__lbd_cfg_add_str	Estimator_Adv	RSSIDiff_EstW2FromW5 $filename
 	__lbd_cfg_add_str	Estimator_Adv	ProbeCountThreshold $filename
 	__lbd_cfg_add_str	Estimator_Adv	StatsSampleInterval $filename
+	__lbd_cfg_add_str	Estimator_Adv	BackhaulStationStatsSampleInterval $filename
 	__lbd_cfg_add_str	Estimator_Adv	Max11kUnfriendly $filename
 	__lbd_cfg_add_str	Estimator_Adv	11kProhibitTimeShort $filename
 	__lbd_cfg_add_str	Estimator_Adv	11kProhibitTimeLong $filename
@@ -444,7 +451,15 @@ lbd_create_config() {
 	__lbd_cfg_add_str	Estimator_Adv	IASEnableSingleBandDetect $filename
 	__lbd_cfg_add_str	Estimator_Adv	ActDetectMinInterval $filename
 	__lbd_cfg_add_str	Estimator_Adv	ActDetectMinPktPerSec $filename
-	__lbd_cfg_add_str	Estimator_Adv	APSteerMaxRetryCount $filename
+	__lbd_cfg_add_str	Estimator_Adv	BackhaulActDetectMinPktPerSec $filename
+	__lbd_cfg_add_str	Estimator_Adv	LowPhyRateThreshold $filename
+	__lbd_cfg_add_str	Estimator_Adv	HighPhyRtateThreshold_W2 $filename
+	__lbd_cfg_add_str	Estimator_Adv	HighPhyRtateThreshold_W5 $filename
+	__lbd_cfg_add_str	Estimator_Adv	PhyRateScalingFactorLow $filename
+	__lbd_cfg_add_str	Estimator_Adv	PhyRateScalingFactorMedium $filename
+	__lbd_cfg_add_str	Estimator_Adv	PhyRateScalingFactorHigh $filename
+	__lbd_cfg_add_str	Estimator_Adv	PhyRateScalingFactorTCP $filename
+	__lbd_cfg_add_str	APSteer 	APSteerMaxRetryCount $filename
 	__lbd_cfg_add_ias_curve $filename
 
 	__lbd_cfg_nl_append '[STEEREXEC]' $filename
@@ -473,6 +488,7 @@ lbd_create_config() {
 	__lbd_cfg_add_str	SteerExec_Adv	MaxConsecutiveBTMFailuresAsActive $filename
 	__lbd_cfg_add_str   SteerExec_Adv   LegacyUpgradeUnfriendlyTime $filename
 	__lbd_cfg_add_str	SteerExec	DisableLegacySteering $filename
+	__lbd_cfg_add_str	SteerExec	DisableBTMFailDowngradeToLegacySteering $filename
 
 	__lbd_cfg_nl_append '[STEERALG]' $filename
 	__lbd_cfg_add_str_new_key	IdleSteer	RSSISteeringPoint_DG	InactRSSIXingThreshold_W2 $filename
@@ -483,6 +499,8 @@ lbd_create_config() {
 	__lbd_cfg_add_str_new_key	ActiveSteer	RateRSSIXingThreshold_DG	LowRateRSSIXingThreshold $filename
 	__lbd_cfg_add_str	SteerAlg_Adv	MinTxRateIncreaseThreshold $filename
 	__lbd_cfg_add_str	config_Adv	AgeLimit $filename
+	__lbd_cfg_add_str	config_Adv	BackhaulAgeLimit $filename
+	__lbd_cfg_add_str	config_Adv	LegacyClientAgeLimit $filename
 	__lbd_cfg_add_str	config		PHYBasedPrioritization $filename
 	__lbd_cfg_add_str_new_key	Offload	OffloadingMinRSSI	RSSISafetyThreshold $filename
 	__lbd_cfg_add_str	SteerAlg_Adv	MaxSteeringTargetCount $filename
@@ -513,6 +531,7 @@ lbd_create_config() {
 	__lbd_cfg_add_str	DiagLog		LogLevelStaMon $filename
 	__lbd_cfg_add_str	DiagLog		LogLevelEstimator $filename
 	__lbd_cfg_add_str	DiagLog		LogLevelDiagLog $filename
+	__lbd_cfg_add_str	DiagLog		LogLevelMultiAP $filename
 
 	__hyd_cfg_nl_append '[PERSIST]' $filename
 	__hyd_cfg_add_persist_str_new_key	Persist		PersistFile $filename $br_name

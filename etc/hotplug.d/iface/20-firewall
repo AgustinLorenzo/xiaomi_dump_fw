@@ -6,6 +6,7 @@ logger -t "${0}-firewall[$$]" "HotPlugEvent: $ACTION of $INTERFACE ($DEVICE)"
 
 /etc/init.d/firewall enabled || exit 0
 
+[ "$INTERFACE" == "wan_6" ] && INTERFACE=wan6
 fw3 -q network "$INTERFACE" >/dev/null || exit 0
 
 logger -t firewall "HotPlugEvent: Reloading firewall due to $ACTION of $INTERFACE ($DEVICE)"

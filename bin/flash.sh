@@ -122,6 +122,11 @@ fi
 
 board_start_upgrade_led
 
+netmode="`uci -q get xiaoqiang.common.NETMODE`"
+if [ "$netmode" = "whc_cap" -o "$netmode" = "whc_re" ]; then
+	sleep 10
+fi
+
 # stop services
 board_prepare_upgrade
 

@@ -5,5 +5,5 @@ Source: package/network/utils/iptables
 License: GPL-2.0
 Section: net
 Architecture: aarch64_cortex-a53
-Installed-Size: 2141
+Installed-Size: 2140
 Description:  iptables extensions for IPv6-NAT targets.

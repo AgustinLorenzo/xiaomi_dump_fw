@@ -18,7 +18,8 @@
     local router_name = XQSysUtil.getRouterName()
     local router_local = XQSysUtil.getRouterLocale()
     router_name = encode4HtmlValue(router_name) .."(".. encode4HtmlValue(router_local) ..")"
-    local netmod = XQFunction.getNetModeType()
+
+    local netmod = XQFunction.getnetmode()
     local hardware = string.lower( XQSysUtil.getHardware() )
     local color = XQSysUtil.getColor()
     local _hardware = hardware
@@ -52,7 +53,9 @@
             <div class="devices">
                 <div class="img"></div>
                 <p><%:终端设备%></p>
-                <div class="status status-devices" id="statusDevices"><b class="devcountonline">--</b><%:台%></div>
+
+                <div class="status status-devices" id="statusDevices" <%if netmod == 3 then%>style="display: none"<%end%>><b class="devcountonline">--</b><%:台%></div>
+
             </div>
             <div id="devline" class="line line-ok"></div>
             <div class="router active">
@@ -61,7 +64,7 @@
                     <img class="off" src="<%=resource%>/web/img/icons/<%=routerSrc%>">
                 </div>
                 <p><%=router_name%> | <%:本机%></p>
-                <table class="status-wifi" id="statusWifi">
+                <table <%if netmod == 3 then%>style="display: none"<%end%> class="status-wifi" id="statusWifi">
                 <%if wifi50IsSupport == "1" then%>
                     <tr>
                         <td class="l">
@@ -82,8 +85,13 @@
                 <%end%>
                 </table>
             </div>
+            <%if netmod == 3 then%>
+            <div id="netline" class="line line-ok"></div>
+            <%else%>
             <div id="netline" class="line line-aplink"></div>
-            <div class="linetext-aplink"><%if netmod == 1 then%><%:无线中继%><%else%><%:有线中继%><%end%></div>
+            <%end%>
+            <div class="linetext-aplink">
+            <%if netmod == 1 then%><%:无线中继%><%elseif netmod ==3 then%><%:Mesh组网%><%else%><%:有线中继%><%end%></div>
             <div class="internet">
             <%if vendorInfo_ip ~= 0 then%>
                 <a href="http://<%=vendorInfo_ip%>" target="_blank">
@@ -93,9 +101,11 @@
                 <img src="<%=resource%>/web/img/icons/router_other.png">
             <%end%>
                 <p><%:主路由器%></p>
-                <div class="status status-internet" id="statusInternet">
+
+                <div <%if netmod == 3 then%>style="display: none"<%end%> class="status status-internet" id="statusInternet">
                     <i class="ico ico-wifi-on"></i><b id="ssidval">--</b>
                 </div>
+
             </div>
         </div>
     </div>
@@ -113,28 +123,32 @@
                         <ul>
                              <li> <b>2.4G</b><span>Hz</span></li>
                             <li class="wifi_2g_name">Wi-Fi名称</li>
-                            <li class="passwd_2g">Wi-Fi密码： 
+                            <li class="passwd_2g">Wi-Fi密码：
                                 <input type="text" class="wifi_2g_pssswd wifi_2g_pssswd_txt" style="padding: 5px;" value="">
-                                <input type="password" class="wifi_2g_pssswd" value=""> 
+                                <input type="password" class="wifi_2g_pssswd" value="">
                                  <span class="eye2"></span>
                             </li>
                             <li class="wifi_2g_online">连接设备数量 --</li>
                         </ul>
+                        <%if netmod ~= 3 then%>
                         <a class="btn_wifi" href="<%=luci.dispatcher.build_url("web", "apsetting", "wifi")%>" >设置</a>
+                        <%end%>
                     </div>
-                   
+
                     <div class="wifi_5g">
                         <ul>
                             <li> <b>5G</b><span>Hz</span></li>
                              <li class="wifi_5g_name">Wi-Fi名称</li>
                             <li class="passwd_5g">Wi-Fi密码：
                                 <input type="text" class="wifi_5g_pssswd wifi_5g_pssswd_txt" style="padding: 5px;" value="">
-                                <input type="password" class="wifi_5g_pssswd" value=""> 
+                                <input type="password" class="wifi_5g_pssswd" value="">
                                 <span class="eye2"></span>
                             </li>
-                            <li class="wifi_5g_online">连接设备数量1 --</li>
+                            <li class="wifi_5g_online">连接设备数量 --</li>
                         </ul>
+                        <%if netmod ~= 3 then%>
                         <a class="btn_wifi" href="<%=luci.dispatcher.build_url("web", "apsetting", "wifi")%>" >设置</a>
+                        <%end%>
                     </div>
                 </div>
                 <div class="bd">
@@ -151,7 +165,7 @@
                             <td id="routermac">--</td>
                             <td id="routersn">--</td>
                         </tr>
-                        
+
                     </table>
                 </div>
             </div>
@@ -304,7 +318,7 @@ $.sub('status:newget', function(){
                 type: 'GET',
                 datatype: 'json',
                 success: function(res){
-                    res =  $.parseJSON(res); 
+                    res =  $.parseJSON(res);
                     if(res.code == 0){
                         //2.4g
                         $('.wifi_2g_name').html('Wi-Fi名称：'+res['2g'].ssid);
@@ -323,11 +337,11 @@ $.sub('status:newget', function(){
                         }
                         $('.wifi_5g_online').html('连接设备数量：'+res['5g'].online_sta_count);
                         //信息
-                     
-                       
+
+
                         $('#routermodel').text(mapModel[res.hardware.platform]);
-                        
-                       
+
+
                         $('#routerversion').text('MiWiFi ' + mapChannel[res.hardware.channel] + ' ' + res.hardware.version);
                         $('#routermac').text(res.hardware.mac);
                         $('#routersn').text(res.hardware.sn);

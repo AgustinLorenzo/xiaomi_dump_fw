@@ -15,6 +15,17 @@ ieee1905managed_bridge2=
 . /lib/functions/hyfi-network.sh
 
 start() {
+	# skip in ft_mode
+	[ "1" = "`cat /proc/xiaoqiang/ft_mode 2>/dev/null`" ] && {
+		echo "hyfi-bridging *** in FT mode, skip handle "
+		return 1
+	}
+	# skip in none-son mode
+	net_mode="`uci get xiaoqiang.common.NETMODE 2>/dev/null`"
+	[ "whc_cap" = "$net_mode" -o "whc_re" = "$net_mode" ] || {
+		echo "hyfi-bridging *** not in cap/re mode, skip handle "
+		return 1
+	}
 	config_load 'hyd'
 	config_get_bool enabled config 'Enable' '0'
 	local hyfi_bridging_rcd_enabled=`ls /etc/rc.d/S${START}hyfi-bridging 2> /dev/null`
@@ -55,7 +66,7 @@ stop() {
 	fi
 
 	# Get the IEEE1905.1 managed bridge name and detach
-	hyfi_get_ieee1905_managed_iface ieee1905managed_bridge
+	hyfi_get_ieee1905_managed_iface ieee1905managed_bridge ieee1905managed_bridge2
 	hyctl detach br-$ieee1905managed_bridge
 
 	if [ -n "$ieee1905managed_bridge2" ]; then

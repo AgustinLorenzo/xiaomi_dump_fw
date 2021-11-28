@@ -1,0 +1,12 @@
+/sbin/whc_to_re_common_api.sh
+/usr/sbin/xq_info_sync_mqtt
+/sbin/xqwhc_backhaul_maclist_reload.sh
+/sbin/bind_client.sh
+/sbin/cap_whc_common_push.sh
+/etc/config/bind
+/sbin/xqwhc_gw_update.sh
+/sbin/cap_push_backhaul_whitelist.sh
+/sbin/re_do_action_common_api.sh
+/etc/init.d/xq_info_sync_mqtt
+/sbin/xqwhc_maclist_reload.sh
+/sbin/xqwhc_info_sync.sh

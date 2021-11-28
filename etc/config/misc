@@ -21,6 +21,7 @@ config misc wireless
 	option ifname_5G wl0
 	option ifname_guest_2G wl14
 	option ifname_apclient_2G wl11
+	option mesh_ifname_5G wl9
 	option wl12_scanifname 'wl0'
 	option wl11_scanifname 'wl1'
 	option wl12_scanband  '5g'
@@ -144,3 +145,8 @@ config misc http_proxy
 config misc cgroup
 	option memgrp1_en 1
 	option memgrp1_limit '150m'
+
+config misc backhauls
+	option backhaul '5g'
+	option backhaul_5g_sta_iface 'wl01'
+	option backhaul_5g_ap_iface 'wl5'

@@ -1965,8 +1965,8 @@ enable_qcawificfg80211() {
 		config_get chwidth "$vif" chwidth
 		[ -n "$chwidth" ] && "$device_if" "$ifname" chwidth "${chwidth}"
 
-		config_get minet "$vif" minet 1
-		[ -n "$minet" ] && iwpriv "$ifname" minet "${minet}"
+		config_get miwifi_mesh "$vif" miwifi_mesh
+		[ -n "$miwifi_mesh" ] && iwpriv "$ifname" miwifi_mesh "${miwifi_mesh}"
 
 		config_get wds "$vif" wds
 		case "$wds" in
@@ -1977,6 +1977,20 @@ enable_qcawificfg80211() {
 				;;
 		esac
 		"$device_if" "$ifname" wds "$wds" >/dev/null 2>&1
+
+        config_get ext_nss "$device" ext_nss
+        if [ "$bw" = "0" -a "$bdmode" = "5G" ]; then
+			ext_nss=0
+		else
+			ext_nss=1
+		fi
+        case "$ext_nss" in
+            1|on|enabled) "$device_if" "$phy" ext_nss 1 >/dev/null 2>&1
+                ;;
+            0|on|enabled) "$device_if" "$phy" ext_nss 0 >/dev/null 2>&1
+                ;;
+            *) ;;
+        esac
 
 		config_get ext_nss_sup "$vif" ext_nss_sup
 		case "$ext_nss_sup" in
@@ -2935,22 +2949,13 @@ enable_qcawificfg80211() {
 		config_get vif_txpower "$vif" txpower
 		# use vif_txpower (from wifi-iface) instead of txpower (from wifi-device) if
 		# the latter doesn't exist
-		config_get ext_nss "$device" ext_nss
-        [ "$bw" = "160" ] && ext_nss=0
-        case "$ext_nss" in
-            1|on|enabled) "$device_if" "$phy" ext_nss 1 >/dev/null 2>&1
-                ;;
-            0|on|enabled) "$device_if" "$phy" ext_nss 0 >/dev/null 2>&1
-                ;;
-            *) ;;
-        esac
-
 
 		# for miwifi
 		if [ "$bdmode" = "24G" ]; then
 			max_power=30
 			wifitool "$ifname" setUnitTestCmd 67 3 16 1 1
 			iwpriv "$ifname" 11ngvhtintop 1
+			iwpriv "$ifname" enablertscts 0x11
 		else
 			max_power=30
 		fi
@@ -3193,10 +3198,22 @@ post_qcawificfg80211() {
 
 			# These init scripts are assumed to check whether the feature is
 			# actually enabled and do nothing if it is not.
-			[ ! -f /etc/init.d/lbd ] || /etc/init.d/lbd start
-			[ ! -f /etc/init.d/hyfi-bridging ] || /etc/init.d/hyfi-bridging start
-			[ ! -f /etc/init.d/ssid_steering ] || /etc/init.d/ssid_steering start
-			[ ! -f /etc/init.d/wsplcd ] || /etc/init.d/wsplcd restart
+			# disable cause of hyd start
+			local netmode="`uci -q get xiaoqiang.common.NETMODE`"
+			[ "whc_cap" = "$netmode" -o "whc_re" = "$netmode" ] && {
+				[ ! -f /etc/init.d/hyfi-bridging ] || /etc/init.d/hyfi-bridging start
+				[ ! -f /etc/init.d/ssid_steering ] || /etc/init.d/ssid_steering start
+				### miwifi add hyd restart after wifi restart, and skip wsplcd restart instead by trafficd whc_sync
+				[ "1" = "`nvram get QSDK_SON`" ] && {
+					[ ! -f /etc/init.d/wsplcd ] || /etc/init.d/wsplcd restart
+				} || {
+					logger -p 1 -t "wifi_xqwhc" " miwifi ignore wsplcd instead of trafficd whc_sync "
+					#[ ! -f /etc/init.d/wsplcd ] || /etc/init.d/wsplcd restart
+					[ ! -f /etc/init.d/hyd ] || /etc/init.d/hyd restart
+				}
+			} || {
+				[ ! -f /etc/init.d/lbd ] || /etc/init.d/lbd start
+			}
 
 			config_get_bool wps_pbc_extender_enhance qcawifi wps_pbc_extender_enhance 0
 			[ ${wps_pbc_extender_enhance} -ne 0 ] && {
@@ -3779,6 +3796,7 @@ EOF
     if [ $devidx = 0 ]; then
         cat <<EOF
     option bw 80
+    option support160 '1'
 EOF
     fi
 	cat <<EOF
@@ -3796,6 +3814,7 @@ EOF
 	if [ $devidx = 0 ]; then
 		cat <<EOF
 	option channel_block_list '52,56,60,64'
+	option miwifi_mesh '1'
 EOF
 	fi
 	devidx=$(($devidx + 1))

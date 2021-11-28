@@ -6,5 +6,5 @@ License: GPLv2
 Section: utils
 Maintainer: John Crispin <john@phrozen.org>
 Architecture: aarch64_cortex-a53
-Installed-Size: 80860
+Installed-Size: 80858
 Description:  Utilities for manipulating memory technology devices.

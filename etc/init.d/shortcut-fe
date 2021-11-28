@@ -15,14 +15,17 @@
 
 #SFE connection manager has a lower priority, it should be started after other connection manager
 #to detect the existence of connection manager with higher priority
-START=72
+#START=72
 
 have_cm() {
 	[ -d "/sys/kernel/debug/ecm" ] && echo 1 && return
 	[ -d "/sys/module/shortcut_fe_cm" ] && echo 1 && return
 
 	local vpn_up=$(ubus call network.interface.vpn status 2>/dev/null | grep -Eq '"up": true' && echo 1 || echo 0)
-	[ "$vpn_up" == "1" ] && return
+	[ "$vpn_up" == "1" ] && {
+		stop
+		echo 1 && return
+	}
 
 	local ipv6_enabled=$(uci -q get ipv6.settings.enabled)
 	local ipv6_mode=$(uci -q get ipv6.settings.mode)

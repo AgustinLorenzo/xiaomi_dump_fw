@@ -10,6 +10,12 @@ init_switch() {
 
 	include /lib/network
 	setup_switch
+
+	local lan_mac=$(getmac lan)
+	[ -z "$lan_mac" ] && return
+	uci set network.@device[0].macaddr="$lan_mac"
+	uci set network.lan.macaddr="$lan_mac"
+	uci commit
 }
 
 start_service() {

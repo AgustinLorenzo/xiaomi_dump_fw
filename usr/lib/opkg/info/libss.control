@@ -5,6 +5,6 @@ Source: package/utils/e2fsprogs
 License: GPL-2.0
 Section: libs
 Architecture: aarch64_cortex-a53
-Installed-Size: 8421
+Installed-Size: 8425
 Description:  This pacakge contains libss, a command-line interface parsing library
  bundled with e2fsprogs.

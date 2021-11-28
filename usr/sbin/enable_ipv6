@@ -10,7 +10,7 @@ usage() {
  enable_ipv6 wan off
  enable_ipv6 wan native
  enable_ipv6 wan static ip6addr ip6gw ip6prefix ip6assign
- enable_ipv6 wan nat
+ enable_ipv6 wan nat 
  enable_ipv6 wan dns off
  enable_ipv6 wan dns on dns-list
 "
@@ -54,53 +54,14 @@ case ${action} in
     ## clean wan and clean lan
     uci -q batch <<EOF
         delete network.globals
-		delete network.${iface}_6
-		del_list network.lan.ip6class=${iface}_6
+	delete network.${iface}_6
+	del_list network.lan.ip6class=${iface}_6
         delete network.lan.ip6addr
-		delete network.lan.ip6assign
+	delete network.lan.ip6assign
         set network.${iface}.ipv6=0
-		set network.lan.ipv6='0'
-		commit network
+	set network.lan.ipv6='0'
+	commit network
 EOF
-    ;;
-
-"native")
-    [ -z "$ip6assign" ] && {
-        logerr "WARN: [Native6-mode] ip6assign is NULL, set 64 as default."
-        ip6assign="64"
-    }
-
-    loginfo "INFO: try to set router to [Native6-mode]."
-
-    ## for pppoe ipv6, must set ipv6=auto
-    if [ "$proto_type" = "pppoe" ]; then
-        uci -q batch <<EOF
-		delete network.globals
-        delete network.${iface}_6
-        delete network.lan.ip6addr
-        del_list network.lan.ip6class=${iface}_6
-        set network.${iface}.ipv6="auto"
-        set network.lan.ip6assign=${ip6assign}
-        set network.lan.ipv6='1'
-        commit network
-EOF
-    else
-        #set wan to dhcpv6 and set lan to static prefix set
-        uci -q batch <<EOF
-        delete network.globals
-		delete network.${iface}_6
-        delete network.lan.ip6addr
-        delete network.${iface}.ipv6
-		set network.${iface}_6=interface
-		set network.${iface}_6.ifname=${wan_iface}
-		set network.${iface}_6.proto=dhcpv6
-		set network.${iface}_6.reqaddress=try
-		set network.${iface}_6.reqprefix=auto
-		set network.lan.ip6assign=${ip6assign}
-		set network.lan.ipv6='1'
-		commit network
-EOF
-    fi
     ;;
 
 "static")
@@ -131,10 +92,10 @@ EOF
 			delete network.lan.ip6addr
 			del_list network.lan.ip6class=${iface}_6
 			add_list network.lan.ip6class=${iface}_6
-			set network.${iface}.ipv6="auto"
 			set network.lan.ip6assign=${ip6assign}
 			set network.lan.ip6addr=${ip6prefix}
 			set network.lan.ipv6='1'
+			set network.${iface}.ipv6="auto"
 			commit network
 EOF
 	else
@@ -142,14 +103,13 @@ EOF
 			delete network.globals
 			delete network.${iface}.ipv6
 			delete network.${iface}_6
+			del_list network.lan.ip6class=${iface}_6
 			set network.${iface}_6=interface
 			set network.${iface}_6.ifname=${wan_iface}
 			set network.${iface}_6.proto=static
 			set network.${iface}_6.ip6assign=no
 			set network.${iface}_6.ip6addr=${ip6addr}
 			set network.${iface}_6.ip6gw=${ip6gw}
-			delete network.lan.ip6addr
-			del_list network.lan.ip6class=${iface}_6
 			add_list network.lan.ip6class=${iface}_6
 			set network.lan.ip6assign=${ip6assign}
 			set network.lan.ip6addr=${ip6prefix}
@@ -157,6 +117,46 @@ EOF
 			commit network
 EOF
 	fi
+    ;;
+
+"native")
+    [ -z "$ip6assign" ] && {
+        logerr "WARN: [Native6-mode] ip6assign is NULL, set 64 as default."
+        ip6assign="64"
+    }
+
+    loginfo "INFO: try to set router to [Native6-mode]."
+
+    ## for pppoe ipv6, must set ipv6=auto
+    if [ "$proto_type" = "pppoe" ]; then
+        uci -q batch <<EOF
+	delete network.globals
+        delete network.${iface}_6
+        delete network.lan.ip6addr
+        del_list network.lan.ip6class=${iface}_6
+        set network.${iface}.ipv6="auto"
+        set network.lan.ip6assign=${ip6assign}
+        set network.lan.ipv6='1'
+        commit network
+EOF
+    else
+        #set wan to dhcpv6 and set lan to static prefix set
+        uci -q batch <<EOF
+        delete network.globals
+	delete network.${iface}_6
+        delete network.lan.ip6addr
+	del_list network.lan.ip6class=${iface}_6
+        delete network.${iface}.ipv6
+	set network.${iface}_6=interface
+	set network.${iface}_6.ifname=${wan_iface}
+	set network.${iface}_6.proto=dhcpv6
+	set network.${iface}_6.reqaddress=try
+	set network.${iface}_6.reqprefix=auto
+	set network.lan.ip6assign=${ip6assign}
+	set network.lan.ipv6='1'
+	commit network
+EOF
+    fi
     ;;
 
 "nat")
@@ -169,28 +169,31 @@ EOF
     loginfo "INFO: try to set router to [NAT6-mode]."
 
 	if [ "$proto_type" = "pppoe" ]; then
-		loginfo "INFO: [NAT6-mode] ip6addr and  ip6gw is NULL. Set WAN to DHCP6 proto and LAN to NAT static-ULA."
+		loginfo "INFO: [NAT6-mode] ip6addr and  ip6gw is NULL. Set WAN to PPPoE6 proto and LAN to NAT static-ULA."
 		uci -q batch <<EOF
-            delete network.globals
-            set network.lan.ipv6='1'
-            set network.lan.ip6addr=fd00:6868:6868::1/${ip6assign}
-            delete network.${iface}_6
-            set network.${iface}.ipv6="auto"
-            commit network
+		delete network.globals
+		delete network.${iface}_6
+		delete network.lan.ip6addr
+		del_list network.lan.ip6class=${iface}_6
+		set network.lan.ipv6='1'
+		set network.lan.ip6assign=${ip6assign}
+		set network.${iface}.ipv6="auto"
+		commit network
 EOF
 	else
 		loginfo "INFO: [NAT6-mode] ip6addr and  ip6gw is NULL. Set WAN to DHCP6 proto and LAN to NAT static-ULA."
 		uci -q batch <<EOF
 		delete network.globals
-		set network.lan.ipv6='1'
-        set network.lan.ip6addr=fd00:6868:6868::1/${ip6assign}
 		delete network.${iface}_6
+		delete network.lan.ip6addr
+		del_list network.lan.ip6class=${iface}_6
+		set network.lan.ipv6='1'
+		set network.lan.ip6assign=${ip6assign}
 		set network.${iface}_6=interface
 		set network.${iface}_6.ifname=${wan_iface}
 		set network.${iface}_6.proto=dhcpv6
-        set network.${iface}.ipv6="auto"
-        commit network
-
+		set network.${iface}.ipv6="auto"
+		commit network
 EOF
     fi
     ;;
@@ -301,13 +304,6 @@ EOF
     logger stat_points_none ip6_enabled=$ip6_status,$mode
 
     ubus call network reload
-    #restart ipv6 interface
-    [ "$ip6_enabled" == "1" -a "$mode" != "off" -a "$mode" != "static" ] && {
-        ifup ${iface}_6 >/dev/null 2>&1
-	}
-
-    #flush all deprecated address
-    #ip -6 address flush scope global deprecated dynamic
 
 	if [ "$ip6_enabled" == "1" -a "$mode" == "nat" ]; then
 		[ -d "/sys/module/shortcut_fe_cm" ] && /etc/init.d/qca-nss-ecm restart
@@ -315,8 +311,7 @@ EOF
 		[ ! -d "/sys/module/shortcut_fe_cm" ] && /etc/init.d/qca-nss-ecm restart
 	fi
 
-    /etc/init.d/dnsmasq stop
-    /etc/init.d/dnsmasq start
+    /etc/init.d/dnsmasq restart
     ;;
 
 *)

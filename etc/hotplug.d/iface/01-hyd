@@ -1,0 +1,12 @@
+#!/bin/sh
+
+[ `cat /proc/xiaoqiang/ft_mode` = "1" ] && return 0
+
+XQLOGTAG="xqwhc_hyd_hotp_iface"
+
+[ ifup = "$ACTION" -a "lan" = "$INTERFACE" ] && {
+    logger -p 1 -t "$XQLOGTAG" "  lan up, hyd restart! "
+    /etc/init.d/hyfi-bridging restart
+    /etc/init.d/hyd restart &
+}
+

@@ -246,6 +246,7 @@ bridgeap_close_r3600(){
 
 uci -q batch <<-EOF >/dev/null
     delete network.wan.auto
+	delete network.wan_6.auto
     commit network
     delete dhcp.lan.ignore;
     commit dhcp
@@ -445,6 +446,9 @@ case $OPT in
 	echo $wan_device $lan_device
 
         bridgeap_open;
+        /etc/init.d/ipv6 ip6_fw close
+        /etc/init.d/firewall restart
+        /etc/init.d/odhcpd stop
         /etc/init.d/dnsmasq stop
         /usr/sbin/dhcp_apclient.sh restart
         /etc/init.d/network restart
@@ -467,6 +471,9 @@ case $OPT in
     close)
         bridgeap_check_gw_stop
         bridgeap_close;
+        /etc/init.d/ipv6 ip6_fw open
+        /etc/init.d/firewall restart
+        /etc/init.d/odhcpd start
         /etc/init.d/dnsmasq stop
         /usr/sbin/dhcp_apclient.sh restart
         /etc/init.d/network restart

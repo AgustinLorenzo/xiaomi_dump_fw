@@ -1,0 +1,9 @@
+Package: libieee1905
+Version: miwifi_git-1
+Depends: libc, libhyficommon
+Source: qca_qsdk/qca_qsdk_spf10.0/feeds/ieee1905-security/qca-ieee1905-security-config/libieee1905
+Section: QCA
+Maintainer: Qualcomm Atheros, Inc.
+Architecture: aarch64_cortex-a53
+Installed-Size: 7251
+Description:  This Package contains the IEEE1905.1 library

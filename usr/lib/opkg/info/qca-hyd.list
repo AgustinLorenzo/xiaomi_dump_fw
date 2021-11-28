@@ -1,0 +1,15 @@
+/usr/sbin/hyd_debug.sh
+/usr/lib/libpsService.so
+/usr/sbin/hyd_superv.sh
+/usr/lib/libmcfwdtblwlan2g.so
+/usr/lib/libmcfwdtbleswitch.so
+/usr/lib/libpluginManager.so
+/etc/hotplug.d/iface/01-hyd
+/usr/sbin/hyd
+/usr/sbin/hyt
+/usr/sbin/hyd_run.sh
+/etc/config/hyd
+/usr/lib/libmcfwdtblwlan5g.so
+/usr/sbin/hyd-map-cmd
+/etc/init.d/hyd
+/etc/hotplug.d/net/30-hyd

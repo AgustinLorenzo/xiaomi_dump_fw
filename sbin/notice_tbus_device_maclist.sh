@@ -1,7 +1,7 @@
 #!/bin/sh
 # Copyright (C) 2015 Xiaomi
 #
-
+. /usr/share/libubox/jshn.sh
 . /lib/functions.sh
 section_cb(){
     config_get device $1 device
@@ -23,9 +23,9 @@ device_name=`uci get misc.wireless.if_2G`
 iface_no=`wifiap_interface_find_by_device $device_name`
 [ "$iface_no" == "" ] && return 1
 
-maclist="`uci -q get wireless.$iface_no.maclist`"
+maclist="`uci -q get wireless.@wifi-iface[1].maclist`"
 maclist_format="`echo -n $maclist | sed "s/ /;/g"`"
-filter="`uci -q get wireless.$iface_no.macfilter`"
+filter="`uci -q get wireless.@wifi-iface[1].macfilter`"
 
 # add for D01, use new method
 auth="`uci -q get devicelist.settings.auth`"
@@ -40,25 +40,49 @@ else
     policy=0
 fi
 
-tbus -t 2 list | grep -v netapi | grep -v master | while read a
-do
-    if [ "$HARDWARE" == "D01" ]; then
+json_init
+
+if [ "$HARDWARE" == "D01" -o "$HARDWARE" == "R3600" -o "$HARDWARE" == "RM1800" ]; then
         if [ "$level" != "" -a  "$auth" != "" ]; then
+        jmsg="{\"policy\":${policy},\"list\":\"${maclist_format}\",\"level\":${level},\"auth\":${auth}}" 
+        json_add_string "method" "access"
+        json_add_string "payload" $jmsg
+        json_str=`json_dump`
+        echo $json_str
             logger -p info -t maclist "set both auth:$auth level:$level"
-            tbus -t 2 call $a access  "{\"policy\":${policy},\"list\":\"${maclist_format}\",\"level\":${level},\"auth\":${auth}}"
+        ubus call xq_info_sync_mqtt send_msg  "$json_str"
         elif [ "$level" != "" ]; then
+        jmsg="{\"policy\":${policy},\"list\":\"${maclist_format}\",\"level\":${level}}"  
+        json_add_string "method" "access"
+        json_add_string "payload" $jmsg
+        json_str=`json_dump`
+        echo $json_str
             logger -p info -t maclist "set only level:$level"
-            tbus -t 2 call $a access  "{\"policy\":${policy},\"list\":\"${maclist_format}\",\"level\":${level}}"
+        ubus call xq_info_sync_mqtt send_msg  "$json_str"
         elif [ "$auth" != "" ]; then
+        jmsg="{\"policy\":${policy},\"list\":\"${maclist_format}\",\"auth\":${auth}}"  
+        json_add_string "method" "access"
+        json_add_string "payload" $jmsg
+        json_str=`json_dump`
+        echo $json_str
             logger -p info -t maclist "set only auth:$auth"
-            tbus -t 2 call $a access  "{\"policy\":${policy},\"list\":\"${maclist_format}\",\"auth\":${auth}}"
+        ubus call xq_info_sync_mqtt send_msg  "$json_str"
         else
             #call tbus function to notice device change maclist
-            tbus -t 2 call $a access  "{\"policy\":${policy},\"list\":\"${maclist_format}\"}"
+        jmsg="{\"policy\":${policy},\"list\":\"${maclist_format}\"}"  
+        json_add_string "method" "access"
+        json_add_string "payload" $jmsg
+        json_str=`json_dump`
+        echo $json_str
+        ubus call xq_info_sync_mqtt send_msg  "$json_str"
         fi
     else
         #call tbus function to notice device change maclist
-        tbus -t 2 call $a access  "{\"policy\":${policy},\"list\":\"${maclist_format}\"}"
+    jmsg="{\"policy\":${policy},\"list\":\"${maclist_format}\"}"                                    
+    json_add_string "method" "access"
+    json_add_string "payload" $jmsg
+    json_str=`json_dump`
+    echo $json_str
+    ubus call xq_info_sync_mqtt send_msg  "$json_str"
     fi
-done
 

@@ -32,6 +32,7 @@ DNSMASQ_CONF="/var/etc/dnsmasq.conf.cfg01411c"
 QOS_CONF="/etc/config/miqos"
 WIFISHARE_CONF="/etc/config/wifishare"
 MICLOUD_LOG="/tmp/micloudBackup.log"
+WHC_LOG="/tmp/whc.log"   ### for D01/RM1800/R3600 xqwhc
 GZ_LOGS=""
 
 hardware=`uci get /usr/share/xiaoqiang/xiaoqiang_version.version.HARDWARE`
@@ -174,7 +175,31 @@ elif [ "$hardware" = "R3600" ]; then
         # wifi
         log_exec "athstats -i wifi$i >> $LOG_TMP_FILE_PATH"
     done
-    for i in 0 1 13 14; do
+    list="0 1"
+    netmode="`uci -q get xiaoqiang.common.NETMODE`"
+    ifconfig wl14 >/dev/null 2>&1
+    [ $? = 0 ] && list="$list 14"
+    [ "$netmode" = "whc_cap" -o "$netmode" = "whc_re" ] && {
+        bh_radio_list="`uci get misc.backhauls.backhaul`"
+        for bh_radio in $bh_radio_list; do
+            bh_vap_if="`uci get misc.backhauls.backhaul_${bh_radio}_ap_iface`"
+            bh_sta_if="`uci get misc.backhauls.backhaul_${bh_radio}_sta_iface`"
+            if [ -n "$bh_vap_if" ] && [ "$bh_vap_if" != "wl0" ] && [ "$bh_vap_if" != "wl1" ]; then
+                bh_vap_if="`echo $bh_vap_if | cut -d l -f 2`"
+                bh_vap_list="$bh_vap_list $bh_vap_if"
+            fi
+            [ -n "$bh_sta_if" ] && {
+                bh_sta_if="`echo $bh_sta_if | cut -d l -f 2`"
+                bh_sta_list="$bh_sta_list $bh_sta_if"
+            }
+        done
+        list="$list $bh_vap_list"
+    }
+    echo "========== list:$list" >> $LOG_TMP_FILE_PATH
+
+    # timeout -t 3 cnss_diag -p -c  | grep -e ANI_EDCCA_PHYID -e OFDM_DL
+    # /usr/sbin/getneighbor.sh ${LOG_TMP_FILE_PATH} > /dev/null 2>&1
+    for i in $list; do
         # wl
         log_exec "iwinfo wl$i info >> $LOG_TMP_FILE_PATH"
         log_exec "iwinfo wl$i assolist >> $LOG_TMP_FILE_PATH"
@@ -184,18 +209,73 @@ elif [ "$hardware" = "R3600" ]; then
         log_exec "iwconfig wl$i >> $LOG_TMP_FILE_PATH"
         log_exec "iwpriv wl$i get_chutil >> $LOG_TMP_FILE_PATH"
         log_exec "iwpriv wl$i get_channf >> $LOG_TMP_FILE_PATH"
-    log_exec "iwpriv wl$i txrx_stats 9"
-    log_exec "iwpriv wl$i txrx_stats 10"
+    	log_exec "iwpriv wl$i txrx_stats 9"
+    	log_exec "iwpriv wl$i txrx_stats 10"
+        log_exec "iwpriv wl$i txrx_stats 262" #wds table
+        log_exec "hostapd_cli -p /var/run/hostapd-wifi$i -i wl$i get_config | grep -v \"passphrase=\""
     done
-	timeout -t 3 cnss_diag -p -c  | grep -e ANI_EDCCA_PHYID -e OFDM_DL
-    #/usr/sbin/getneighbor.sh ${LOG_TMP_FILE_PATH} > /dev/null 2>&1
+
+    # /usr/sbin/getneighbor.sh ${LOG_TMP_FILE_PATH} > /dev/null 2>&1
+    [ "$netmode" = "whc_cap" -o "$netmode" = "whc_re" ] && {
+        [ "$netmode" = "whc_re" -a -n "$bh_sta_list" ] && {
+            echo "========== bh_sta_list:$bh_sta_list" >> $LOG_TMP_FILE_PATH
+            for i in $bh_sta_list; do
+                echo "========== @@@@ iwinfo wl$i @@@@" >> $LOG_TMP_FILE_PATH
+                echo "========== @@@@ iwinfo wl$i @@@@" > /dev/console
+                log_exec "iwinfo wl$i info"
+                log_exec "iwconfig wl$i"
+                log_exec "wpa_cli -p /var/run/wpa_supplicant-wl$i -i wl$i status"
+                log_exec "wpa_cli -p /var/run/wpa_supplicant-wl$i -i wl$i list_networks"
+            done
+        }
+
+        ### log info for whc serives and state
+        flog_exec "  @@@@ whc info log @@@@" "$WHC_LOG"
+        flog_exec "#whc general show: " "$WHC_LOG"
+        whcal role >> $WHC_LOG
+        whcal status >> $WHC_LOG
+        whcal isre && {
+            whcal getmetric; echo "metric $?" >> $WHC_LOG
+        }
+        flog_exec "#hyctl show: " "$WHC_LOG"
+        hyctl show >> $WHC_LOG
+        flog_exec "#hyctl getfdb br-lan: " "$WHC_LOG"
+        hyctl getfdb br-lan 5000 >> "$WHC_LOG"
+        flog_exec "#hyctl gethatbl br-lan: " "$WHC_LOG"
+        hyctl gethatbl br-lan 5000 >> "$WHC_LOG"
+        flog_exec "#hyctl gethdtbl br-lan: " "$WHC_LOG"
+        hyctl gethdtbl br-lan 5000 >> "$WHC_LOG"
+
+        flog_exec "#brctl showmacs detail info: " "$WHC_LOG"
+        brctl showmacs br-lan >> $WHC_LOG
+        flog_exec "#brctl showstp detail info: " "$WHC_LOG"
+        brctl showstp br-lan >> $WHC_LOG
+
+        flog_exec "###hyd info:td s2, pc s A,pc s D, hy ha, hy hd, he s, stadb s, stadb s phy, bandmon s, \
+estimator s, steeralg s, steerexec s, ps s, ps p, ps f" "$WHC_LOG"
+        (echo "@hyt_td_s2:"; echo td s2; sleep 3) | hyt >> $WHC_LOG
+        (echo "@pc_s_A:";echo pc s A; sleep 2) | hyt >> $WHC_LOG
+        (echo "@pc_s_D:";echo pc s D; sleep 4) | hyt >> $WHC_LOG
+        (echo "@hy_ha_hd:"; echo hy ha; sleep 3; echo hy hd; sleep 2) | hyt >> $WHC_LOG
+        (echo "@he_s:"; echo he u; sleep 1; echo he s; sleep 3 ) | hyt >> $WHC_LOG
+        (echo "@ps_s_p_f:"; echo ps s; sleep 1; echo ps p; sleep 1; echo ps f; sleep 1) | hyt >> $WHC_LOG
+        (echo "@steerexec_s:"; echo steerexec s; sleep 3 ) | hyt >> $WHC_LOG
+        (echo "@stadb_s:"; echo stadb s; sleep 3 ) | hyt >> $WHC_LOG
+        (echo "@stadb_s_phy:"; echo stadb s phy; sleep 3 ) | hyt >> $WHC_LOG
+        (echo "@bandmon_s:"; echo bandmon s; sleep 1) | hyt >> $WHC_LOG
+        (echo "@estimator_s"; echo estimator s; sleep 1) | hyt >> $WHC_LOG
+
+
+        flog_exec "### swconfig info" "$WHC_LOG"
+        swconfig dev switch0 show >> $WHC_LOG
+    }
 elif [ "$hardware" = "D01" ]; then
     for i in `seq 0 1`; do
         # wifi
         log_exec "athstats -i wifi$i >> $LOG_TMP_FILE_PATH"
     done
 
-    local list="0 1 13"
+    list="0 1 13"
     ifconfig wl14 >/dev/null 2>&1
     [ $? = 0 ] && list="$list 14"
     whcal isre && list="$list 01 11"
@@ -301,7 +381,7 @@ ubus call trafficd hw '{"debug":true}' >> $TRAFFICD_LOG
 echo "    trafficd ip info:" >> $TRAFFICD_LOG
 ubus call trafficd ip '{"debug":true}' >> $TRAFFICD_LOG
 echo "    tbus list:" >> $TRAFFICD_LOG
-tbus list -v >> $TRAFFICD_LOG
+tbus -v list >> $TRAFFICD_LOG
 
 
 # list enabled plugin's name
@@ -354,8 +434,9 @@ fi
 
 [ "$hardware" = "R3600" ] && {
     redundancy_files="$redundancy_files "/tmp/log/" "/tmp/run/""
+    move_files="$move_files $WHC_LOG"
 
-    for ff in lbd.conf resolv.conf; do
+    for ff in hyd-*.conf lbd.conf plc.conf resolv.conf; do
         conf_files="$conf_files `ls /tmp/$ff 2>/dev/null`"
     done
 

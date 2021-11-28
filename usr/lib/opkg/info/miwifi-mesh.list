@@ -1,0 +1,7 @@
+/usr/share/udhcpc/mesh_dhcp.script
+/usr/lib/lua/miwifi_mesh.so
+/usr/share/mesh/hostapd-template.conf
+/usr/sbin/meshd
+/usr/sbin/mesh_connect.sh
+/etc/init.d/meshd
+/usr/sbin/set_mesh_info.lua

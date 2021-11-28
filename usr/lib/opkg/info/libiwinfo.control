@@ -6,6 +6,6 @@ License: GPL-2.0
 Section: libs
 Maintainer: Jo-Philipp Wich <jo@mein.io>
 Architecture: aarch64_cortex-a53
-Installed-Size: 18053
+Installed-Size: 18052
 Description:  Wireless information library with consistent interface for proprietary Broadcom,
  nl80211 and wext driver interfaces.

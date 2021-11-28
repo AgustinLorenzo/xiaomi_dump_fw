@@ -4,5 +4,5 @@ Depends: libc, libuci, jshn, iwinfo, lua, libblobmsg-json, libpthread, libjson-c
 Source: package/miwifi/trafficd
 Section: net
 Architecture: aarch64_cortex-a53
-Installed-Size: 32094
+Installed-Size: 32868
 Description:  traffic

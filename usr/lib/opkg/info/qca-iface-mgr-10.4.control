@@ -1,9 +1,0 @@
-Package: qca-iface-mgr-10.4
-Version: miwifi_git-1
-Depends: libc, libpthread, libnl, libwifisoncfg
-Source: qca_qsdk/qca_qsdk_spf10.0/feeds/qca/net/qca-iface-mgr-10.4
-Section: QCA
-Maintainer: Qualcomm Atheros
-Architecture: aarch64_cortex-a53
-Installed-Size: 34666
-Description:  User Space application to manage interfaces

@@ -95,12 +95,67 @@ deconfig_interface() {
 	proto_send_update "$INTERFACE"
 }
 
+# old ap mode set in dhcp_apclient.sh
+setup_for_mesh_re () {
+    # reset lan config
+    [ -z "$ip" ] && exit 1
+    netmask="${subnet:-255.255.255.0}"
+    mtu="${mtu:-1500}"
+    dns="${dns:-$router}"
+    #model=$(uci -q get misc.hardware.model)
+    #[ -z "$model" ] && model=$(cat /proc/xiaoqiang/model)
+    #hostname="MiWiFi-$model"
+    ap_hostname_tmp=${vendorinfo:7}
+    ap_hostname_tmp=${ap_hostname_tmp%%-*}
+    ap_hostname=MiWiFi-${ap_hostname_tmp}-srv
+    logger -p warn -t udhcpc " ============ mesh re set ip=$ip gw=$router."
+uci -q batch <<EOF >/dev/null
+set xiaoqiang.common.ap_hostname=$ap_hostname
+set xiaoqiang.common.vendorinfo=$vendorinfo
+commit xiaoqiang
+set network.lan=interface
+set network.lan.type=bridge
+set network.lan.proto=static
+set network.lan.ipaddr=$ip
+set network.lan.netmask=$netmask
+set network.lan.gateway=$router
+set network.lan.mtu=$mtu
+del network.lan.dns
+del network.vpn
+EOF
+    for d in $dns
+    do
+        uci -q add_list network.lan.dns=$d
+    done
+    uci commit network
+    # restart service
+    ifdown vpn
+    /usr/sbin/vasinfo_fw.sh off
+    /etc/init.d/trafficd restart
+    /etc/init.d/xq_info_sync_mqtt restart
+    /etc/init.d/xqbc restart
+    [ -f /etc/init.d/hwnat ] && /etc/init.d/hwnat off
+    # call netifd reload, and it will stop udhcpc. And must avoid conflict with wifi OPS.
+    if [ "`uci -q get xiaoqiang.common.INITTED`" != "YES" ]; then
+    	ubus call network reload
+    	logger -p warn -t udhcpc "====== ubus call network reload, make netifd kill udhcpc immediately !"
+    else
+		/etc/init.d/hyd stop
+        ubus call network reload
+        logger -p warn -t udhcpc "====== call /etc/init.d/network reload after dhcp, make lan to static."
+    fi
+}
 case "$1" in
 	deconfig)
 		deconfig_interface
 	;;
 	renew|bound)
 		setup_interface
+		# do other config for mesh RE device [master:whc_cap  child:whc_re]
+		mesh_mode=`uci -q get xiaoqiang.common.NETMODE`
+		if [ "$mesh_mode" == "whc_re" ]; then
+			setup_for_mesh_re
+		fi
 	;;
         offer_exit)
                 echo vendorinfo=$vendorinfo

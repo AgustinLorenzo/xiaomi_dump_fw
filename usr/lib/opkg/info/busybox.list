@@ -98,7 +98,6 @@
 /usr/bin/reset
 /sbin/start-stop-daemon
 /bin/usleep
-/usr/sbin/brctl
 /bin/cat
 /usr/sbin/arping
 /etc/init.d/telnet

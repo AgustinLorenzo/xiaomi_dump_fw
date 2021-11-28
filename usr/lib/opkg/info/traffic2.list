@@ -4,7 +4,6 @@
 /etc/iwevent.d/02-notify_trafficd.sh
 /usr/sbin/trafficd
 /etc/traffic.d/device/02-chk_newsta_onre_call.sh
-/etc/config/bind
 /etc/traffic.d/linkstatus/02-wan_dog.sh
 /sbin/device_event_call
 /etc/traffic.d/device/01-device_call_example.sh

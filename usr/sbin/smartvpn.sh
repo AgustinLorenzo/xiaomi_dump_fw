@@ -267,8 +267,7 @@ smartvpn_vpn_mark_redirect_open()
     #fi
 
     #allowmacs not NULL
-    if [ "$smartvpn_cfg_devicemac" != "" ]
-    then
+    if [ "$smartvpn_cfg_devicemac" != "" ]; then
         for mac in $smartvpn_cfg_devicemac
         do
             smartvpn_logger "device mac add $mac."
@@ -288,8 +287,7 @@ smartvpn_vpn_mark_redirect_open()
     }
     smartvpn_logger "hostlist_not_null $hostlist_not_null."
 
-    if [ "$hostlist_not_null" != "1" ]
-    then
+    if [ "$hostlist_not_null" != "1" ]; then
         smartvpn_logger "add all host mark $ipset_mark to vpn."
         iptables -t mangle -A $smartvpn_mark_table -j MARK --set-mark $ipset_mark
     else
@@ -361,18 +359,15 @@ smartvpn_config_get()
 
     config_get smartvpn_cfg_hostnotnet dest notnet &>/dev/null
 
-    if [ -z $smartvpn_cfg_domain_disabled ];
-    then
+    if [ -z $smartvpn_cfg_domain_disabled ]; then
         smartvpn_cfg_domain_disabled="0"
     fi
 
-    if [ -z $smartvpn_cfg_status ];
-    then
+    if [ -z $smartvpn_cfg_status ]; then
         smartvpn_cfg_status="off"
     fi
 
-    if [ $smartvpn_cfg_type != "vpn" ]
-    then
+    if [ $smartvpn_cfg_type != "vpn" ]; then
         return 1
     fi
 
@@ -381,21 +376,17 @@ smartvpn_config_get()
 
 smartvpn_flush()
 {
-
-    if [ $smartvpn_cfg_domain_disabled -ne 0 ]
-    then
+    if [ $smartvpn_cfg_domain_disabled -ne 0 ]; then
         smartvpn_logger "smartvpn not enabled."
         return 1
     fi
 
-    if [  $smartvpn_cfg_type != "vpn" ]
-    then
+    if [  $smartvpn_cfg_type != "vpn" ]; then
         smartvpn_logger "smartvpn not in vpn."
         return 1
     fi
 
-    if [ $smartvpn_cfg_status != "on" ];
-    then
+    if [ $smartvpn_cfg_status != "on" ]; then
         smartvpn_logger "smartvpn not run."
         return 1
     fi
@@ -411,32 +402,31 @@ smartvpn_set_off()
 {
     uci set smartvpn.vpn.status=off
     uci commit smartvpn
+	smartvpn_logger "status set off."
 }
 
 smartvpn_set_on()
 {
     uci set smartvpn.vpn.status=on
     uci commit smartvpn
+	smartvpn_logger "status set on."
 }
 
 smartvpn_open()
 {
-    if [ $smartvpn_cfg_status == "on" ];
-    then
+    if [ $smartvpn_cfg_status == "on" ]; then
         smartvpn_logger "already enabled."
         return 1
     fi
 
-    if [  $vpn_status != "up" ];
-    then
+    if [  $vpn_status != "up" ]; then
         smartvpn_logger "vpn_status($vpn_status) is down, return."
         return 1
     fi
 
     [ $smartvpn_cfg_domain_disabled == "1" ] && smartvpn_cfg_domainfile=""
 
-    if [ -s $smartvpn_cfg_domainfile  -a $smartvpn_cfg_type == "vpn" ]
-    then
+    if [ -s $smartvpn_cfg_domainfile  -a $smartvpn_cfg_type == "vpn" ]; then
         smartvpn_logger "translet domain to ipset."
         gensmartdns.sh "$smartvpn_cfg_domainfile" "$smartdns_conf" "$rule_file_ip" "$ipset_name"
     fi
@@ -457,13 +447,9 @@ smartvpn_open()
     smartvpn_vpn_route_delete
     smartvpn_vpn_mark_redirect_open
     smartvpn_firewall_reload_add
-
     ip route flush table cache
 
-    smartvpn_logger "status set on."
-
     smartvpn_set_on
-
     smartvpn_logger "smartvpn open!"
 
     return
@@ -471,25 +457,22 @@ smartvpn_open()
 
 smartvpn_close()
 {
-    if [ $smartvpn_cfg_status == "off" ];
-    then
+    if [ $smartvpn_cfg_status == "off" -a "$1" != "1" ]; then
         smartvpn_logger "status already off!"
         return 0
     fi
 
-    smartvpn_vpn_mark_redirect_close
-    smartvpn_vpn_route_add
-    smartvpn_firewall_reload_delete
-
-    smartvpn_dns_stop
-
-    smartvpn_ipset_delete
-
-    ip route flush table cache
+	smartvpn_firewall_reload_delete
+	
+	if [ $vpn_status == "up" -o $smartvpn_cfg_status != "off" ]; then
+        smartvpn_vpn_mark_redirect_close
+        smartvpn_vpn_route_add
+        smartvpn_dns_stop
+        smartvpn_ipset_delete
+        ip route flush table cache
+	fi
 
     smartvpn_set_off
-    smartvpn_logger "status set off."
-
     smartvpn_logger "smartvpn close!"
 
     return
@@ -501,30 +484,25 @@ smartvpn_config_get || return 1
 
 OPT=$1
 
-[ "$smartvpn_cfg_domain_switch" != "1" ] && return 1;
-
-smartvpn_lock="/var/run/samartvpn.lock"
+smartvpn_lock="/var/run/smartvpn.lock"
 trap "lock -u $smartvpn_lock; exit 1" SIGHUP SIGINT SIGTERM
 lock $smartvpn_lock
 #main
 case $OPT in
     on)
-        smartvpn_close
+        [ "$smartvpn_cfg_domain_switch" != "1" ] && {
+           lock -u $smartvpn_lock
+           return 1
+        }
+        smartvpn_close 0
         smartvpn_cfg_status=off
         smartvpn_open
         lock -u $smartvpn_lock
         return $?
     ;;
 
-    flush)
-        smartvpn_close
-        smartvpn_cfg_status=off
-        smartvpn_open
-        lock -u $smartvpn_lock
-        return $?
-    ;;
     off)
-        smartvpn_close
+        smartvpn_close 1
         lock -u $smartvpn_lock
         return $?
     ;;

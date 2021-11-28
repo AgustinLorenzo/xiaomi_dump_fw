@@ -67,7 +67,7 @@
         <a target="_blank" href="{$link}"><img data-hover-src="{$hoverpic}" src="{$pic}" /></a>
         <div class="clearfix root-name">
             <span class="name"><em>{$name}{$locale}</em></span>
-            <span class="info"><em><%:主路由器%></em></span>
+            <span class="info"><em><%:网关%></em></span>
         </div>
         <span class="wifi"><em>{$ip}</em></span>
     </div>
@@ -100,7 +100,7 @@
 <![endif]-->
 <script type="text/javascript">
 $(function(){
-    
+
     //存储路由器节点字符
     var html = [];
     var routerColor = {
@@ -170,7 +170,7 @@ $(function(){
             pic: getRouterPic( obj.hardware, obj.color, true, obj.ip).src,
             name: obj.name,
             locale: obj.locale ? '(' + obj.locale + ')' : '',
-            link: 'http://' + obj.ip,
+            link: 'http://' + obj.ip + (obj.mode == 8 ? '/cgi-bin/luci/web?goto=pc':''),
             ip: obj.ip,
             hardware: obj.hardware.toLowerCase(),
             hoverpic: getRouterPic( obj.hardware, obj.color, true, obj.ip ).hoverSrc

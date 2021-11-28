@@ -1,0 +1,3 @@
+/lib/functions/hyfi-debug.sh
+/lib/functions/hyfi-network.sh
+/lib/functions/hyfi-iface.sh

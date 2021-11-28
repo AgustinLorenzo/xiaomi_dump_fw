@@ -4,5 +4,5 @@ Depends: libc, wireless-tools
 Source: package/miwifi/iwevent-call
 Section: net
 Architecture: aarch64_cortex-a53
-Installed-Size: 1585
+Installed-Size: 1586
 Description:  This package is used for listen wireless event

@@ -4,5 +4,5 @@ Depends: libc, libuci, libssh2, libpthread
 Source: package/miwifi/portscan
 Section: utils
 Architecture: aarch64_cortex-a53
-Installed-Size: 11613
+Installed-Size: 11617
 Description:  This package contains port scan utility.

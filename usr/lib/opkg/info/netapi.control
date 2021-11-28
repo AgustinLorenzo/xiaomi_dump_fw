@@ -4,5 +4,5 @@ Depends: libc, libcurl, liblua, libjson-c, libpolarssl, libuci, libubus, libz
 Source: package/miwifi/netapi
 Section: data
 Architecture: aarch64_cortex-a53
-Installed-Size: 6913
+Installed-Size: 6914
 Description:  netapi

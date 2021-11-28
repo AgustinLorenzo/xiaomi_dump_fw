@@ -1,0 +1,3 @@
+/etc/config/acd
+/usr/sbin/acd-run.sh
+/etc/init.d/acd

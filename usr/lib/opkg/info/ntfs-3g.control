@@ -7,7 +7,7 @@ LicenseFiles: COPYING COPYING.LIB
 Section: utils
 Maintainer: Ted Hess <thess@kitschensync.net>
 Architecture: aarch64_cortex-a53
-Installed-Size: 161645
+Installed-Size: 161642
 Description:  Ntfs-3g is a NTFS driver, which can create, remove, rename,
  move files, directories, hard links, and streams. It can read
  and write files, including streams and sparse files. It can

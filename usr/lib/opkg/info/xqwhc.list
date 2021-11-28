@@ -1,0 +1,16 @@
+/lib/xqwhc/xqwhc_hyt.sh
+/usr/sbin/whc_test
+/lib/xqwhc/xqwhc_public.sh
+/lib/xqwhc/xqwhc_metric.sh
+/etc/init.d/xqwhc
+/lib/xqwhc/xqwhc_sync.sh
+/usr/sbin/xqwhc_superv
+/lib/xqwhc/network_lal.sh
+/lib/xqwhc/xqwhc_stat.sh
+/usr/sbin/parse_json
+/usr/sbin/whcal
+/lib/xqwhc/xqwhc.sh
+/usr/sbin/xqwhc_postota
+/lib/xqwhc/xqwhc_init.sh
+/usr/sbin/whc_ual
+/usr/sbin/xqwhc_push.cron

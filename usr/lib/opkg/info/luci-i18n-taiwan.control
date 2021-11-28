@@ -5,5 +5,5 @@ Source: feeds/luci/luci
 Section: luci
 Maintainer: LuCI Development Team <luci@lists.subsignal.org>
 Architecture: aarch64_cortex-a53
-Installed-Size: 11695
+Installed-Size: 11698
 Description:  Taiwan Chinese

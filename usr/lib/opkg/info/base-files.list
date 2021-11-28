@@ -1,3 +1,4 @@
+/usr/sbin/update_whc_ob_bssid
 /usr/sbin/killpidfile
 /usr/sbin/list_dir.lua
 /usr/sbin/dhcp_apclient_get_ip.sh
@@ -45,6 +46,7 @@
 /etc/config/diag.R2200
 /etc/config/smartvpn
 /lib/preinit/10_indicate_preinit
+/etc/opkg/keys/d895232f539d887e
 /usr/libexec/login.sh
 /usr/sbin/dhcp_apclient.sh
 /usr/sbin/sysapi
@@ -109,6 +111,7 @@
 /etc/config/diag
 /lib/preinit/80_mount_root
 /lib/preinit/81_urandom_seed
+/sbin/chk_sta_re
 /etc/rc.local
 /usr/sbin/set_wifi_auto_ap_mode.lua
 /lib/functions/uci-defaults.sh
@@ -189,7 +192,6 @@
 /lib/functions/leds.sh
 /lib/config_post_ota/wireless_cfg_update.lua
 /lib/xq-misc/phy_switch.sh
-/etc/opkg/keys/ab963bc60ec5195a
 /etc/smartvpn/proxy.txt
 /usr/sbin/openvpn_deamon.sh
 /usr/sbin/vip_device_push_act.lua

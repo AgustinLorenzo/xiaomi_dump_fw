@@ -685,7 +685,9 @@ var modelVpn = (function(){
                     checkConnected(function(){
                         // var enable = $(self).hasClass('btn-switch-on') ? 0 : 1;
                         var mode = $('#smartvpnmode li.active').attr('data-mode');
+                        $.pub('loading:start');
                         $.getJSON('<%=luci.dispatcher.build_url("api", "misystem", "smartvpn_switch")%>', {'enable': open, 'mode': mode}, function(rsp){
+                            $.pub('loading:stop');
                             if( rsp.code == 0 ){
                                 getSmartVPNInfo();
                                 miVPNInfo();
@@ -699,7 +701,9 @@ var modelVpn = (function(){
                 checkConnected(function(){
                     // var enable = $(self).hasClass('btn-switch-on') ? 0 : 1;
                     var mode = $('#smartvpnmode li.active').attr('data-mode');
+                    $.pub('loading:start');
                     $.getJSON('<%=luci.dispatcher.build_url("api", "misystem", "smartvpn_switch")%>', {'enable': open, 'mode': mode}, function(rsp){
+                        $.pub('loading:stop');
                         if( rsp.code == 0 ){
                             getSmartVPNInfo();
                         }else{
@@ -910,7 +914,9 @@ var modelVpn = (function(){
                     $.getJSON('<%=luci.dispatcher.build_url("api", "xqsystem", "vpn_switch")%>', {'conn': 0, id: currentId}, function(rsp){
                         if (rsp.code == 0) {
                             // nextfn && nextfn();
+                            $.pub('loading:start');
                             $.getJSON('<%=luci.dispatcher.build_url("api", "misystem", "mi_vpn")%>', {'open': open}, function(rsp){
+                                $.pub('loading:stop');
                                 if( rsp.code == 0 ){
                                     miVPNInfo();
                                     //close smart vpn ui
@@ -1006,7 +1012,7 @@ var modelVpn = (function(){
         });
     }
     function checkConnected( nextfn ){
-        if( vpnConnectStatus == 0 ){
+        if( vpnConnectStatus == 0 || vpnConnectStatus == 1){
             $.confirm('<%:当前正在连接的VPN将被断开，重新连接后该设置将生效。%>', function(){
                 stopListenStatus();
                 $.getJSON('<%=luci.dispatcher.build_url("api", "xqsystem", "vpn_switch")%>', {'conn': 0, id: currentId}, function(rsp){

@@ -6,5 +6,5 @@ License: MIT
 LicenseFiles: README
 Section: libs
 Architecture: aarch64_cortex-a53
-Installed-Size: 6236
+Installed-Size: 6233
 Description:  Terminal Info Database (ncurses)

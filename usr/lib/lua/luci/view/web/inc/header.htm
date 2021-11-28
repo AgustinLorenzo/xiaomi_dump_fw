@@ -10,6 +10,7 @@
     -- ap model
     local netMode = 0
     local MeshType = 0
+
     local mode = XQFunction.getNetMode()
     if mode == "lanapmode" then
         netMode = 2
@@ -21,11 +22,20 @@
     elseif mode == "whc_re" then
          --mesh从设备
         netMode = 3
-    end  
+    end
     local hardware = string.lower( XQSysUtil.getHardware() )
     local features = require("xiaoqiang.XQFeatures").FEATURES
     local usbIsSupport = features["hardware"]["usb"]
     local showTopoLink = 0
+
+
+    local netmod = 0
+    local netmod = XQFunction.getnetmode()
+    --4 mesh主设备  whc_cap
+    --3 mesh从设备  whc_re
+    --0 router
+
+
     local topo = XQTopology.topologicalGraph()
     local leafs = topo["leafs"]
     if leafs and #leafs > 0 then
@@ -52,9 +62,9 @@ var GLOBALHEADER = true;
                     <li <%if string.find(REQUEST_URI, "/store") then%>class="active"<%end%>><a href="<%=luci.dispatcher.build_url("web", "store")%>"><%:存储状态%></a></li>
                     <%end%>
                     <li <%if string.find(REQUEST_URI, "/setting") then%>class="active"<%end%>><a href="<%=luci.dispatcher.build_url("web", "setting", "wifi")%>"><%:常用设置%></a></li>
-                    
+
                     <li <%if string.find(REQUEST_URI, "/prosetting") then%>class="active"<%end%>><a href="<%=luci.dispatcher.build_url("web","prosetting","qos")%>"><%:高级设置%></a></li>
-                    
+
                 </ul>
                 <%elseif netMode==3 then%>
                 <ul>
@@ -75,6 +85,12 @@ var GLOBALHEADER = true;
                 <%if (showTopoLink==1 and hardware~="d01") then%>
                     <span class="goto-topo"><a href="http://miwifi.com/" target="_blank"><%:查看完整网络%></a></span>
                 <%end%>
+
+
+                <%if (netmod == 4 or netmod == 0)then%>
+                   <span id="addMesh" style="cursor:pointer;margin-top:6px;margin-left:15px"><%:添加Mesh节点路由%></span>
+                <%end%>
+
                 <span id="sysmenu" class="name s-dropdown"><%=router_name%></span>
                 <span id="sysnotice" class="ico-notice"></span>
             </div>
@@ -145,7 +161,7 @@ var GLOBALHEADER = true;
                         <span><%:系统状态%></span>
                     </a>
                 </li>
-                
+
                 <li <%if string.find(REQUEST_URI, "/roam") then%>class="active"<%end%>>
                     <a href="<%=luci.dispatcher.build_url("web", "apsetting", "roam")%>">
                         <i class="ico ico-7"></i>
@@ -162,6 +178,23 @@ var GLOBALHEADER = true;
                     </a>
                 </li>
              </ul>
+            <%elseif ((hardware == "rm1800" or hardware == "r3600") and netmod == 3 ) then%>
+             <ul class="clearfix li-2">
+
+<!--                <li <%if string.find(REQUEST_URI, "/safe") then%>class="active"<%end%>>-->
+<!--                    <a href="<%=luci.dispatcher.build_url("web", "apsetting", "safe")%>">-->
+<!--                        <i class="ico ico-3"></i>-->
+<!--                        <span><%:安全中心%></span>-->
+<!--                    </a>-->
+<!--                </li>-->
+              <li <%if string.find(REQUEST_URI, "/upgrade") then%>class="active"<%end%>>
+                    <a href="<%=luci.dispatcher.build_url("web", "apsetting", "upgrade")%>">
+                        <i class="ico ico-5"></i>
+                        <span><%:系统状态%></span>
+                    </a>
+                </li>
+             </ul>
+
             <%else%>
             <ul class="clearfix li-4">
                 <li <%if string.find(REQUEST_URI, "/wifi") then%>class="active"<%end%>>
@@ -196,13 +229,13 @@ var GLOBALHEADER = true;
         <%if string.find(REQUEST_URI, "/prosetting") then%>
         <div class="mod-set-nav mod-set-nav-pro">
             <ul class="clearfix li-6">
-                 
+
                 <li <%if string.find(REQUEST_URI, "/qos")  then%>class="active"<%end%>><a href="<%=luci.dispatcher.build_url("web","prosetting","qos")%>">
                         <i class="ico ico-6"></i>
                         <span><%:QoS智能限速%></span>
                     </a>
                 </li>
-                
+
                 <li <%if string.find(REQUEST_URI, "/dhcpipmacband") then%>class="active"<%end%>>
                     <a href="<%=luci.dispatcher.build_url("web", "prosetting", "dhcpipmacband")%>">
                         <i class="ico ico-8"></i>
@@ -241,3 +274,119 @@ var GLOBALHEADER = true;
         <%end%>
     </div>
 </div>
+
+<script type="tmpl/html" id="tmplMeshMode">
+<div class="netmode-switch-dialog-cont">
+    <div class="switch-step step-select" id="mesh-select" style="display:block;overflow:hidden">
+        <div class="mesh_title"><%:添加Mesh节点路由%></div>
+        <div class="mesh_content">
+            1. 将要添加的Mesh节点路由放置主Mesh路由附近；<br/>
+            2. 与主Mesh路由距离不超过3米；<br/>
+            3. 接通电源，等待路由器系统指示灯变为蓝色；
+        </div>
+        <button class="mesh_buttons" id="mesh_search">开始搜索</button>
+    </div>
+
+    <div id="mesh-overMaxLength" class="switch-step">
+         <div class="mesh_title"><%:温馨提示%></div>
+         <div class="mesh_content">
+              <p class="content">
+             为保证Mesh网络良好的使用体验，当前至多可支持4台Mesh路由器组网，更多Mesh路由器建议组成新的Mesh网络。
+              </p>
+          </div>
+           <button class="mesh_buttons" id="mesh-close-button">知道了</button>
+    </div>
+
+     <div id="mesh-Off-5G" class="switch-step">
+         <div class="mesh_title"><%:添加Mesh节点%></div>
+         <div class="mesh_content">
+              <p class="content">
+             搜索并添加Mesh节点时，请先到Wi-Fi设置页面，开启5G Wi-Fi。
+              </p>
+          </div>
+           <button class="mesh_buttons" id="setting-5G-button">去开启</button>
+
+    </div>
+
+    <div class="switch-step step-search-loading" id="mesh-search-loading">
+        <div class="mesh_title"><%:搜索要添加的Mesh节点路由%></div>
+        <img id="loading_mesh" src="<%=resource%>/web/img/mesh_loading.png"/>
+        <div class="mesh_content" style="text-align:center">搜索Mesh节点路由...</div>
+        <button class="mesh_buttons" id="mesh_search_cancle">取消</button>
+    </div>
+
+
+    <div class="switch-step step-search-lists"  id="mesh-search-lists">
+        <div class="mesh_title"><%:选择要添加的Mesh节点路由%></div>
+        <div class="list_box"></div>
+        <button class="mesh_Dbuttons mesh_add_Dbuttons " id="show_locate_select">添加</button>
+        <button class="mesh_Dbuttons mesh_research_Dbuttons" id="mesh-research-btn">重试</button>
+    </div>
+
+    <div id="mesh_list_length0"  class="switch-step">
+      <div class="mesh_title"><%:未找到可用的Mesh节点路由%></div>
+      <img class="fail_me" src="<%=resource%>/web/img/mesh_fail.png"/>
+      <div class="mesh_content">
+          <p class="content">
+          未找到可用的Mesh节点，请确认：<br/>
+            1.确认要添加的路由器支持Mesh功能；<br/>
+            2.将要添加的Mesh节点路由升级至最新版本；<br/>
+            3.将要添加的Mesh节点路由靠近主Mesh路由器；<br/>
+            4. 将要添加的Mesh节点路由上电；<br/>
+            5. 长按Reset按键恢复至出厂状态后重试
+          </p>
+      </div>
+      <button class="mesh_buttons" id="mesh_re_search">重新搜索</button>
+    </div>
+
+
+    <div class="switch-step step-add-loading"  id="mesh-add-loading">
+        <div class="mesh_title"><%:正在扩展Mesh网络%></div>
+        <img id="loading_mesh" src="<%=resource%>/web/img/mesh_loading.png"/>
+        <p class="head"><%:正在连接Mesh节点路由...%></p>
+    </div>
+
+    <div class="switch-step step-add-success"  id="mesh-add-success">
+        <div class="mesh_title"><%:Mesh网络扩展成功%></div>
+        <img class="success_me" src="<%=resource%>/web/img/mesh_success.png"/>
+        <div class="mesh_content">
+             恭喜您，Wi-Fi覆盖增强！<br/>
+            1. 将新增Mesh节点路由放置在需要覆盖的地方。<br/>
+            2. 需等待一段时间后，新增路由会出现在管理列表中。<br/>
+            3. 新增Mesh节点路由Wi-Fi信息与之前保持一致！
+        </div>
+        <button class="mesh_buttons" id="mesh_add_success"><%:完成%></button>
+    </div>
+
+    <div class="switch-step step-add-failer"  id="mesh-add-failer">
+    <div class="mesh_title"><%:Mesh网络扩展失败%></div>
+        <img class="fail_me" src="<%=resource%>/web/img/mesh_fail.png"/>
+        <div class="mesh_content">
+          <%:1.将要添加的Mesh节点路由靠近主Mesh路由器。%><br/>
+          <%:2.将要添加的Mesh节点路由恢复出厂后，重试%>
+        </div>
+        <button class="mesh_buttons" id="mesh_re_try">重试</button>
+    </div>
+    <div id="mesh-local" class="switch-step" style="display:none;">
+      <div class="mesh_title"><%:选择放置的位置%></div>
+      <div class="mesh_content">
+      <div class="form-item-select">
+        <select id="locateSelect" name="locateSelect" class="beautify">
+          <option selected value="客厅">客厅</option>
+          <option value="主卧">主卧</option>
+          <option value="次卧">次卧</option>
+          <option value="书房">书房</option>
+          <option value="厨房">厨房</option>
+          <option value="办公室">办公室</option>
+          <option value="地下室">地下室</option>
+          <option value="卫生间">卫生间</option>
+          <option value="阁楼">阁楼</option>
+          <option value="阳台">阳台</option>
+          <option value="餐厅">餐厅</option>
+        </select>
+      </div>
+      </div>
+      <button class="mesh_buttons" id="mesh_search_add">确认</button>
+    </div>
+</div>
+</script>

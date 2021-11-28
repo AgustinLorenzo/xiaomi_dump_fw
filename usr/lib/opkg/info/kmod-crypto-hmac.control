@@ -6,5 +6,5 @@ License: GPLv2
 Section: kernel
 Status: unknown hold not-installed
 Architecture: aarch64_cortex-a53
-Installed-Size: 192
+Installed-Size: 190
 Description:  HMAC digest CryptoAPI module

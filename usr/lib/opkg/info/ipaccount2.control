@@ -4,5 +4,5 @@ Depends: libc, lua, libnl-tiny
 Source: package/miwifi/trafficd
 Section: net
 Architecture: aarch64_cortex-a53
-Installed-Size: 6937
+Installed-Size: 6936
 Description:  ip account

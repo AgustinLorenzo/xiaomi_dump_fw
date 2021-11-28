@@ -1,0 +1,104 @@
+#!/bin/sh
+
+### whc handle post ota reboot to rcS.
+# whc detail configs [repacd hyd hyfi-bridging lbd mcsd ] 
+# will be overwrite by new version along with these module switch flag
+# this script DO re-enable these modules
+
+__LOGF="/etc/xqwhc_postota.log"
+[ -f "$__LOGF" ] && rm -f "$__LOGF"
+
+__LOGI()
+{
+    echo "@@@`date +%Y%m%d-%H%M%S`-xqwhc_postota  $1" >/dev/console 2>&1
+    echo "@@@`date +%Y%m%d-%H%M%S`-xqwhc_postota  $1" >>$__LOGF 2>&1 
+}
+
+## check situation
+flag_ota="`nvram get flag_ota_reboot`"
+[ 1 = "$flag_ota" ] || {
+    __LOGI " no ota reboot, ignore!"
+    return 0
+}
+
+mode="`uci -q get xiaoqiang.common.NETMODE`"
+[ "whc_cap" = "$mode" -o "whc_re" = "$mode" ] || {
+    __LOGI " ota with no WHC, ignore! mode=[$mode]"
+    return 0
+}
+
+ssid_5g="`uci -q get wireless.@wifi-iface[0].ssid`"
+dis_5g="`uci -q get wireless.@wifi-iface[0].disabled`"
+ssid_2g="`uci -q get wireless.@wifi-iface[1].ssid`"
+dis_2g="`uci -q get wireless.@wifi-iface[1].disabled`"
+[ -z "$ssid_5g" -o -z "$ssid_2g" ] && {
+    __LOGI " exception occur, ssid invalid! "
+    return 1
+}
+
+# 
+__LOGI " boot with ota upgrade, handle son config."
+
+__restore_son()
+{
+    ### disable mcsd (as it cannot run at the same time as hyd)
+    [ -f /etc/init.d/mcsd ] && {
+        uci -q set mcsd.config.Enable=0
+        uci commit mcsd
+        /etc/init.d/mcsd disable
+    }
+
+    ### lbd
+    uci -q delete lbd.config.MatchingSSID
+    # assign public wifi-iface ssid, exclude minet_ready from hyd Wlanif
+    [ "0$dis_2g" -ne "1" ] && uci add_list lbd.config.MatchingSSID="$ssid_2g"
+    [ "$ssid_5g" != "$ssid_2g" ] && {
+        [ "0$dis_5g" -ne "1" ] && uci add_list lbd.config.MatchingSSID="$ssid_5g"
+    }
+    # assign bh ssid
+    . /lib/xqwhc/xqwhc_public.sh
+    [ "$BH_METHOD" -eq "$USE_ONLY_5G_IND_VAP_BH" -o "$BH_METHOD" -eq "$USE_DUAL_BAND_IND_VAP_BH" ] && {
+        local bh_ifname="`uci get misc.backhauls.backhaul_5g_ap_iface`"
+        local bh_ssid="`uci get "$(uci show wireless | awk -F 'ifname' '/'$bh_ifname'/{print $1}')ssid"`"
+        [ -n "$bh_ssid" ] && uci add_list lbd.config.MatchingSSID="$bh_ssid"
+    }
+    uci commit lbd
+
+    ### hyd, autoset in repacd start
+
+    ### re Range Extender Placement and Auto-configuration Daemon
+    uci -q set repacd.repacd.Enable=1
+    # miwifi: we need CAP must be router-mode, thus app/web UI must assure that wan is configed before repacd init as CAP.
+    # in bsp layer we ignore automatic decision of non-CAP by below option
+    uci -q set repacd.repacd.miwifi_mode="$mode"
+
+    # miwifi, set son_no_24backhaul
+    son_no_24backhaul="`uci get xiaoqiang.common.son_no_24backhaul`"
+    if [ -n "$son_no_24backhaul" ] && [ "$son_no_24backhaul" == "1" ]; then
+        uci -q set repacd.WiFiLink.2GIndependentChannelSelectionEnable=1
+    else
+        uci -q set repacd.WiFiLink.2GIndependentChannelSelectionEnable=0
+    fi
+
+    uci commit repacd
+
+    __LOGI " restore son on $mode "
+    return 0
+}
+
+__restore_other()
+{
+    # TODO: other qca module config
+    # ecm ssid-steering nss thermal
+    return 0
+}
+
+postota()
+{
+    __restore_son
+    __restore_other
+}
+
+postota
+
+

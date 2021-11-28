@@ -1,5 +1,6 @@
 /usr/sbin/scan
 /etc/config/miscan
+/usr/sbin/miot_post.sh
 /usr/sbin/decrypt
 /etc/init.d/scan
 /usr/share/udhcpc/miwifi-scan.scrpit

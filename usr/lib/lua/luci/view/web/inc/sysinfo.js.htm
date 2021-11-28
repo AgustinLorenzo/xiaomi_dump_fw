@@ -6,7 +6,18 @@ local romVersion = XQSysUtil.getRomVersion()
 local uploadUrl = luci.dispatcher.build_url("api", "xqsystem","upload_rom")
 local backupKeys = XQBackup.defaultKeys()
 local hardware = string.lower( XQSysUtil.getHardware() )
+local backupKeys = XQBackup.defaultKeys()
 
+local XQFunction = require("xiaoqiang.common.XQFunction")
+local netmod = 0
+local netmod = XQFunction.getnetmode()
+--2 有线中继
+--1 无线中继
+--4 mesh主设备  whc_cap
+--3 mesh从设备  whc_re
+--0 router
+
+local isMesh = (netmod == 3 or netmod == 4) and 'true'  or  'false'
 %>
 
 <script type="tmpl/text" id="uploadform">
@@ -93,7 +104,9 @@ local hardware = string.lower( XQSysUtil.getHardware() )
 <script type="tmpl/text" id="resettip">
 <div class="dialog-reset-tips">
     <img src="<%=resource%>/web/img/ico_warn.png?v=<%=ver%>">
-    <p ><%:恢复出厂设置操作会抹掉当前路由器的所有设置，建议您先进行配置备份再恢复出厂设置。%></p>
+    <p ><%:恢复出厂设置操作会抹掉当前路由器的所有设置，建议您先进行配置备份再恢复出厂设置。%><br>
+
+    </p>
     <div class="btns">
         <a href="#" id="toconfigbackup" class="btn btn-primary btn-m"><span><%:备份路由器设置%></span></a>
         <a href="#" id="toresetwindow" class="btn btn-primary btn-m"><span><%:直接恢复出厂设置%></span></a>
@@ -103,7 +116,10 @@ local hardware = string.lower( XQSysUtil.getHardware() )
 <script type="tmpl/text" id="resettip_d01">
 <div class="dialog-reset-tips">
     <img src="<%=resource%>/web/img/ico_warn.png?v=<%=ver%>">
-    <p ><%:恢复出厂设置操作会抹掉当前路由器的所有设置。%></p>
+    <p class="text-left">
+    <span><%:1.恢复出厂设置操作会抹掉当前路由器的所有设置；%></span>
+    <span><%:2.当前子Mesh节点会失去连接。%></span>
+    </p>
     <div class="btns">
         <a href="#" id="toresetwindow" class="btn btn-primary btn-m"><span><%:直接恢复出厂设置%></span></a>
     </div>
@@ -239,6 +255,7 @@ local hardware = string.lower( XQSysUtil.getHardware() )
 })(jQuery);
 //check ota
 var hardware = '<%=hardware%>';
+var isMesh = <%=isMesh%>;
 
 $.sub( 'upgrade:check', function() {
     var requestData = {},
@@ -266,10 +283,10 @@ $.sub( 'upgrade:check', function() {
            }
          var res= c.join('');
          return res;
-     } 
+     }
     function cpr_version_latest(a,b){
             var _a=toNum(a),_b=toNum(b);
-            // if(_a>=_b)  false;  
+            // if(_a>=_b)  false;
             // if(_a<_b)  true;
             if(_b>=_a){
                 return true;
@@ -278,12 +295,12 @@ $.sub( 'upgrade:check', function() {
             }
     }
 
-    
+
     $.getJSON( requestURL, requestData, function(rsp) {
         if(rsp.code == 0){
             mainMeshVersion = rsp.version;
 
-            if(hardware=='d01'){
+            if(isMesh){
             //topo
                     $.getJSON( requestURL2, {}, function(rsp) {
                         if(rsp.code == 0){
@@ -293,25 +310,26 @@ $.sub( 'upgrade:check', function() {
                             }else{
                                 $('#blue').html('当前路由器_'+rsp.graph.locale);
                             }
-                            
 
-                            var meshlist = rsp.graph.leafs;
-                            meshlist.forEach(function(item,i){
-                                listHtml+='<div class="one div'+(i+2)+' clearfix"><div class="left"><img class="icon-d01" src="/xiaoqiang/web/img/icons/router_d01_101_on.png"><img class="icon-internet" src="/xiaoqiang/web/img/icons/icon_internet_on.png"></div><div class="left left-item"><p id="blue">'+item.name+'_'+item.locale;
 
-                                if(cpr_version_latest( mainMeshVersion ,item.version)){
-                                    listHtml +='</p><p style="margin-bottom:15px">当前版本<span class="blue">'+item.version+'</span>，你的版本是最新的，无需升级。</p><a href="http://'+item.ip+'" class="btnUpload btn btn-dft btn-l right"><span><%:手动升级%></span></a></div></div>';
-                                }else{  
-                                    listHtml += '</p><p style="margin-bottom:15px">当前版本<span class="blue">'+item.version+'</span>，发现新版本，请立即升级。</p><a href="http://'+item.ip+'" class="btnUpgread btn btn-primary btn-l left"><span><%:立即升级%></span></a></div></div>';
-                                }
-                            });
-                            $("#meshUpgrade").append(listHtml);
+                            // var meshlist = rsp.graph.leafs;
+                            //
+                            // meshlist.forEach(function(item,i){
+                            //     listHtml+='<div class="one div'+(i+2)+' clearfix"><div class="left"><img class="icon-d01" src="/xiaoqiang/web/img/icons/router_d01_101_on.png"><img class="icon-internet" src="/xiaoqiang/web/img/icons/icon_internet_on.png"></div><div class="left left-item"><p id="blue">'+item.name+'_'+item.locale;
+                            //
+                            //     if(cpr_version_latest( mainMeshVersion ,item.version)){
+                            //         listHtml +='</p><p style="margin-bottom:15px">当前版本<span class="blue">'+item.version+'</span>，你的版本是最新的，无需升级。</p><a href="http://'+item.ip+'" class="btnUpload btn btn-dft btn-l right"><span><%:手动升级%></span></a></div></div>';
+                            //     }else{
+                            //         listHtml += '</p><p style="margin-bottom:15px">当前版本<span class="blue">'+item.version+'</span>，发现新版本，请立即升级。</p><a href="http://'+item.ip+'" class="btnUpgread btn btn-primary btn-l left"><span><%:立即升级%></span></a></div></div>';
+                            //     }
+                            // });
+                            // $("#meshUpgrade").append(listHtml);
 
                         }
                     });
                 }
 
-            
+
             if( rsp.needUpdate == 1 ){
                 $( '#upgradeinfo,.upgradeinfo' ).html( tplHasnew.tmpl( {
                     size: '<em class="em">' + byteFormat( rsp.fileSize ) + '</em>'
@@ -324,7 +342,7 @@ $.sub( 'upgrade:check', function() {
                     ret: '<%:你的版本是最新的，无需升级。%>'
                 } ) );
                 $(".hasnewver").hide();
-                if(hardware=='d01'){
+                if(isMesh){
                     $('.div1 .btnUpgread').remove()
                 }
             }
@@ -538,7 +556,7 @@ $.sub( 'upgrade:upload', function() {
 
  var hardware = '<%=hardware%>';
 $.sub( 'reset:tip', function(){
-    if(hardware=='d01'){
+    if(isMesh){
         var tipDialog = $.dialog({
         title: '<%:提示%>',
         content: $('#resettip_d01').html(),
@@ -577,7 +595,7 @@ $.sub( 'reset:tip', function(){
         }
     });
     }
-    
+
 } );
 
 $.sub( 'config:backup', function(){
@@ -1176,7 +1194,7 @@ $.sub('datetime', function(){
         },
         randerTimezone = function(now,index){
             var options = [],val;
-             for(var attr in indexDict){   
+             for(var attr in indexDict){
                     if(attr === now ) {
                          val = indexDict[attr][index];
 
@@ -1193,7 +1211,7 @@ $.sub('datetime', function(){
         },
         getTimezone = function(now,index){
             var val;
-            for(var attr in indexDict){   
+            for(var attr in indexDict){
                     if(attr === now ) {
                          val = TIMEZONES[indexDict[attr][index]][1];
 
@@ -1226,7 +1244,7 @@ $.sub('datetime', function(){
             }, 1000);
             $('#datetiemval').html(datetiem);
             $('#datetiemval2').html(datetiem);
-            
+
             if(rsp.role === "whc_cap"){
                 $('#zhumesh').show();
             }else if(rsp.role === "whc_re"){
@@ -1317,7 +1335,7 @@ $.sub('datetime', function(){
                         index = j;
                     }
                  }
-                
+
             }
         })
         $.post('<%=luci.dispatcher.build_url("api","misystem","set_sys_time")%>', {timezone: timezone,index: index}, function(rsp){

@@ -243,7 +243,7 @@ guest_start()
     /etc/init.d/network restart
     /etc/init.d/dnsmasq restart
     /etc/init.d/firewall reload
-
+    /etc/init.d/xq_info_sync_mqtt restart
     return 0
 }
 
@@ -254,7 +254,7 @@ guest_stop()
     /etc/init.d/network restart
     /etc/init.d/dnsmasq restart
     /etc/init.d/firewall reload
-
+    /etc/init.d/xq_info_sync_mqtt restart
     return 0
 }
 

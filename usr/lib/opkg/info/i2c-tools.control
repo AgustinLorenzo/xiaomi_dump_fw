@@ -7,6 +7,6 @@ LicenseFiles: COPYING
 Section: utils
 Maintainer: Daniel Golle <daniel@makrotopia.org>
 Architecture: aarch64_cortex-a53
-Installed-Size: 17845
+Installed-Size: 17846
 Description:  This package contains an heterogeneous set of I2C tools for Linux. These tools
  were originally part of the lm-sensors package.

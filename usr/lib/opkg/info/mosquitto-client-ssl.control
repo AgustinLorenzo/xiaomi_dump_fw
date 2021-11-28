@@ -1,0 +1,14 @@
+Package: mosquitto-client-ssl
+Version: 1.6.9-1
+Depends: libc, librt, libcares, libmosquitto-ssl
+Provides: mosquitto-client
+Source: feeds/packages/net/mosquitto
+License: BSD-3-Clause
+LicenseFiles: LICENSE.txt
+Section: net
+Maintainer: Karl Palsson <karlp@etactica.com>
+Architecture: aarch64_cortex-a53
+Installed-Size: 32014
+Description:  Command line client tools for publishing messages to MQTT servers
+ and subscribing to topics.
+ This package is built with SSL support

@@ -25,9 +25,12 @@ setup_interface () {
     netmask="${subnet:-255.255.255.0}"
     mtu="${mtu:-1500}"
     dns="${dns:-$router}"
+    ap_hostname_tmp=${vendorinfo:7}
+    ap_hostname_tmp=${ap_hostname_tmp%%-*}
+    ap_hostname=MiWiFi-${ap_hostname_tmp}-srv
 
 uci -q batch <<EOF >/dev/null
-set xiaoqiang.common.ap_hostname=$hostname
+set xiaoqiang.common.ap_hostname=$ap_hostname
 set xiaoqiang.common.vendorinfo=$vendorinfo
 commit xiaoqiang
 set network.lan=interface

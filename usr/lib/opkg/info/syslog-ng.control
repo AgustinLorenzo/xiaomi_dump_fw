@@ -5,7 +5,7 @@ Source: feeds/packages/admin/syslog-ng
 Section: admin
 Maintainer: W. Michael Petullo <mike@flyn.org>
 Architecture: aarch64_cortex-a53
-Installed-Size: 465222
+Installed-Size: 465163
 Description:  syslog-ng reads and logs messages to the system console, log
  files, other machines and/or users as specified by its
  configuration file.

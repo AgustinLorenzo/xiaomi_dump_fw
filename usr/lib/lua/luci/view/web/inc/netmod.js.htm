@@ -1,20 +1,45 @@
+<%
+
+local XQFunction = require("xiaoqiang.common.XQFunction")
+local netmod = 0
+local netmod = XQFunction.getnetmode()
+--2 有线中继
+--1 无线中继
+--4 mesh主设备  whc_cap
+--3 mesh从设备  whc_re
+--0 router
+
+local isMesh = (netmod == 3 or netmod == 4) and "true" or "false"
+
+
+
+%>
+
 <script>
+    var netmod = <%=netmod%>;
 // r1c netmod.js
 $(function(){
     var netModeDialog;
     var currentmode = $('#currentnetmode').val();
 
     $( '#btnNetmodSwitch' ).on( 'click', function( e ){
+        // alert(netmod);
         e.preventDefault();
-        netModeDialog = $.dialog({
-            title:'<%:工作模式切换%>',
-            content: $('#tmplNetMode').html(),
-            padding: '30px 30px',
-            lock: true
-        });
-        setTimeout(function(){
-            $('#modeSelect .mode-option').eq( currentmode ).addClass('on');
-        }, 100);
+        if(netmod == 4){
+            $.alert('<%:Mesh模式下不支持切换为中继模式。%>');
+        }else{
+            netModeDialog = $.dialog({
+                title:'<%:工作模式切换%>',
+                content: $('#tmplNetMode').html(),
+                padding: '30px 30px',
+                lock: true
+            });
+            setTimeout(function(){
+                $('#modeSelect .mode-option').eq( currentmode ).addClass('on');
+            }, 100);
+        }
+
+
     } );
 
     //
@@ -187,8 +212,8 @@ $(function(){
                 //             }
                 //         }
                 //     });
-                
-                $.confirm('<%:如果您已开启访客wifi，切换为无线中继模式后，访客wifi将会关闭%>', function() {
+
+                $.confirm('<div style="text-align: left"><div><%:1.如果您已开启访客wifi，切换为无线中继模式后，访客wifi将会关闭%></div><div><%:2.切换为无线中继模式后，Mesh功能将不可用%></div></div>', function() {
                                     stepwdsinit();
                                 });
             }else{
@@ -205,7 +230,7 @@ $(function(){
                 //             }
                 //         }
                 //     });
-                $.confirm('<%:如果您已开启访客wifi，切换为有线中继模式后，访客wifi将会关闭%>', function() {
+                $.confirm('<div style="text-align: left"><div><%:1.如果您已开启访客wifi，切换为有线中继模式后，访客wifi将会关闭%></div><div><%:2.切换为无线中继模式后，Mesh功能将不可用%></div></div>', function() {
                                     goToStep('step-lanap');
                                 });
             }

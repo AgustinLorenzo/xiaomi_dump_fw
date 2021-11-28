@@ -51,25 +51,38 @@ setup_interface() {
 		proto_add_dns_search "$domain"
 	done
 
-	mode=$(uci -q get ipv6.settings.mode)
-	if [ "$mode" = "native" ]; then
-		for prefix in $PREFIXES; do
+	local ip6_assign=$(uci -q get network.lan.ip6assign)
+	local ip6_prefix=$(uci -q get ipv6.settings.ip6prefix)
+
+	for prefix in $PREFIXES; do
+		prefsig="$prefsig ${prefix%%,*}"
+		local entry="${prefix#*/}"
+		entry="${entry#*,}"
+		local preferred="${entry%%,*}"
+		entry="${entry#*,}"
+		local valid="${entry%%,*}"
+
+		if [ "$ipv6mode" = "native" ]; then
 			proto_add_ipv6_prefix "$prefix"
-			prefsig="$prefsig ${prefix%%,*}"
-			local entry="${prefix#*/}"
-			entry="${entry#*,}"
-			entry="${entry#*,}"
-			local valid="${entry%%,*}"
+		elif [ "$ipv6mode" = "nat" ]; then
+			[ -z "$ip6_prefix" ] && ip6_prefix="fd00:6868:6868::1"
+			[ -z "$ip6_assign" ] && ip6_assign=64
+			proto_add_ipv6_prefix "$ip6_prefix/$ip6_assign,$preferred,$valid"
+			break
+		fi
 
-			if [ -z "$RA_ADDRESSES" -a -z "$RA_ROUTES" -a \
-				-z "$RA_DNS" -a "$FAKE_ROUTES" = 1 ]; then
-				RA_ROUTES="::/0,$SERVER,$valid,4096"
-			fi
-		done
-
+		if [ -z "$RA_ADDRESSES" -a -z "$RA_ROUTES" -a -z "$RA_DNS" -a "$FAKE_ROUTES" = 1 ]; then
+			RA_ROUTES="::/0,$SERVER,$valid,4096"
+		fi
+	done
+	if [ "$ipv6mode" = "native" ]; then
 		for prefix in $USERPREFIX; do
 			proto_add_ipv6_prefix "$prefix"
 		done
+	elif [ "$ipv6mode" = "nat" -a -z "$PREFIXES" ]; then
+		[ -z "$ip6_prefix" ] && ip6_prefix="fd00:6868:6868::1"
+		[ -z "$ip6_assign" ] && ip6_assign=64
+		proto_add_ipv6_prefix "$ip6_prefix/$ip6_assign"
 	fi
 
 	# Merge addresses
@@ -102,7 +115,7 @@ setup_interface() {
 
 		# RFC 7278
 		if [ "$mask" -eq 64 -a -z "$PREFIXES" -a -n "$EXTENDPREFIX" ]; then
-			proto_add_ipv6_prefix "$addr/$mask,$preferred,$valid"
+			[ "$ipv6mode" = "native" ] && proto_add_ipv6_prefix "$addr/$mask,$preferred,$valid"
 
 			local raroutes=""
 			for route in $RA_ROUTES; do

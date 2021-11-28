@@ -1,0 +1,9 @@
+Package: qca-libhyfi-bridge
+Version: miwifi_git-1
+Depends: libc, kmod-qca-hyfi-bridge
+Source: qca_qsdk/qca_qsdk_spf10.0/feeds/hyfi/qca-hyfi-bridging/qca-libhyfi-bridge
+Section: QCA
+Maintainer: Qualcomm Atheros, Inc.
+Architecture: aarch64_cortex-a53
+Installed-Size: 5051
+Description:  This package installs the Hy-Fi Bridging API Library

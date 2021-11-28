@@ -2,16 +2,16 @@
 
 [ -z "$1" ] && echo "odhcp6c.user Error: should be run by odhcp6c" && exit 1
 
-[ -n $2 ] && {
+[ -n "$2" ] && {
 	case "$2" in
 	"ra-updated")
         wan6_old=$(ip -6 route 2>/dev/null | grep "default via" | awk 'NR==1 {print $3}')
-        [ -z $wan6_old ] && return
+        [ -z "$wan6_old" ] && return
 
         res=$(ip -6 route | grep "default from")
         wan6_gw=$(echo $res | awk 'NR==1 {print $5}')
         wan6_itf=$(echo $res | awk 'NR==1 {print $7}')
-        [ -z $wan6_gw -o -z $wan6_itf ] && return
+        [ -z "$wan6_gw" -o -z "$wan6_itf" ] && return
 
         [ "$wan6_old" == "$wan6_gw" ] && return
 
@@ -20,9 +20,9 @@
 		;;
 	"stopped")
 		ip6addr=$(ip addr show dev br-lan 2>/dev/null | grep inet6 | grep  -v fe80:: | grep deprecated | awk 'NR==1 {print $2}')
-		[ -z $ip6addr ] && return
+		[ -z "$ip6addr" ] && return
 		ip6addr_conf=$(uci -q get network.lan.ip6addr)
-		if [ -z $ip6addr_conf -o "$ip6addr" != "$ip6addr_conf" ]; then
+		if [ -z "$ip6addr_conf" -o "$ip6addr" != "$ip6addr_conf" ]; then
 			ip -f inet6 addr delete $ip6addr dev br-lan
 		fi
 		;;

@@ -1,0 +1,9 @@
+Package: libstorage
+Version: miwifi_git-1
+Depends: libc, libhyficommon, libuci, libwifisoncfg
+Source: qca_qsdk/qca_qsdk_spf10.0/feeds/ieee1905-security/qca-ieee1905-security-config/libstorage
+Section: QCA
+Maintainer: Qualcomm Atheros, Inc.
+Architecture: aarch64_cortex-a53
+Installed-Size: 15228
+Description:  This Package installs the Storage Abstration Library

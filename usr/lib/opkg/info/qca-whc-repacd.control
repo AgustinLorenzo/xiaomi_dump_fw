@@ -1,0 +1,10 @@
+Package: qca-whc-repacd
+Version: miwifi_git-1
+Depends: libc, libnl, qca-cfg80211, qca-whc-init, qca-ieee1905-init, openssl-util
+Source: qca_qsdk/qca_qsdk_spf10.0/feeds/whc/qca-whc-repacd
+Section: QCA
+Maintainer: Qualcomm Atheros, Inc.
+Architecture: aarch64_cortex-a53
+Installed-Size: 91996
+Description:  This package installs the Whole Home Coverage Range Extender Placement and
+ Auto-configuration scripts

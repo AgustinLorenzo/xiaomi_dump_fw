@@ -27,7 +27,7 @@ is_dev_encry()
     netmode=`uci -q get xiaoqiang.common.NETMODE`
     is_dev_encry $DEVNAME
     authorize=$?
-    if [ x"$netmode" = x ]; then
+    if [ x"$netmode" = x -o x"$netmode" = x"whc_cap" -o x"$netmode" = x"dmzsimple" -o x"$netmode" = x"dmzmode" ]; then
 	BUS="ubus"
     else
 	ROUTER_IP=`uci get network.lan.gateway`

@@ -25,6 +25,7 @@
 /www/xiaoqiang/web/img/logo_us.png
 /www/xiaoqiang/web/img/zh_cn/newguide.png
 /usr/lib/lua/luci/view/web/inc/agreement.htm
+/www/xiaoqiang/web/img/icons/router_rm2100_101.png
 /www/xiaoqiang/web/img/topograph/router_r4ac_101.png
 /www/xiaoqiang/web/img/topograph/router_r01_100.png
 /www/xiaoqiang/web/img/topograph/router_r1cm_100.png
@@ -35,6 +36,7 @@
 /www/xiaoqiang/web/img/icons/flash.png
 /www/xiaoqiang/web/img/topograph/router_r3a_101.png
 /www/xiaoqiang/web/img/guide_logo.png
+/www/xiaoqiang/web/img/icons/router_rm1800_101_on.png
 /www/xiaoqiang/web/img/ico_check_error.png
 /www/xiaoqiang/web/img/ico_disk.png
 /www/xiaoqiang/web/img/icons/router_r4c_101.png
@@ -61,6 +63,7 @@
 /www/xiaoqiang/web/img/topograph/router_r4cm_101.png
 /usr/lib/lua/luci/view/web/setting/upgrade_manual.htm
 /www/xiaoqiang/web/img/ico_nav_7.png
+/www/xiaoqiang/web/img/topograph/router_rm1800_100_on.png
 /www/xiaoqiang/web/img/topograph/router_r3d_100_on.png
 /www/xiaoqiang/web/img/ico_tips.png
 /www/xiaoqiang/web/img/topograph/router_r1d_100.png
@@ -95,10 +98,10 @@
 /usr/lib/lua/luci/view/web/syslock.htm
 /www/xiaoqiang/web/img/bg_login_btn.png
 /usr/lib/lua/luci/view/web/setting/nat.htm
+/www/xiaoqiang/web/img/mesh_loading.png
 /usr/lib/lua/luci/view/web/sysauth.htm
 /www/xiaoqiang/web/img/ap.jpg
 /usr/lib/lua/luci/view/web/inc/footer.htm
-/www/xiaoqiang/web/img/icons/router_r1800_100_on.png
 /usr/lib/lua/luci/view/web/inc/privacy_HK.htm
 /www/xiaoqiang/web/img/en/bg_login_tit.png
 /www/xiaoqiang/web/img/icons/flash_on.png
@@ -114,6 +117,7 @@
 /www/xiaoqiang/web/js/jquery.dialog.js
 /www/xiaoqiang/web/css/syslock.css
 /www/xiaoqiang/web/img/guide_bd_nowanselect_rp_r1c.png
+/usr/lib/lua/luci/view/web/inc/sysinfo_ap.htm
 /www/xiaoqiang/web/img/ico_fix.png
 /usr/lib/lua/luci/view/web/setting/proset.htm
 /www/xiaoqiang/web/img/topograph/router_r3p_100_on.png
@@ -145,7 +149,7 @@
 /www/xiaoqiang/web/img/guide_slide_btn.png
 /www/xiaoqiang/web/img/topograph/router_r2600_100.png
 /www/xiaoqiang/web/img/guide_finish_appshow.png
-/www/xiaoqiang/web/img/icons/router_r1800_100.png
+/www/xiaoqiang/web/img/topograph/router_rm1800_101_on.png
 /www/xiaoqiang/web/js/class.pie.js
 /www/xiaoqiang/web/img/code.png
 /www/xiaoqiang/web/img/topograph/router_r4a_101.png
@@ -190,9 +194,9 @@
 /www/xiaoqiang/web/img/wifi.png
 /www/xiaoqiang/web/img/zh_cn/guide_finish_appshow.png
 /www/xiaoqiang/web/img/en/guide_finish_appshow.png
-/www/xiaoqiang/web/img/icons/router_r1800_101_on.png
 /usr/bin/luci-bwc
 /www/xiaoqiang/web/img/en/logo_privacy_us.png
+/www/xiaoqiang/web/img/icons/router_rm2100_100_on.png
 /www/xiaoqiang/web/img/topograph/router_r3d_106_on.png
 /www/xiaoqiang/web/img/topograph/router_r3d_106.png
 /www/xiaoqiang/web/img/repeat_rt.png
@@ -207,7 +211,6 @@
 /www/xiaoqiang/web/img/icons/router_r4cm_100.png
 /www/xiaoqiang/web/img/zh_cn/bg_login_tit.png
 /www/xiaoqiang/web/css/nat.css
-/www/xiaoqiang/web/img/icons/router_r1800_101.png
 /www/xiaoqiang/web/img/ico_signal.png
 /usr/lib/lua/luci/view/web/inc/reboot.js.htm
 /www/xiaoqiang/web/css/guide.css
@@ -219,6 +222,7 @@
 /www/xiaoqiang/web/img/ico_nav_2.png
 /www/xiaoqiang/web/img/icons/router_r2100_100.png
 /www/xiaoqiang/web/img/ico_wifi_home.png
+/www/xiaoqiang/web/img/icons/router_r2350_100_on.png
 /www/xiaoqiang/web/img/icons/router_r3600_101_on.png
 /www/xiaoqiang/web/img/guide_router_r1d.png
 /usr/lib/lua/luci/view/web/inc/agreement_US.htm
@@ -234,6 +238,7 @@
 /usr/lib/lua/luci/view/web/inc/g.js.htm
 /usr/lib/lua/luci/view/web/inc/netmod.js.htm
 /www/xiaoqiang/web/css/upgrademanual.css
+/www/xiaoqiang/web/img/icons/router_r2350_100.png
 /www/xiaoqiang/web/img/icons/router_r3600_101.png
 /www/xiaoqiang/web/img/head_bg.png
 /www/xiaoqiang/web/img/ico_file_show.png
@@ -250,6 +255,7 @@
 /usr/lib/lua/luci/view/web/inc/netmod.htm
 /www/xiaoqiang/web/img/en/logo_agreement.png
 /www/xiaoqiang/web/img/topograph/router_r1cm_104.png
+/www/xiaoqiang/web/img/mesh_b.png
 /www/xiaoqiang/web/img/agreement_logo_us.png
 /www/xiaoqiang/web/img/en/logo_privacy.png
 /www/xiaoqiang/web/img/icons/router_r3p_106_on.png
@@ -280,7 +286,6 @@
 /usr/lib/lua/luci/view/web/inc/privacy_TW.htm
 /www/xiaoqiang/web/img/ico_back.png
 /www/xiaoqiang/web/img/icons/router_r01_101_on.png
-/www/xiaoqiang/web/img/topograph/router_r1800_100.png
 /www/xiaoqiang/web/img/2dcode.png
 /www/xiaoqiang/web/img/bg_login_tit.png
 /www/xiaoqiang/web/img/ico_nav_3.png
@@ -295,8 +300,10 @@
 /www/xiaoqiang/web/img/icons/router_r1cm_101.png
 /www/xiaoqiang/web/img/icons/router_r02_101.png
 /usr/lib/lua/luci/view/web/init/hello.htm
+/www/xiaoqiang/web/img/icons/router_r2350_101.png
 /www/xiaoqiang/web/img/topograph/router_d01_100.png
 /www/xiaoqiang/web/img/en/newguide.png
+/www/xiaoqiang/web/img/icons/router_rm2100_101_on.png
 /www/xiaoqiang/web/img/ico_lannet.png
 /www/xiaoqiang/web/img/icons/router_r4a_101_on.png
 /www/xiaoqiang/web/img/ico_nav_12.png
@@ -313,6 +320,7 @@
 /www/xiaoqiang/web/img/icons/router_d01_100_on.png
 /www/xiaoqiang/web/img/topograph/router_r3d_100.png
 /www/xiaoqiang/web/img/ko_kr/newguide.png
+/www/xiaoqiang/web/img/mesh_s.png
 /www/xiaoqiang/web/img/ico_upgrade.png
 /www/xiaoqiang/web/img/topograph/router_r3l_100.png
 /www/xiaoqiang/web/img/ico_dlg_close.png
@@ -321,6 +329,7 @@
 /www/xiaoqiang/web/img/ico_usb_err.png
 /www/xiaoqiang/web/img/bg_li1.png
 /www/xiaoqiang/web/img/guide_pppoecatching.png
+/www/xiaoqiang/web/img/icons/router_r2350_101_on.png
 /www/xiaoqiang/web/img/topograph/router_d01_100_on.png
 /usr/lib/lua/luci/view/web/apsetting/safe.htm
 /www/xiaoqiang/web/img/disk2.png
@@ -329,20 +338,20 @@
 /www/xiaoqiang/web/img/ico_err.png
 /www/xiaoqiang/web/img/ico_help.png
 /www/xiaoqiang/web/img/zh_tw/logo_agreement.png
+/www/xiaoqiang/web/img/mesh_fail.png
 /www/xiaoqiang/web/img/zh_cn/logo_agreement.png
-/www/xiaoqiang/web/img/topograph/router_r1800_100_on.png
 /www/xiaoqiang/web/img/icons/router_r02_100_on.png
 /www/xiaoqiang/web/img/disk_fix_fail.png
 /www/xiaoqiang/web/img/icons/harddisc.png
 /www/xiaoqiang/web/img/ico_diag.png
 /www/xiaoqiang/web/img/icons/router_r1cm_105_on.png
-/www/xiaoqiang/web/img/topograph/router_r1800_101.png
 /www/xiaoqiang/web/img/ico_nav_4.png
 /usr/lib/lua/luci/view/web/init/agreement.htm
 /www/xiaoqiang/web/img/bg_select_open.png
 /www/xiaoqiang/web/img/guide_bd_nowanselect_r1d.png
 /www/xiaoqiang/web/img/notice.png
 /usr/lib/lua/luci/view/web/inc/agreement_US_inter.htm
+/www/xiaoqiang/web/img/icons/router_rm1800_100.png
 /www/xiaoqiang/web/img/icons/router_r2d_101.png
 /www/xiaoqiang/web/img/ico_signal_guide.png
 /www/xiaoqiang/web/css/agreement.css
@@ -353,6 +362,7 @@
 /www/xiaoqiang/web/img/icons/router_r03_100.png
 /www/xiaoqiang/web/img/icons/router_r1cm_102.png
 /www/xiaoqiang/web/img/topograph/router_d01_101.png
+/www/xiaoqiang/web/img/topograph/router_rm1800_100.png
 /usr/lib/lua/luci/view/web/apsetting/wan.htm
 /usr/lib/lua/luci/view/web/apsetting/upgrade.htm
 /www/xiaoqiang/web/img/icons/router_r3_100.png
@@ -388,6 +398,7 @@
 /www/xiaoqiang/web/css/bc.css
 /usr/lib/lua/luci/view/web/inc/aprouterchange.htm
 /www/xiaoqiang/web/img/topograph/router_r4c_101.png
+/www/xiaoqiang/web/img/icons/router_rm1800_100_on.png
 /www/xiaoqiang/web/js/jquery.cookie.js
 /usr/lib/lua/luci/view/web/inc/agreement_TW.htm
 /www/xiaoqiang/web/img/icons/router_r3l_100_on.png
@@ -403,6 +414,7 @@
 /www/xiaoqiang/web/img/ico_wifi_off.png
 /www/xiaoqiang/web/img/icons/icon_device.png
 /www/xiaoqiang/web/img/ico_usb.png
+/www/xiaoqiang/web/img/icons/router_rm1800_101.png
 /www/xiaoqiang/web/img/ico_freshen.png
 /www/xiaoqiang/web/img/bg_wifi_circle.png
 /www/xiaoqiang/web/img/ico_refresh.png
@@ -411,9 +423,12 @@
 /www/xiaoqiang/web/img/icons/USB.png
 /www/xiaoqiang/web/img/ssid50.png
 /www/xiaoqiang/web/img/ico_notice.png
+/www/xiaoqiang/web/img/topograph/router_rm1800_101.png
 /www/xiaoqiang/web/img/icons/router_d01_101_on.png
+/www/xiaoqiang/web/img/icons/router_rm2100_100.png
 /www/xiaoqiang/web/img/topograph/router_r4ac_100.png
 /www/xiaoqiang/web/img/icons/router_r3_101.png
+/www/xiaoqiang/web/img/mesh_success.png
 /www/xiaoqiang/web/img/topograph/router_r1cl_101.png
 /usr/lib/lua/luci/view/web/store.htm
 /www/xiaoqiang/web/img/icons/router_r3l_100.png
@@ -430,7 +445,6 @@
 /www/xiaoqiang/web/img/icons/router_r2d_101_on.png
 /www/xiaoqiang/web/css/login.css
 /www/xiaoqiang/web/img/wx_code.png
-/www/xiaoqiang/web/img/topograph/router_r1800_101_on.png
 /www/xiaoqiang/web/img/icons/router_r02_101_on.png
 /www/xiaoqiang/web/img/gamespeedup.png
 /usr/lib/lua/luci/view/web/setting/dmz.htm

@@ -9,7 +9,7 @@ PROG=/usr/sbin/xiaoqiang_sync.lua
 start_service() {
 	local netmode
 	netmode=`uci -q -S get xiaoqiang.common.NETMODE`
-	if [ "$netmode" = "wifiapmode" -o "$netmode" = "lanapmode" ]; then
+	if [ "$netmode" = "wifiapmode" -o "$netmode" = "lanapmode" -o "$netmode" = "whc_re" ]; then
 	    [ -f "$PROG" ] && {
 		procd_open_instance
 		procd_set_param command "$PROG"

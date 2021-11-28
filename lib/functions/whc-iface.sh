@@ -83,6 +83,7 @@ __whc_get_wlan_excluded() {
 #            if no matching ssid, only the network name will be checked
 #	  $3 the matching SSID returned back to the caller
 whc_get_wlan_ifaces() {
+	local matchssid=$1
 	config_load 'repacd'
 	config_get guest_network repacd NetworkGuest 'guest'
 	config_get traffic_separation_enabled repacd TrafficSeparationEnabled '0'
@@ -92,7 +93,9 @@ whc_get_wlan_ifaces() {
 	config_foreach __whc_get_wlan_ifaces wifi-iface "$1" "$4"
 
 	eval "$2='${WLAN_INCLUDED_DEVICES}'"
-	eval "$3='$1'"
+	# miwifi add base64 for special character ssid
+	matchssid="`echo $matchssid | base64`"
+	eval "$3='$matchssid'"
 }
 
 # return the EXCLUDE interface list. This should be called after the interface list is created

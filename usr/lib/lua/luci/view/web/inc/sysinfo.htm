@@ -5,30 +5,42 @@ local uci = require("luci.model.uci").cursor()
 local features = require("xiaoqiang.XQFeatures").FEATURES
 local XQSysUtil = require "xiaoqiang.util.XQSysUtil"
 local hardware = string.lower( XQSysUtil.getHardware() )
-%>
-<div class="mod-upgrade">
-    <div class="hd"><h3><%:升级检测%></h3></div>
 
-    <%if hardware == "d01" then%>
-    <div class="bd bd-01" id="meshUpgrade">
-         <div class="one div1 clearfix">
-            <div class="left">
-                 <img class="icon-d01" src="/xiaoqiang/web/img/icons/router_d01_101_on.png">
-                 <img class="icon-internet" src="/xiaoqiang/web/img/icons/icon_internet_on.png">
-            </div>
-            <div class="left left-item">
-                <p id="blue">--</p>
-                 <p class="upgradeinfo"></p>
-                  <a href="<%=luci.dispatcher.build_url("web", "syslock")%>?flashtype=download" class="btnUpgread btn btn-primary btn-l left">
-                     <span><%:立即升级%></span>
-                  </a>
-                <a href="#" class="btnUpload btn btn-dft btn-l right">
-                    <span><%:手动升级%></span>
-                 </a>
-            </div>
-        </div>
-    </div>
-     <%else%>
+
+local XQFunction = require("xiaoqiang.common.XQFunction")
+local netmod = 0
+local netmod = XQFunction.getnetmode()
+--2 有线中继
+--1 无线中继
+--4 mesh主设备  whc_cap
+--3 mesh从设备  whc_re
+--0 router
+
+local isMesh = (netmod == 3 or netmod == 4) and true  or  false
+%>
+<div class="mod-upgrade" data="<%=netmod%>">
+    <div class="hd"><h3><%:升级检测%></h3></div>
+<!--    暂时不做判断mesh都显示 下面的普通路由器的功能-->
+<!--    < isMesh >-->
+<!--    <div class="bd bd-01" id="meshUpgrade">-->
+<!--         <div class="one div1 clearfix">-->
+<!--            <div class="left">-->
+<!--                 <img class="icon-d01" src="/xiaoqiang/web/img/icons/router_d01_101_on.png">-->
+<!--                 <img class="icon-internet" src="/xiaoqiang/web/img/icons/icon_internet_on.png">-->
+<!--            </div>-->
+<!--            <div class="left left-item">-->
+<!--                <p id="blue">&#45;&#45;</p>-->
+<!--                 <p class="upgradeinfo"></p>-->
+<!--                  <a href="<%=luci.dispatcher.build_url("web", "syslock")%>?flashtype=download" class="btnUpgread btn btn-primary btn-l left">-->
+<!--                     <span><%:立即升级%></span>-->
+<!--                  </a>-->
+<!--                <a href="#" class="btnUpload btn btn-dft btn-l right">-->
+<!--                    <span><%:手动升级%></span>-->
+<!--                 </a>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--     <else>-->
     <div class="bd">
             <h4><%:系统版本%></h4>
             <p id="upgradeinfo"></p>
@@ -42,7 +54,7 @@ local hardware = string.lower( XQSysUtil.getHardware() )
             </div>
         </div>
     </div>
-    <%end%>
+<!--    <end>-->
 
 <div class="mod-uploadlog">
     <div class="hd">
@@ -65,7 +77,7 @@ local hardware = string.lower( XQSysUtil.getHardware() )
     </div>
 </div>
 
- <%if hardware ~= "d01" then%>
+ <%if not isMesh then%>
 <div class="mod-set mod-backupconfig">
     <div class="hd">
         <h3><%:备份与恢复%></h3>
@@ -102,7 +114,7 @@ local hardware = string.lower( XQSysUtil.getHardware() )
         <h3><%:时区设置%></h3>
     </div>
 
-    <%if hardware == "d01" then%>
+    <%if netmod == 4 then%>
      <!-- 主mesh -->
     <div class="bd" id="zhumesh"  style="display:none">
         <div class="group" >
@@ -112,16 +124,16 @@ local hardware = string.lower( XQSysUtil.getHardware() )
             <p id="timezoneval"></p>
             <button type="button" id="btnTimezone" class="btn btn-dft btn-m"><span><%:更改时区%></span></button>
         </div>
-        
+
     </div>
-    <!-- 子mesh -->
+    <%elseif netmod == 3 then%>
     <div class="bd" id="zimesh" style="display:none">
         <div class="group">
             <p>当前系统时间：<span id="datetiemval2"></span></p>
             <p>当前系统时区：<span id="timezoneval2"></span></p>
             <p>*如需修改时区，请切换到主Mesh路由进行修改，会自动同步到子Mesh路由</p>
         </div>
-       
+
     </div>
 
     <%else%>
@@ -137,5 +149,5 @@ local hardware = string.lower( XQSysUtil.getHardware() )
     </div>
 
     <%end%>
-    
+
 </div>

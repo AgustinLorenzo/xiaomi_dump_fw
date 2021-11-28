@@ -4,5 +4,5 @@ Depends: libc
 Source: package/miwifi/boot_check
 Section: net
 Architecture: aarch64_cortex-a53
-Installed-Size: 15162
+Installed-Size: 15158
 Description:  check boot successfully?
