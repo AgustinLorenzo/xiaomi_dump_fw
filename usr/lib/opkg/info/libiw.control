@@ -1,0 +1,11 @@
+Package: libiw
+Version: 29-5
+Depends: libc
+Source: package/network/utils/wireless-tools
+License: GPL-2.0
+Section: libs
+Maintainer: Felix Fietkau <nbd@nbd.name>
+Architecture: aarch64_cortex-a53
+Installed-Size: 11438
+Description:  This package contains a library for manipulating
+ "Linux Wireless Extensions".

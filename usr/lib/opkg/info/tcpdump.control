@@ -1,0 +1,10 @@
+Package: tcpdump
+Version: 4.9.2-1
+Depends: libc, libpcap
+Source: package/network/utils/tcpdump
+License: BSD-3-Clause
+Section: net
+Maintainer: Felix Fietkau <nbd@nbd.name>
+Architecture: aarch64_cortex-a53
+Installed-Size: 365793
+Description:  Network monitoring and data acquisition tool

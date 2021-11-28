@@ -1,0 +1,234 @@
+#!/bin/sh /etc/rc.common
+
+#such ipv6 enable should be invoked before other-settings
+
+START=58
+
+EXTRA_COMMANDS=" native static nat off set_mode set_dns "
+EXTRA_HELP="
+    start/stop
+    off
+    native
+    native dns1,dns2
+    static ip6-addr ip6-gateway ip6-prefix
+    static ip6-addr ip6-gateway ip6-prefix ip6-assign
+    static ip6-addr ip6-gateway ip6-prefix ip6-assign dns1,dns2
+    nat
+    nat dns1,dns2
+"
+
+#as default, we will enable ipv6 on LAN
+CMD="/usr/sbin/enable_ipv6"
+
+update_dns6() {
+    peerdns=$(uci -q get ipv6.dns.peerdns)
+    dns_list=$(uci -q get ipv6.dns.dns)
+
+    if [ "$peerdns" == "1" -o -z "$dns_list" ]; then
+        $CMD wan dns #off
+    else
+        $CMD wan dns $dns_list #on
+    fi
+}
+
+start() {
+    flag=$(uci -q get ipv6.settings.enabled)
+    mode=$(uci -q get ipv6.settings.mode)
+
+    #try to fix config crupt
+    [ -z "$mode" -o -z "$flag" ] && {
+        mode="off"
+        flag="0"
+        set_mode off
+        $CMD wan off
+        $CMD wan reload_network
+    }
+    [ "$flag" == "0" -o "$mode" == "off" ] && return 0
+
+    ap_mode=$(uci -q get xiaoqiang.common.NETMODE)
+    if [ "$ap_mode" == "wifiapmode" -o "$ap_mode" == "lanapmode" -o "$ap_mode" == "whc_re" ]; then
+        echo "AP mode do not enable ipv6"
+        /etc/init.d/odhcpd stop
+        return 0
+    fi
+
+    #start
+	start_ipv6 $mode
+	
+    return 0
+}
+
+stop() {
+    $CMD wan off
+    $CMD wan reload_network
+    return 0
+}
+
+restart() {
+    stop
+    start
+}
+
+start_ipv6() {
+    #add IPv6 config, restart odhcpd
+    dhcpv6=$(uci -q get dhcp.lan.dhcpv6)
+    [ -z "$dhcpv6" ] && {
+        uci -q batch <<EOF
+        set dhcp.lan.dhcpv6='server'
+        set dhcp.lan.ra='server'
+        set dhcp.lan.ra_default='1'
+        commit dhcp
+EOF
+        /etc/init.d/odhcpd restart
+    }
+
+	mode="$1"
+    case "$mode" in
+    "native")
+        $CMD wan native
+        update_dns6
+        ;;
+
+    "static")
+        ip6addr=$(uci -q get ipv6.settings.ip6addr)
+        ip6gw=$(uci -q get ipv6.settings.ip6gw)
+        ip6prefix=$(uci -q get ipv6.settings.ip6prefix)
+        ip6assign=$(uci -q get ipv6.settings.ip6assign)
+
+        $CMD wan static "${ip6addr}" "${ip6gw}" "${ip6prefix}" "${ip6assign}"
+        update_dns6
+        ;;
+
+    "nat")
+        ip6addr=$(uci -q get ipv6.settings.ip6addr)
+        ip6gw=$(uci -q get ipv6.settings.ip6gw)
+
+        if [ -z "${ip6addr}" -o -z "${ip6gw}" ]; then
+            $CMD wan nat
+        else
+            $CMD wan nat "${ip6addr}" "${ip6gw}"
+        fi
+        update_dns6
+        ;;
+    *)
+        echo "not supported mode: ", $mode
+        return 0
+        ;;
+    esac
+
+    #enable firewall to filter ipv6
+    uci -q set firewall.@defaults[0].disable_ipv6=0
+    uci -q commit firewall
+
+    $CMD wan reload_network
+    return 0
+}
+
+native() {
+    set_mode native $@
+    start_ipv6 native
+}
+
+static() {
+    set_mode static $@
+    start_ipv6 static
+}
+
+nat() {
+    set_mode nat $@
+    start_ipv6 nat
+}
+
+off() {
+    set_mode off
+    $CMD wan off
+    $CMD wan reload_network
+}
+
+set_mode() {
+    action="$1"
+    case $action in
+    "off")
+        uci -q batch <<EOF
+        set ipv6.settings.enabled="0"
+        set ipv6.settings.mode="off"
+        set ipv6.dns=dns
+        set ipv6.dns.peerdns="1"
+        commit ipv6
+EOF
+
+        ;;
+
+    "native")
+        dns_list=$2
+        if [ -z "$dns_list" ]; then
+            peerdns="1"
+        else
+            peerdns="0"
+        fi
+
+        uci -q batch <<EOF
+        set ipv6.settings.enabled="1"
+        set ipv6.settings.mode="native"
+        set ipv6.dns=dns
+        set ipv6.dns.peerdns="$peerdns"
+        set ipv6.dns.dns="$dns_list"
+        commit ipv6
+EOF
+        ;;
+
+    "static")
+        ip6addr=$2
+        ip6gw=$3
+        ip6prefix=$4
+        ip6assign=$5
+        dns_list=$6
+
+        # paramter lost
+        [ -z "$ip6addr" -o -z "$ip6gw" -o -z "$ip6prefix" -o -z "$ip6assign" ] && return 1
+
+        [ -z "$ip6assign" ] && ip6assign="64"
+
+        if [ -z "$dns_list" ]; then
+            peerdns="1"
+        else
+            peerdns="0"
+        fi
+
+        uci -q batch <<EOF
+        set ipv6.settings.enabled="1"
+        set ipv6.settings.mode="static"
+        set ipv6.settings.ip6addr=$ip6addr
+        set ipv6.settings.ip6gw=$ip6gw
+        set ipv6.settings.ip6prefix=$ip6prefix
+        set ipv6.settings.ip6assign=$ip6assign
+        set ipv6.dns=dns
+        set ipv6.dns.peerdns="$peerdns"
+        set ipv6.dns.dns="$dns_list"
+        commit ipv6
+EOF
+        ;;
+    "nat")
+        #TODO not support yet
+        #ip6addr=$2
+        #ip6gw=$3
+        dns_list=$2
+        if [ -z "$dns_list" ]; then
+            peerdns="1"
+        else
+            peerdns="0"
+        fi
+
+        uci -q batch <<EOF
+        set ipv6.settings.enabled="1"
+        set ipv6.settings.mode="nat"
+        set ipv6.settings.ip6addr=$ip6addr
+        set ipv6.settings.ip6gw=$ip6gw
+        set ipv6.dns=dns
+        set ipv6.dns.peerdns="$peerdns"
+        set ipv6.dns.dns="$dns_list"
+        commit ipv6
+EOF
+        ;;
+    esac
+}

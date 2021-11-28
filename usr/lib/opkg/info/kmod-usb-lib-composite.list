@@ -1,0 +1,2 @@
+/etc/modules.d/50-usb-lib-composite
+/lib/modules/4.4.60/libcomposite.ko

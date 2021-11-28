@@ -1,0 +1,12 @@
+Package: xqled
+Version: 1-1.0
+Depends: libc
+Source: package/miwifi/xqled
+Section: util
+Architecture: aarch64_cortex-a53
+Installed-Size: 3155
+Description:  xqled: miwifi led abstract layer, 
+ support all MTK platform
+ qca platform support on issue TODO.
+ 
+ *Better to add default dependency in target profile*

@@ -1,0 +1,6 @@
+/usr/sbin/scan
+/etc/config/miscan
+/usr/sbin/decrypt
+/etc/init.d/scan
+/usr/share/udhcpc/miwifi-scan.scrpit
+/usr/sbin/connect

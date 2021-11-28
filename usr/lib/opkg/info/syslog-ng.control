@@ -1,0 +1,11 @@
+Package: syslog-ng
+Version: 3.9.1-3
+Depends: libc, libpcre, glib2, libeventlog, libopenssl, libuuid, libcurl
+Source: feeds/packages/admin/syslog-ng
+Section: admin
+Maintainer: W. Michael Petullo <mike@flyn.org>
+Architecture: aarch64_cortex-a53
+Installed-Size: 465170
+Description:  syslog-ng reads and logs messages to the system console, log
+ files, other machines and/or users as specified by its
+ configuration file.

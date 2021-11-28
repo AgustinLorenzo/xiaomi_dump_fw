@@ -1,0 +1,8 @@
+Package: traffic2
+Version: 0.2-1
+Depends: libc, libuci, jshn, iwinfo, lua, libblobmsg-json, libpthread, libjson-c, ubus, libnl-tiny, ipaccount2
+Source: package/miwifi/trafficd
+Section: net
+Architecture: aarch64_cortex-a53
+Installed-Size: 30674
+Description:  traffic

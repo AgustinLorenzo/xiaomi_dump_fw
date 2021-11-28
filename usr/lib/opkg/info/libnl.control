@@ -1,0 +1,9 @@
+Package: libnl
+Version: 3.2.21-1
+Depends: libc, libpthread
+Source: package/libs/libnl
+License: LGPL-2.1
+Section: libs
+Architecture: aarch64_cortex-a53
+Installed-Size: 160865
+Description:  This package contains a library for applications dealing with netlink sockets

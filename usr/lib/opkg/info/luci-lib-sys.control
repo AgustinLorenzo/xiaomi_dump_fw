@@ -1,0 +1,9 @@
+Package: luci-lib-sys
+Version: 0.11.1-1
+Depends: libc
+Source: feeds/luci/luci
+Section: luci
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Architecture: aarch64_cortex-a53
+Installed-Size: 16210
+Description:  LuCI Linux/POSIX system library

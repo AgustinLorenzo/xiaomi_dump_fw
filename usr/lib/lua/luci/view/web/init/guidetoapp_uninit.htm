@@ -1,0 +1,95 @@
+
+
+
+<%
+    local ver = require("xiaoqiang.XQVersion").webVersion
+    local XQSysUtil = require "xiaoqiang.util.XQSysUtil"
+    local XQFunction = require("xiaoqiang.common.XQFunction")
+    local XQTopology = require("xiaoqiang.module.XQTopology")
+    local httpHost = luci.http.getenv("HTTP_HOST")
+    local hardware = string.lower( XQSysUtil.getHardware() )
+%>
+<%include("web/inc/head")%>
+    <title><%:小米路由器%></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <link href="<%=resource%>/web/css/bc.css?v=<%=ver%>" rel="stylesheet">
+    <link href="<%=resource%>/web/css/login.css?v=<%=ver%>" rel="stylesheet">
+</head>
+<body>
+<div id="doc" style="display:none;">
+    <div id="hd">
+    </div>
+    <div id="bd" style="color:#fff">
+
+        <div class="mod-login">
+  
+            <svg class="init_svg" width="400px" height="107px" viewBox="0 0 400 107" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <g id="d01-1219" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Fill-1-Copy-2" fill="#FFFFFF">
+            <path d="M321.982271,54.4442717 L321.982271,106.666667 L316.444444,106.666667 L316.444444,2.77734598 L316.444444,5.89750471e-13 L388.444444,5.89750471e-13 L388.444444,5.55469195 L321.982271,5.55469195 L321.982271,48.8895798 L378.476356,48.8895798 L378.476356,54.4442717 L321.982271,54.4442717 Z M213.280837,46.6080108 L187.602505,106.666667 L181.911327,106.666667 L138.666667,5.89750471e-13 L144.357845,5.89750471e-13 L184.829922,100.070677 L210.508254,39.7533551 L213.392005,32.8124773 L227.435776,5.89750471e-13 L233.123636,5.89750471e-13 L216.199432,39.7533551 L240.595175,100.070677 L283.19771,5.89750471e-13 L288.888889,5.89750471e-13 L243.367758,106.666667 L237.676579,106.666667 L213.280837,46.6080108 Z M124.444444,106.666667 L129.777778,106.666667 L129.777778,29.3333333 L124.444444,29.3333333 L124.444444,106.666667 Z M124.444444,13.1442501 L124.444444,2.85744568 C124.444444,1.27694754 125.638284,5.89750471e-13 127.110316,5.89750471e-13 C128.583938,5.89750471e-13 129.777778,1.27694754 129.777778,2.85744568 L129.777778,13.1442501 C129.777778,14.7196608 128.583938,16 127.110316,16 C125.638284,16 124.444444,14.7196608 124.444444,13.1442501 Z M299.555556,106.666667 L304.888889,106.666667 L304.888889,30.2222222 L299.555556,30.2222222 L299.555556,106.666667 Z M299.555556,12.4129861 L299.555556,2.69812505 C299.555556,1.20650487 300.749396,5.89750471e-13 302.223017,5.89750471e-13 C303.695049,5.89750471e-13 304.888889,1.20650487 304.888889,2.69812505 L304.888889,12.4129861 C304.888889,13.9013846 303.695049,15.1111111 302.223017,15.1111111 C300.749396,15.1111111 299.555556,13.9013846 299.555556,12.4129861 Z M394.666667,106.666667 L400,106.666667 L400,29.3333333 L394.666667,29.3333333 L394.666667,106.666667 Z M394.666667,13.1442501 L394.666667,2.85744568 C394.666667,1.27694754 395.858917,5.89750471e-13 397.332538,5.89750471e-13 C398.80457,5.89750471e-13 400,1.27694754 400,2.85744568 L400,13.1442501 C400,14.7196608 398.80457,16 397.332538,16 C395.858917,16 394.666667,14.7196608 394.666667,13.1442501 Z M52.80551,106.666667 L5.55638338,9.99844552 L5.55638338,106.666667 L0,106.666667 L0,5.89750471e-13 L6.81633802,5.89750471e-13 L55.4131691,101.768589 L104.47524,5.89750471e-13 L111.111111,5.89750471e-13 L111.111111,106.666667 L105.556383,106.666667 L105.556383,9.27219027 L57.9678471,106.666667 L52.80551,106.666667 Z" id="Fill-1-Copy"></path>
+        </g>
+    </g>
+</svg>
+            <div class="title_uninit">
+                欢迎使用小米路由器Mesh
+            </div>
+            <div class="describe" >
+                您需要使用小米WiFi APP对路由器进行初始化设置
+            </div>
+            <div class="download" style="margin-top:100px">
+                <div class="code"></div>
+            </div>
+            <div class="tips">
+                请扫描上方二维码，下载安装小米WiFi APP
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<%include("web/inc/g.js")%>
+<script>
+    var isMobile = {
+    Android: function() {
+        return navigator.userAgent.match(/Android/i);
+    },
+    BlackBerry: function() {
+        return navigator.userAgent.match(/BlackBerry/i);
+    },
+    iOS: function() {
+        return navigator.userAgent.match(/iPhone|iPad|iPod/i);
+    },
+    Opera: function() {
+        return navigator.userAgent.match(/Opera Mini/i);
+    },
+    Windows: function() {
+        return navigator.userAgent.match(/IEMobile/i);
+    },
+    any: function() {
+        return (isMobile.Android() || isMobile.BlackBerry() || isMobile.iOS() || isMobile.Opera() || isMobile.Windows());
+    }
+},
+    hardware = '<%=hardware%>';
+    if(hardware == "d01"){
+        $('#noneed').hide();
+        $('#money').hide();
+        $('#gamespeedup').hide();
+        $('#doc').show();
+    }
+  
+    if( isMobile.Android() || isMobile.iOS() || hardware == "r3l" ||hardware == "r3a" || hardware == "r1cl" || hardware == "r4" || hardware == "r4g"|| hardware == "r4c" || hardware == "r4cm" || hardware == "r4ac")  {
+        if(hardware == "d01"){
+            $('#noneed').hide();
+            $('#money').hide();
+            $('#gamespeedup').hide();
+            $('#doc').show();
+        }else{
+            window.location.href = "<%=luci.dispatcher.build_url("web", "init", "hello")%>";
+        }
+        
+    }else {
+        $('#doc').show();
+    }
+
+</script>
+

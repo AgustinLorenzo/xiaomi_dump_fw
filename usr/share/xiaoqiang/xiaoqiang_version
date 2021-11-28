@@ -1,0 +1,23 @@
+config core 'version'
+	# ROM ver
+	option ROM '1.0.17'
+	# channel
+	option CHANNEL 'release'
+	# hardware platform R1AC or R1N etc.
+	option HARDWARE 'R3600'
+	# CFE ver
+	option UBOOT '1.0.2'
+	# Linux Kernel ver
+	option LINUX '4.4.16'
+	# RAMFS ver
+	option RAMFS '0.0.1'
+	# SQUASHFS ver
+	option SQAFS '0.0.1'
+	# ROOTFS ver
+	option ROOTFS '0.0.1'
+  #build time
+  option BUILDTIME 'Wed, 19 Feb 2020 10:59:53 +0000'
+  #build timestamp
+  option BUILDTS '1582109993'
+  #build git tag
+   option GTAG 'commit 6c3182dcb5709e9ed053afd65ff7d889b29042c9'

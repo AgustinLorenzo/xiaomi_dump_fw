@@ -1,0 +1,9 @@
+Package: qca-wpa-cli
+Version: miwifi_git-1
+Depends: libc, librt, libopenssl, libnl
+Source: qca_qsdk/qca_qsdk_spf10.0/feeds/qca/net/qca-hostap
+Section: QCA
+Maintainer: Qualcomm Atheros
+Architecture: aarch64_cortex-a53
+Installed-Size: 42882
+Description:  WPA Supplicant command line interface

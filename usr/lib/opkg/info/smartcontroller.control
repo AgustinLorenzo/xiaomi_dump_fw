@@ -1,0 +1,8 @@
+Package: smartcontroller
+Version: 1-1.1
+Depends: libc, libstdcpp, libpthread, libevent2, libthriftnb, boost-thread, boost-system, boost-filesystem, libpcre, libjson-c, libsqlite3
+Source: package/miwifi/smartcontroller
+Section: opt
+Architecture: aarch64_cortex-a53
+Installed-Size: 213115
+Description:  the smart controller demaon

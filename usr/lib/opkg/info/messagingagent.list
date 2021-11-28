@@ -1,0 +1,12 @@
+/etc/config/miwifi
+/usr/share/messaging/messaging.conf
+/usr/bin/matool
+/etc/config/messaging
+/etc/init.d/messagingagent.sh
+/etc/config/miwifi_host_mapping
+/etc/init.d/wrsst
+/usr/share/messaging/serverkey_2.pub
+/usr/share/messaging/serverkey.pub
+/usr/bin/messagingagent
+/usr/bin/mald
+/usr/bin/wrsst

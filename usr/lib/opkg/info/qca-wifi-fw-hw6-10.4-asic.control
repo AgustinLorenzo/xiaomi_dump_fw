@@ -1,0 +1,9 @@
+Package: qca-wifi-fw-hw6-10.4-asic
+Version: CNSS.PS.3.10-00027-S-1-1
+Depends: libc
+Source: qca_qsdk/qca_qsdk_spf10.0/feeds/qca/net/qca-wifi-fw-10.2.4
+Section: QCA
+Maintainer: Qualcomm Atheros
+Architecture: all
+Installed-Size: 599047
+Description:  This package contains the qca-wifi firmware(-hw6-10.4-asic) used in 10.x drivers

@@ -1,0 +1,156 @@
+config misc mount_bind_etc
+	option flag_name flag_format_overlay
+
+config misc mount_jffs2
+	option do_mount 1
+
+config misc determine_ext_root
+	option skip_det_ext_root 1
+
+config misc wireless
+	option if_2G wifi0
+	option if_5G wifi1
+	option guest_2G wl14
+	option apclient_2G wl11
+	option apclient_5G wl12
+	option wl_if_count 2
+	option ifname_2G wl1
+	option ifname_5G wl0
+	option ifname_guest_2G wl14
+	option ifname_apclient_2G wl11
+	option miwifi_ready wl13
+	option wl12_scanifname 'wl0'
+	option wl11_scanifname 'wl1'
+	option wl12_scanband  '5g'
+	option wl11_scanband  '2g'
+	option wl12_device  'wifi1'
+	option wl11_device  'wifi0'
+	option wl12_mode  '2'
+	option wl11_mode  '1'
+	list APCLI_IFNAMES 'wl12'
+	list APCLI_IFNAMES 'wl11'
+
+       list DEVICE_LIST 'device_2g'
+       list DEVICE_LIST 'device_5g'
+       option device_2g_band '2g'
+       option device_2g_name 'wifi0'
+       option device_2g_primary 'iface_2g'
+       option device_5g_band '5g'
+       option device_5g_name 'wifi1'
+       option device_5g_primary 'iface_5g'
+       list IFACE_LIST 'iface_2g'
+       list IFACE_LIST 'iface_5g'
+       list IFACE_LIST 'iface_guest_2g'
+       list IFACE_LIST 'iface_ready_2g'
+       option iface_2g_ifname 'wl1'
+       option iface_2g_deviceidx 'device_2g'
+       option iface_2g_network 'lan'
+       option iface_5g_ifname 'wl0'
+       option iface_5g_deviceidx 'device_5g'
+       option iface_5g_network 'lan'
+       option iface_guest_2g_name 'guest_2G'
+       option iface_guest_2g_ifname 'wl14'
+       option iface_guest_2g_deviceidx 'device_2g'
+       option iface_guest_2g_network 'guest'
+       option iface_ready_2g_name 'miwifi_ready'
+       option iface_ready_2g_ifname 'wl13'
+       option iface_ready_2g_deviceidx 'device_2g'
+       option iface_ready_2g_network 'ready'
+       list APCLI_LIST 'apcli_2g'
+       list APCLI_LIST 'apcli_5g'
+       option apcli_2g_ifname 'wl11'
+       option apcli_2g_deviceidx 'device_2g'
+       option apcli_2g_workmode '1'
+       option apcli_2g_network 'lan'
+       option apcli_5g_ifname 'wl12'
+       option apcli_5g_deviceidx 'device_5g'
+       option apcli_5g_workmode '2'
+       option apcli_5g_network 'lan'
+
+config misc httpd
+	option uhttpd 0
+
+config misc sw_reg
+	option sw_power '0'
+	option sw_phy_config '0'
+	option sw_phy_speed '4'
+	option sw_phy_autoneg '9'
+	option sw_power_up '0x3100'
+	option sw_power_down '0x3900'
+	option sw_neg_100 '501'
+	option sw_neg_10 '441'
+	option sw_lan_ports '2 3 4'
+	option sw_wan_port '0'
+
+config misc switchop
+	option bridgeap_connect 'bridgeap_connect_r1cm'
+	option bridgeap_open 'bridgeap_open_r1cm_elink'
+	option bridgeap_close 'bridgeap_close_r1cm'
+	option wifiap_connect 'wifiap_connect_r1cm'
+	option wifiap_open 'wifiap_open_r1cm'
+	option wifiap_close 'wifiap_close_r1cm'
+
+config misc quickpass
+	option ctf 0
+
+config misc log
+	option redundancy_mode 1
+
+config misc boot
+	option syslog 1
+	option checkswap 0
+
+config misc firewall
+	option webinit 1
+
+config misc messagingagent
+	option thread_num 2
+
+config misc iwevent
+	option authorize 1
+
+config misc initd
+	option cpulimit_en 0
+	option cpuctr_en 0
+	option trafctr_en 0
+	option networkdt_en 0
+
+config misc hardware
+	option model R2200
+	option recovery 0
+	option gpio 38
+	option flash_per 1
+	option bbs 'http://bbs.xiaomi.cn/f-354'
+	option verify 'cd /tmp;mkxqimage -v '
+	option camera '/extdisks/sda1/'
+	option rom_up_path '/tmp/'
+	option rom_up_file 'customrom.bin'
+	option rom_down_path '/userdisk/download/'
+	option cpufreq '775MHz'
+	option wanspeed '1000'
+	option memtype 'DDR2'
+	option memfreq '325MHz'
+	option memsize '128MB'
+	option reset_gpio '18'
+
+config misc modules
+	option guestwifi 'wl14'
+
+config misc config_bkup
+	option cfg_bkup_en 0
+
+config misc fantmp
+	option fantmp_en 0
+
+config misc check_for_boottype
+	option flag31 1
+
+config misc ota_pred
+	option download 0
+
+config misc http_proxy
+	option fastpath "hwnat"
+
+config misc cgroup
+	option memgrp1_en 1
+	option memgrp1_limit '150m'

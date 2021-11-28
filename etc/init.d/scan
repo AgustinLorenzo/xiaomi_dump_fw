@@ -1,0 +1,36 @@
+#!/bin/sh /etc/rc.common
+
+START=96
+
+USE_PROCD=1
+NAME=scan
+PROG=/usr/sbin/scan
+
+EXTRA_COMMANDS=" led_reset "
+
+start_service() {
+	local enable=$(uci -q get miscan.config.enabled)
+	if [ "$enable" != "0" ];then
+		wpa_cli -g /var/run/wpa_supplicantglobal  interface_remove wl2
+#		ifconfig wl2 up
+#		procd_open_instance
+#		procd_set_param command "$PROG"
+#		procd_set_param respawn
+#		procd_close_instance
+		xqled ant_on
+	fi
+}
+
+stop_service() {
+	xqled ant_off
+#	ifconfig wl2 down
+}
+
+led_reset() {
+	local enable=$(uci -q get miscan.config.enabled)
+	if [ "$enable" != "0" ];then
+		xqled ant_on
+	else
+		xqled ant_off
+	fi
+}

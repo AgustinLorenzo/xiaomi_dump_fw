@@ -1,0 +1,14 @@
+Package: isc-dhcp-relay-ipv6
+Version: 4.4.1-3
+Depends: libc, zlib
+Source: feeds/packages/net/isc-dhcp
+License: BSD-3-Clause
+LicenseFiles: LICENSE
+Section: net
+Maintainer: Philip Prindeville <philipp@redfish-solutions.com>
+Architecture: aarch64_cortex-a53
+Installed-Size: 863499
+Description:  provides a means for relaying DHCP and BOOTP requests from a subnet to which
+ no DHCP server is directly connected to one or more DHCP servers on other
+ subnets.
+ This package is compiled with IPv4 and IPv6 support.

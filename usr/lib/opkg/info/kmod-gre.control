@@ -1,0 +1,10 @@
+Package: kmod-gre
+Version: 4.4.60-1
+Depends: kernel (=4.4.60-1-685217311214bd18a76fad2cfb7ce2b4), kmod-iptunnel
+Source: package/kernel/linux
+License: GPLv2
+Section: kernel
+Status: unknown hold not-installed
+Architecture: aarch64_cortex-a53
+Installed-Size: 8124
+Description:  Generic Routing Encapsulation support

@@ -1,0 +1,12 @@
+/usr/sbin/syslog-ng.helper
+/etc/init.d/stat_points
+/usr/sbin/StatPoints
+/usr/sbin/stat_clear.sh
+/usr/sbin/stat_points.cron
+/usr/sbin/mtd_crash_log
+/usr/sbin/ecos_pair_verify
+/usr/sbin/syslog_sync.sh
+/usr/share/xiaoqiang/stat_config
+/usr/sbin/stat_points.helper
+/usr/sbin/stat_test.sh
+/usr/sbin/stat_json.lua

@@ -1,0 +1,6 @@
+/lib/wifi/dpp-operating-class-update.sh
+/usr/sbin/hostapd_cli
+/lib/wifi/wps-hostapd-nbh-update
+/lib/wifi/dpp-supplicant-update-uci
+/lib/wifi/dpp-hostapd-update-uci
+/lib/wifi/wps-hostapd-update-uci

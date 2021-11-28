@@ -1,0 +1,5 @@
+/etc/hotplug.d/iface/90-wan_light_check.sh
+/usr/sbin/wan_check.sh
+/usr/sbin/check_wan_status.lua
+/etc/traffic.d/linkstatus/03-wan_light_check.sh
+/etc/init.d/wan_check

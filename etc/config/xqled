@@ -1,0 +1,149 @@
+# unify led controller for miwifi xiaoqiang
+# This config should be adapted, depends on platform gpio / driver model
+
+#config active 'active'
+#		option func  sys_ok
+#		option lock 0
+
+
+##### led gpio defines
+# single color may composed from multi gpios
+
+config led sys
+    option yellow   '2'
+    option blue     '3'
+    option purple   '2 3'
+    option red      '2 3' # red always same with purple for old platform
+    option black    '2 3' # totally turn off led
+
+config led func
+    option yellow   '4'
+    option blue     '5'
+    option purple   '4 5'
+    option black    '4 5'  # totally turn off led
+
+config led ant
+    option yellow   '6'
+    option blue     '6'
+    option purple   '6 6'
+    option black    '6 6'  # totally turn off led
+
+##### funcs defined by uplayer
+#   nled: led name - sys / 
+#   color:   black / yellow / blue / red / purple ...
+#	trigger: on / off / blink
+#	msec_on: led on hold msec   # must be around by 100ms
+#	msec_off: led off hold msec
+#	priority: func priority reserve for multi-task compatition
+#             MAX -> MIN : 7 - 1, temp reserve
+config func 'sys_booting'
+    option nled     'sys'
+    option color    'yellow'
+    option trigger  'on'
+    option priority '7'
+
+config func 'sys_ok'
+    option nled     'sys'
+    option color    'blue'
+    option trigger  'on'
+    option priority '1'
+
+config func 'sys_ota'
+    option nled     'sys'
+    option color    'yellow'
+    option trigger  'blink'
+    option msec_on  '600'
+    option msec_off '600'
+    option priority '7'
+
+config func 'sys_safemode'
+    option nled     'sys'
+    option color    'purple'
+    option trigger  'blink'
+    option msec_on  '800'
+    option msec_off '800'
+    option priority '7'
+
+config func 'sys_fail'
+    option nled     'sys'
+    option color    'purple'
+    option trigger  'on'
+    option priority '7'
+
+config func 'sys_off'
+    option nled     'sys'
+    option color    'black'
+    option trigger  'off'
+    option priority '7'
+
+config func 'func_off'
+    option nled     'func'
+    option color    'black'
+    option trigger  'off'
+    option priority '7'
+
+config func 'ant_off'
+    option nled     'ant'
+    option color    'black'
+    option trigger  'off'
+    option priority '7'
+
+config func 'ant_on'
+    option nled     'ant'
+    option color    'blue'
+    option trigger  'on'
+    option priority '1'
+
+config func 'link_down'
+    option nled     'func'
+    option color    'black'      # turn off
+    option trigger  'off'
+    option priority '5'
+
+config func 'link_conning'
+    option nled     'func'
+    option color    'blue'
+    option trigger  'blink'
+    option msec_on  '300'
+    option msec_off '300'
+    option priority '5'
+
+config func 'link_connfail'
+    option nled     'func'
+    option color    'yellow'
+    option trigger  'on'
+    option priority '5'
+
+config func 'link_conned'
+    option nled     'func'
+    option color    'blue'
+    option trigger  'on'
+    option priority '1'
+
+
+# memtest  ongoing & fail
+config func 'memtest_ongo'
+    option nled     'sys'
+    option color    'blue'
+    option trigger  'blink'
+    option msec_on  '200'
+    option msec_off '200'
+    option priority '7'
+
+config func 'memtest_fail'
+    option nled     'sys'
+    option color    'purple'
+    option trigger  'blink'
+    option msec_on  '400'
+    option msec_off '400'
+    option priority '7'
+
+# log upload
+config func 'log_upload'
+    option nled     'sys'
+    option color    'blue'
+    option trigger  'blink'
+    option msec_on  '1000'
+    option msec_off '1000'
+    option priority '7'
+

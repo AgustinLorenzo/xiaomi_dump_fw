@@ -1,0 +1,3 @@
+/www/cgi-bin/luci
+/www/cgi-bin/upload
+/usr/lib/lua/luci/sgi/cgi.lua

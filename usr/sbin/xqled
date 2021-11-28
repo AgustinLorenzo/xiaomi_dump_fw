@@ -1,0 +1,25 @@
+#!/bin/sh
+
+. /lib/xqled/xqled_api.sh
+
+lockf="/tmp/run/xqled.lock"
+
+#trace caller
+ppid=$PPID
+XQLED_LOGI " xqled [$1], called by ppid[$ppid],<`cat /proc/${ppid}/cmdline`>"
+
+trap "lock -u "$lockf"; exit 1" SIGKILL SIGTERM SIGHUP
+
+[ "$#" -lt 1 ] && {
+    echo " usage:"
+    echo " xqled \$func:    func predefined in xqled.uci"
+    exit 2
+}
+
+lock "$lockf"
+xqled_func_act "$1"
+ret=$?
+lock -u "$lockf"
+
+exit $ret
+

@@ -1,0 +1,109 @@
+#!/bin/sh
+[ -f /usr/sbin/led_ctrl.sh ] || return
+[ -f /usr/sbin/memtester ] || return
+
+. /usr/sbin/led_ctrl.sh
+
+flag_memtest=`nvram get auto_memtest`
+flag_flshtest=`nvram get auto_flashtest`
+if [ "$flag_memtest" = "auto" ];then
+	echo "memtest is autostart everytime"
+elif [ "$flag_memtest" = "once" ]; then
+	nvram unset auto_memtest
+	nvram commit
+	echo "memtest start only one time"
+elif [ "$flag_flshtest" = "once" ];then
+        nvram unset auto_flashtest
+        nvram commit
+        echo "flashtest start only one time"
+else
+        return
+fi
+
+if [ "$flag_flshtest" != "once" ]; then
+        if [ ! -z "$1" ]; then
+	        mem=$1
+	        echo "Memtest size is $mem"
+        else
+	        echo "Use free buff's 80/100 size to test"
+        fi
+fi
+
+while true;do
+        ftmod=`cat /proc/xiaoqiang/ft_mode`
+        status=`cat /proc/xiaoqiang/boot_status`
+	if [ "$status" = "3" -a "$ftmod" = "1" ];then
+		break;
+	fi
+
+        if [ -f /tmp/messages ]; then
+                grep -q "Booting up finished" /tmp/messages
+                if [ $? = 0 ];then
+                        break;
+                fi
+        fi
+
+	sleep 2
+done
+
+blink_led_blue
+
+if [ "$flag_flshtest" = "once" ]; then
+        [ -e /lib/modules/`uname -r`/mtd_stresstest.ko ] || return
+        # use overlay for flashtest
+        mtd_test=`cat /proc/mtd | grep "overlay" | cut -c 4`
+        insmod /lib/modules/`uname -r`/mtd_stresstest.ko dev="$mtd_test" count=100000
+        res=`dmesg | grep "\[MTD_TEST\]FINISHED"`
+        if [ -z "$res" ]; then
+                blink_led_red
+
+                nvram set flashtestres=1
+                nvram set restore_defaults=1
+                nvram commit
+                echo "flashtester result failed! blink red led" >> /data/resofflashtest
+                echo `uptime` >> /data/resofflashtest
+                echo `date` >> /data/resofflashtest
+                sync
+
+                return
+        fi
+        gpio 1 1
+        gpio 2 1
+        gpio 3 0
+        nvram set restore_defaults=1
+        nvram commit
+        return
+fi
+
+cnt=0
+
+nvram set memtestres=0
+nvram commit
+while true;do
+	if [ -z "$1" ]; then
+		#echo 3 > /proc/sys/vm/drop_caches
+		mem=`free -k | awk 'NR==2 {print $4}'`
+		mem=`expr $mem / 10`
+		mem=`expr $mem \* 6`
+	fi
+
+	echo "Testcnt:$cnt Mem size:$mem KB" > /data/resofmemtest
+	memtester ${mem}K 1 >>/data/resofmemtest
+	res=`grep FAILURE /data/resofmemtest`
+	if [ -n "$res" ]; then
+
+		blink_led_red
+
+		nvram set memtestres=1
+		nvram commit
+		echo "memtester result fail($cnt)! blink red led" >> /data/resofmemtest
+		echo `uptime` >> /data/resofmemtest
+		echo `date` >> /data/resofmemtest
+		sync
+		return
+	fi
+	sync
+	cnt=`expr $cnt + 1`
+done
+
+return

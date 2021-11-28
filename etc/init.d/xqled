@@ -1,0 +1,16 @@
+#!/bin/sh /etc/rc.common
+# Copyright (C) 2006 OpenWrt.org
+
+START=10
+
+#USE_PROCD=1
+
+start() {
+	xqled sys_booting
+	return 0
+}
+
+stop() {
+	return 0
+}
+

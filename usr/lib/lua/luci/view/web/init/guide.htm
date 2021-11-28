@@ -1,0 +1,1842 @@
+<%
+local ver = require("xiaoqiang.XQVersion").webVersion
+local sys = require "xiaoqiang.util.XQSysUtil"
+local XQLanWanUtil = require "xiaoqiang.util.XQLanWanUtil"
+local wifiUtil = require "xiaoqiang.util.XQWifiUtil"
+local XQFunction = require("xiaoqiang.common.XQFunction")
+local XQIPConflict = require("xiaoqiang.module.XQIPConflict")
+local xqCountryCode = require "xiaoqiang.XQCountryCode"
+
+if sys.getInitInfo() then
+    luci.http.redirect(luci.dispatcher.build_url("web", "home"))
+end
+
+local wifiInfo = wifiUtil.getAllWifiInfo()
+local ssid = ""
+if wifiInfo[1] then
+    ssid = wifiInfo[1]['ssid']
+end
+ssid = XQFunction.encode4HtmlValue(ssid)
+local status = sys.checkSystemStatus()
+local wan = true
+if not status.wan or not status.link then
+    wan = false
+end
+
+local wanType = 2
+local AutoWanType = XQLanWanUtil.getAutoWanType()
+if AutoWanType then
+    wanType = AutoWanType
+end
+
+local remote_addr = luci.http.getenv("REMOTE_ADDR")
+local mac = luci.sys.net.ip4mac(remote_addr)
+local lanType = wifiUtil.getDeviceWifiIndex(mac)
+local uci = require("luci.model.uci").cursor()
+local features = require("xiaoqiang.XQFeatures").FEATURES
+local hardware = string.lower( sys.getHardware() )
+local color = sys.getColor()
+local routerSrc = resource.."/web/img/topograph/".."router_"..hardware.."_".. color..".png"
+local ipConflict = XQIPConflict.ip_conflict_detection()
+if not ipConflict then
+    ipConflict = 0
+end
+local lang = sys.getLang()
+local ccode = xqCountryCode.getBDataCountryCode()
+
+local wifi50IsSupport = features["wifi"]["wifi50"]
+%>
+<%include("web/inc/head")%>
+    <title><%:小米路由器%></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link href="<%=resource%>/web/css/bc.css?v=<%=ver%>" rel="stylesheet">
+    <link href="<%=resource%>/web/css/guide.css?v=<%=ver%>" rel="stylesheet">
+</head>
+<body>
+<div class="guide-cont-wrap">
+    <div class="for-middle-cont">
+        <div id="guide-doc">
+            <div id="guide-bd">
+                <div class="mod-guide mod-guide-ipconflict">
+                    <p class="tit font18"><%:检测到与上级路由器存在IP冲突%></p>
+                    <div class="hr"></div>
+                    <p class="select-tip"><%:推荐您使用有线中继工作模式%></p>
+                    <div class="select-divs">
+                        <div class="select-option">
+                            <img src="<%=resource%>/web/img/guide_bd_ipconflict.png?v=<%=ver%>" />
+                            <br />
+                            <p class="gray"><%:该模式可以确保您的小米路由器与上%><br><%:级路由器处于同一局域网内可以互访%></p>
+                            <a href="#" class="btn btn-dft btn-block skipto" data-to="lanap" data-from="ipconflict"><span><%:有线中继工作模式%></span></a>
+                        </div>
+                        <div class="select-option">
+                            <a href="#" class="btn-border skipto gray" data-to="ssidpwd" data-from="ipconflict">
+                                <span><%:普通路由器模式%></span>
+                                <em>(<%:局域网IP将变更为%> <i></i>)</em>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <!-- /ipconflict-->
+                <div class="mod-guide mod-guide-nowanselect">
+                    <p class="tit font18"><%:你似乎没有连接网线%></p>
+                    <div class="hr"></div>
+                    <p class="select-tip"><%:你可以选择所需的路由器工作模式继续设置%></p>
+                    <div class="select-option">
+                        <img src="<%=resource%>/web/img/guide_bd_nowanselect.png?v=<%=ver%>" />
+                        <br />
+                        <a href="#" class="btn btn-dft btn-block skipto" data-to="pppoeorssidpwd" data-from="nowanselect"><span><%:路由器工作模式(创建一个无线网络)%></span></a>
+                    </div>
+                    <%if features["apmode"]["wifiapmode"] == "1" then%>
+                    <div class="select-option select-option-last">
+                        <img src="<%=resource%>/web/img/guide_bd_nowanselect_rp.png?v=<%=ver%>" />
+                        <br />
+                        <a href="#" class="btn btn-dft btn-block skipto" data-to="wds" data-from="nowanselect"><span><%:中继工作模式(扩展现有的无线网络)%></span></a>
+                    </div>
+                    <%end%>
+                </div>
+                <!-- /wan口未连接-->
+                <div class="mod-guide mod-guide-pppoe">
+                    <div class="for-succ hide">
+                        <img src="<%=resource%>/web/img/guide_hd_finish.png?v=<%=ver%>" >
+                        <p><%:旧路由器宽带设置已经导入%></p>
+                    </div>
+                    <div class="un-for-succ">
+                        <div class="pic"><img src="<%=routerSrc %>?v=<%=ver%>" ></div>
+                        <p class="tit font18"><%:请输入网络运营商提供的用户名与密码%></p>
+                    </div>
+                    <div class="hr"></div>
+                    <form id="pppoe" name="pppoe" class="form clearfix" action="/">
+                        <div class="form-inputs">
+                            <div class="form-item">
+                                <label class="k"><%:用户名%></label>
+                                <span class="v"><input reqMsg="<%:用户名%>" name="ppoename" type="text" class="ipt-text" autocomplete="off"></span>
+                                <em class="t"></em>
+                            </div>
+                            <div class="form-item" id="pppoepasswdline">
+                                <label class="k"><%:密码%></label>
+                                <span class="v"><input reqMsg="<%:密码%>" name="ppoepwd" data-type="password" type="password" class="android-input ipt-text" autocomplete="off"></span>
+                                <em class="t"></em>
+                            </div>
+                        </div>
+                        <div class="form-contral">
+                            <button class="btn btn-primary btn-m" type="submit"><span><%:下一步%></span></button>
+                            <button class="btn btn-dft btn-m r skipto" data-to="pppoecatchstep1" data-from="pppoe" type="button"><span><%:从旧路由器获取%></span></button>
+                        </div>
+                    </form>
+                    <p class="switchstep">
+                        <a href="#" class="a1 skipto goback" data-to="hellopage" ><%:返回%></a>
+                        <%if (wanType==1) then%>
+                            <span>|</span>
+                            <a href="#" class="a1 skipto" data-to="ssidpwd" data-from="pppoe"><%:无需拨号(DHCP方式)%></a>
+                        <%end%>
+                        <%if (ccode=='CN') then%>
+                            <span>|</span>
+                            <a href="#" class="a1 skipto" data-to="forgetpassword" data-from="pppoe"><%:忘记密码%></a>
+                        <%end%>
+                    </p>
+                </div>
+                <!--/pppoe-->
+                <div class="mod-guide mod-guide-forgetpassword">
+                    <img src="<%=routerSrc %>?v=<%=ver%>" >
+                    <p class="tit font18"><%:可通过以下方式以找回宽带密码%></p>
+                    <div class="hr"></div>
+                    <a href="#" class="btn btn-primary  btn-block skipto" data-to="pppoecatchstep1" data-from="forgetpassword"><span><%:从旧路由器获取%></span></a>
+                    <p class="list-t"><%:联系宽带服务商找回密码%></p>
+                    <div class="operators-wrap">
+                        <ul>
+                            <li class="clearfix">
+                                <span>10000</span>
+                                <%:中国电信宽带客服%>
+                            </li>
+                            <li class="clearfix">
+                                <span>10010</span>
+                                <%:中国联通电信客服%>
+                            </li>
+                            <li class="clearfix">
+                                <span>10086</span>
+                                <%:中国移动宽带客服%>
+                            </li>
+                            <li class="clearfix">
+                                <span>96196</span>
+                                <%:歌华有线客服%>
+                            </li>
+                            <li class="clearfix">
+                                <span>952155</span>
+                                <%:艾普宽带客服%>
+                            </li>
+                            <li class="clearfix">
+                                <span>95079</span>
+                                <%:长城宽带客服%>
+                            </li>
+                            <li class="clearfix">
+                                <span>96877</span>
+                                <%:有线通客服%>
+                            </li>
+                            <li class="clearfix">
+                                <span>96007</span>
+                                <%:宽带通客服%>
+                            </li>
+                            <li class="clearfix">
+                                <span>10050</span>
+                                <%:铁通宽带客服%>
+                            </li>
+                            <li class="clearfix">
+                                <span>010-82529990</span>
+                                <%:方正宽带%>
+                            </li>
+                        </ul>
+                    </div>
+                    <p class="switchstep">
+                        <a href="#" class="a1 skipto goback" data-to="" ><%:返回%></a>
+                    </p>
+                </div>
+                <!--/forgetpassword-->
+                <div class="mod-guide mod-guide-pppoesending">
+                    <div class="pic"><img src="<%=resource%>/web/img/guide_pppoesending.png?v=<%=ver%>" ></div>
+                    <p><%:正在拨号，请稍候%></p>
+                    <!-- <div class="hr"></div> -->
+                    <!-- <button class="btn btn-dft btn-block" type="button" id="cancelpppoe"><span><%:取消%></span></button> -->
+                </div>
+                <!--/拨号中-->
+                <div class="mod-guide mod-guide-pppoeerror">
+                    <div class="pic"><img src="<%=resource%>/web/img/guide_error.png?v=<%=ver%>" ></div>
+                    <p><%:拨号失败（错误码%> :<span id="pppoeerrorcode"></span><%:），请检查用户名密码输入是否有误，或联系运营商确认是否欠费%></p>
+                    <div class="hr"></div>
+                    <div class="form-contral">
+                        <button class="btn btn-primary btn-l skipto" data-to="pppoe" type="button"><span><%:重新输入%></span></button>
+                        <!-- <button class="btn btn-dft btn-m r skipto" data-to="operators" data-from="pppoeerror" type="button"><span><%:联系运营商%></span></button> -->
+                    </div>
+                    <p class="switchstep">
+                        <a href="#" class="a1 skip-pppoe"><%:跳过此步骤%></a>
+                    </p>
+                </div>
+                <!--/拨号出错-->
+                <div class="mod-guide mod-guide-operators">
+                    <p class="tit font18"><%:联系运营商找回用户名与密码%></p>
+                    <div class="hr"></div>
+                    <div class="list">
+                        <div class="clearfix line">
+                            <div class="item l clearfix">
+                                <span>10000</span><%:中国电信%>
+                            </div>
+                            <div class="item r clearfix">
+                                <span>95079</span><%:长城宽带%>
+                            </div>
+                        </div>
+                        <div class="clearfix line">
+                            <div class="item l clearfix">
+                                <span>10010</span><%:中国联通%>
+                            </div>
+                            <div class="item r clearfix">
+                                <span>952155</span><%:艾普宽带%>
+                            </div>
+                        </div>
+                        <div class="clearfix line">
+                            <div class="item l clearfix">
+                                <span>10086</span><%:中国移动%>
+                            </div>
+                            <div class="item r clearfix">
+                                <span>4006100008</span><%:鹏博士%>
+                            </div>
+                        </div>
+                        <div class="clearfix line last-line">
+                            <div class="item l clearfix">
+                                <span>10050</span><%:中国铁通%>
+                            </div>
+                            <div class="item r clearfix">
+                                <span>96007</span><%:宽带通%>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="result-text">
+                        <p><%:错误码：%><span>691</span></p>
+                    </div>
+                    <p class="more">
+                        <a href="#" class="a1 skipto" data-to="operatorsmore" data-from="operators"><%:更多运营商联系方式%></a> <br />
+                    </p>
+                    <p class="switchstep">
+                        <a href="#" class="a1 skipto goback" data-to="pppoeerror" data-from="operators"><%:返回%></a>
+                        <span>|</span>
+                        <a href="#" class="a1 skipto" data-to="pppoecatchstep1" data-from="operators"><%:从旧路由器导入宽带设置%></a>
+                    </p>
+                </div>
+                <!--/运营商-->
+                <div class="mod-guide mod-guide-operatorsmore">
+                    <p class="tit font18"><%:联系运营商找回用户名与密码%></p>
+                    <div class="hr"></div>
+                    <div class="operator-wrap show-select-xxx">
+                        <div class="selected-text"><%:请选择运营商%></div>
+                        <div class="select">
+                            <div class="select-tab clearfix">
+                                <span><%:省会%></span><span class="city"><%:城市%></span><span><%:运营商%></span>
+                            </div>
+                            <div class="select-content">
+                                <div id="province">
+                                    <dl class="clearfix">
+                                        <dt>A-G</dt>
+                                        <dd>
+                                            <span class="current">安徽s</span><span>安ee徽</span><span>安徽</span><span>安徽</span><span>安徽</span><span>安徽</span><span>安徽</span><span>安徽</span><span>安徽</span>
+                                        </dd>
+                                    </dl>
+                                    <dl class="clearfix">
+                                        <dt>H-K</dt>
+                                        <dd>
+                                            <span>安徽</span><span>安ssssss徽</span><span>安徽</span><span>安徽</span><span>安徽</span>
+                                        </dd>
+                                    </dl>
+                                    <dl class="clearfix">
+                                        <dt>L-S</dt>
+                                        <dd>
+                                            <span>安徽</span><span>安徽</span><span>安徽</span><span>安徽</span><span>安徽</span>
+                                        </dd>
+                                    </dl>
+                                    <dl class="clearfix">
+                                        <dt>T-Z</dt>
+                                        <dd>
+                                            <span>安徽</span><span>安徽</span><span>安徽</span><span>安徽</span><span>安徽</span>
+                                        </dd>
+                                    </dl>
+                                </div>
+                                <div id="city">
+                                    <span>安徽</span><span>安徽</span><span>安徽</span><span>安徽</span><span>安徽</span><span>安徽</span><span>安徽</span><span>安徽</span><span>安徽</span><span>安徽</span>
+                                </div>
+                                <div id="operator">
+                                    <span>安徽</span><span>安徽</span><span>安徽</span><span>安徽</span><span>安徽</span><span>安徽</span><span>安徽</span><span>安徽</span><span>安徽</span><span>安徽</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="result-text">
+                        <p><%:运营商联系方式%></p>
+                        <p><%:错误码：691%></p>
+                    </div>
+                    <p class="switchstep">
+                        <a href="#" class="a1 skipto goback" data-to="pppoeerror" data-from="operatorsmore"><%:返回%></a>
+                        <span>|</span>
+                        <a href="#" class="a1 skipto" data-to="pppoecatchstep1" data-from="operatorsmore"><%:从旧路由器导入宽带设置%></a>
+                    </p>
+                </div>
+                <!--/更多运营商-->
+                <div class="mod-guide mod-guide-ssidpwd">
+                    <div class="pic"><img src="<%=routerSrc %>?v=<%=ver%>" ></div>
+                    <p class="tit font18"><%:请设置Wi-Fi名称与密码%></p>
+                    <div class="hr"></div>
+                    <form id="ssidpwd" name="ssidpwd" class="form clearfix" action="/" autocomplete="off">
+                        <div class="form-inputs">
+                            <div class="form-item">
+                                <label class="k"><%:Wi-Fi名称%></label>
+                                <span class="v"><input id="ssidname" reqMsg="<%:Wi-Fi名称%>" datatype="ssid" minlength="1" maxlength="28" name="ssid" type="text" class="ipt-text"  autocomplete="off"></span>
+                                <em class="t"></em>
+                            </div>
+                            <div class="form-item">
+                                <label class="k"><%:Wi-Fi密码%></label>
+                                <span class="v"><input reqMsg="<%:Wi-Fi密码%>" datatype="wifipassword" minlength="8" maxlength="63" name="wifipwd" type="password" class="android-input ipt-text" data-type="password" autocomplete="off"></span>
+                                <em class="t"></em>
+                            </div>
+                            <div class="form-item form-item-ckbox gray">
+                                <label><input type="checkbox" id="kqcqms" autocomplete="off" checked="checked" /> <span><%:开启穿墙模式%></span></label>
+                            </div>
+                        </div>
+                        <div class="form-contral">
+                            <button class="btn btn-primary btn-block" type="submit"><span><%:下一步%></span></button>
+                        </div>
+                    </form>
+                    <%if (wanType==1) then%>
+                        <p class="switchstep">
+                            <a href="#" class="a1 goback skipto" data-to="pppoe"><%:返回%></a>
+                        </p>
+                    <%else%>
+                        <p class="switchstep">
+                            <a href="#" class="a1 goback skipto" data-to="hellopage" ><%:返回%></a>
+                        </p>
+                        <p class="switchstep">
+                            <a href="#" class="a1 skipto" data-to="pppoe" data-from="ssidpwd"><%:需要拨号(PPPoE)%></a>
+                            <span>|</span>
+                            <%if features["apmode"]["wifiapmode"] == "1" then%>
+                            <a href="#" class="a1 skipto" data-to="wds" data-from="ssidpwd"><%:无线中继%></a>
+                            <span>|</span>
+                            <%end%>
+                            <a href="#" class="a1 skipto" data-to="lanap" data-from="ssidpwd"><%:有线中继%></a>
+                        </p>
+                    <%end%>
+                </div>
+                <!--/hdcp 设置wifi ssid -->
+                <div class="mod-guide mod-guide-pppoecatchstep1">
+                    <p class="tit font18"><%:从旧路由器导入宽带设置%></p>
+                    <div class="hr"></div>
+                    <p class="text"><%:第一步：请将旧路由器接上电源并开启%></p>
+                    <div class="pic">
+                        <img src="<%=resource%>/web/img/guide_pppoecatch_step1.png?v=<%=ver%>" >
+                        <span class="gray"><%:旧路由器电源%></span>
+                    </div>
+                    <a href="#" class="skipto btn btn-primary btn-block" data-to="pppoecatchstep2"><span><%:下一步%></span></a>
+                    <p class="switchstep">
+                        <a href="#" class="a1 goback skipto" data-to="operators"><%:返回%></a>
+                    </p>
+                </div>
+                <!--/从旧路由器取回pppoe信息 step1-->
+                <div class="mod-guide mod-guide-pppoecatchstep2">
+                    <p class="tit font18"><%:从旧路由器导入宽带设置%></p>
+                    <div class="hr"></div>
+                    <p class="text"><%:第二步：请将网线接到旧路由器WAN口%></p>
+                    <div class="pic">
+                        <img src="<%=resource%>/web/img/guide_pppoecatch_step2.png?v=<%=ver%>" >
+                        <span class="gray"><%:旧路由器WAN口%></span>
+                    </div>
+                    <a href="#" class="skipto btn btn-primary btn-block" data-to="pppoecatchstep3" ><span><%:下一步%></span></a>
+                    <p class="switchstep">
+                        <a href="#" class="a1 goback skipto" data-to="pppoecatchstep1"><%:返回%></a>
+                    </p>
+                </div>
+                <!--/从旧路由器取回pppoe信息 step2-->
+                <div class="mod-guide mod-guide-pppoecatchstep3">
+                    <p class="tit font18"><%:从旧路由器导入宽带设置%></p>
+                    <div class="hr"></div>
+                    <p class="text"><%:第三步：请将网线的另一头接到小米路由器任一网口%></p>
+                    <div class="pic">
+                        <img src="<%=resource%>/web/img/guide_pppoecatch_step3.png?v=<%=ver%>" >
+                    </div>
+                    <a href="#" id="pppoecatch" class="btn btn-primary btn-block"><span><%:立即导入%></span></a>
+                    <p class="switchstep">
+                        <a href="#" class="a1 goback skipto" data-to="pppoecatchstep2"><%:返回%></a>
+                    </p>
+                </div>
+                <!--/从旧路由器取回pppoe信息 step3-->
+                <div class="mod-guide mod-guide-pppoecatching">
+                    <p class="tit font18"><%:从旧路由器导入宽带设置%></p>
+                    <div class="hr"></div>
+                    <p class="text"><%:请稍候...正在从旧路由器导入配置%></p>
+                    <div class="pic">
+                        <img src="<%=resource%>/web/img/guide_pppoecatching.gif?v=<%=ver%>" >
+                    </div>
+                </div>
+                <!--/正在导入旧路由器配置-->
+                <div class="mod-guide mod-guide-pppoecatcherror">
+                    <div class="pic">
+                        <img src="<%=resource%>/web/img/guide_error.png?v=<%=ver%>" >
+                    </div>
+                    <p><%:从旧路由器导入宽带设置失败%></p>
+                    <div class="hr"></div>
+                    <div class="clearfix">
+                        <button id="repppoecatch" class="btn btn-primary btn-m l" type="button"><span><%:重试%></span></button>
+                        <button class="btn btn-dft btn-m r skipto" data-to="pppoecatchstep1" type="button"><span><%:返回%></span></button>
+                    </div>
+                </div>
+                <!--/pppoecatcherror-->
+                <div class="mod-guide mod-guide-pppoecatchsucc">
+                    <p class="tit font18"><%:从旧路由器导入宽带设置成功%></p>
+                    <div class="hr"></div>
+                    <p class="text"><%:提示：请将小米路由器与旧路由器之间的网线断开 并确定网线已经接上蓝色WAN口%></p>
+                    <div class="pic">
+                        <img src="<%=resource%>/web/img/guide_pppoecatch_succ.png?v=<%=ver%>" >
+                        <span class="gray"><%:小米路由器WAN口%></span>
+                    </div>
+                    <a href="#" class="skipto btn btn-primary btn-block" data-to="pppoe" data-from="pppoecatchsucc"><span><%:下一步%></span></a>
+                    <p class="switchstep">
+                        <a href="#" class="a1 goback skipto" data-to="pppoecatchstep2" data-from="pppoecatchstep3"><%:返回%></a>
+                    </p>
+                </div>
+                <!--/pppoecatchsucc-->
+                <div class="mod-guide mod-guide-routerpwd">
+                    <div class="pic"><img src="<%=routerSrc %>?v=<%=ver%>" ></div>
+                    <p class="tit font18"><%:请设置管理密码%></p>
+                    <div class="hr"></div>
+                    <form id="routerpwd" name="routerpwd" class="form clearfix" action="/" autocomplete="off">
+                        <div class="form-inputs">
+                            <!-- <div class="form-item">
+                                <label class="k"><%:路由器名称%></label>
+                                <span class="v"><input reqMsg="<%:路由器名称%>" datatype="bytetext" maxlength="24" name="routername" type="text" class="android-input ipt-text" autocomplete="off"></span>
+                                <em class="t"></em>
+                            </div> -->
+                            <div class="form-item-out toggle-element">
+                                <div class="form-item-select" id="routerpositionselect">
+                                    <label class="k"><%:位置%></label>
+                                    <span class="v">
+                                        <select name="routerlocale"  class="beautify">
+                                            <option value="<%:家%>"><%:家%></option>
+                                            <option value="<%:公司%>"><%:公司%></option>
+                                            <!-- <option value="2"><%:其他%></option> -->
+                                            <option value="" class="self-define-option"><%:自定义%></option>
+                                        </select>
+                                    </span>
+                                    <em class="t"></em>
+                                </div>
+                            </div>
+                            <div class="form-item-out toggle-element hide">
+                                <div class="form-item" id="routerpositioninput">
+                                    <label class="k"><%:位置%></label>
+                                    <span class="v"><input datatype="bytetext" maxlength="24" reqMsg="<%:位置%>" type="text" class="android-input ipt-text" autocomplete="off"></span>
+                                    <em class="t"></em>
+                                </div>
+                            </div>
+                            <div class="form-item" id="routeradminpwd">
+                                <label class="k"><%:管理密码%></label>
+                                <span class="v"><input reqMsg="<%:管理密码%>" datatype="wifipassword" minlength="8" maxlength="63" name="routerpwd" type="password" class="android-input ipt-text" data-type="password" autocomplete="off"></span>
+                                <em class="t"></em>
+                            </div>
+                            <div class="form-item form-item-ckbox gray">
+                                <label><input type="checkbox" id="samepwd" autocomplete="off" /> <span><%:与Wi-Fi 密码相同%></span></label>
+                            </div>
+                        </div>
+                        <div class="form-contral">
+                            <button class="btn btn-primary btn-block" type="submit"><span><%:配置完成%></span></button>
+                        </div>
+                    </form>
+                    <p class="switchstep">
+                        <a href="#" class="a1 goback skipto" id="routerpwdgoback" data-to="ssidpwd" ><%:返回%></a>
+                    </p>
+                </div>
+                <!--/设置路由器名称管理密码 -->
+                <div class="mod-guide mod-guide-reboot">
+                    <p class="tit font18"><%if wifi50IsSupport == "1" then%><%:正在创建双频WiFi%><%else%><%:正在创建WiFi%><%end%></p>
+                    <div class="hr"></div>
+                    <div class="pic-line clearfix">
+                    <%if wifi50IsSupport == "1" then%>
+                        <div class="info">
+                            <img src="<%=resource%>/web/img/ssid24.png?v=<%=ver%>" >
+                            <p class="font14" ><span class="finishwifi24"></span></p>
+                            <p class="tip" ><span><%:信号穿透力强，覆盖范围广%></span></p>
+                        </div>
+                        <div class="info">
+                            <img src="<%=resource%>/web/img/ssid50.png?v=<%=ver%>" >
+                            <p class="font14" ><span class="finishwifi50"></span> <em>_5G</em></p>
+                            <p class="tip" ><span><%:速度快，适合距离路由器较近的设备%></span></p>
+                        </div>
+                    <%else%>
+                        <div style="width:100%;" class="info">
+                            <img style="width:25%;" src="<%=resource%>/web/img/ssid24.png?v=<%=ver%>" >
+                            <p class="font14" ><span class="finishwifi24"></span></p>
+                            <p class="tip" ><span><%:信号穿透力强，覆盖范围广%></span></p>
+                        </div>
+                    <%end%>
+                    </div>
+                    <div class="is-rebootting">
+                        <div class="reboot-progress">
+                            <div class="progress-container"><span></span></div>
+                        </div>
+                        <p><%:路由器配置完成后，即可连接网络%></p>
+                    </div>
+                    <div class="rebootted hide">
+                        <a href="###" class="btn btn-primary btn-block" id="connectedNext"><span><%:下一步%></span></a>
+                        <p><%:请将电脑连接WiFi后再进行下一步%></p>
+                    </div>
+                </div>
+                <!--/android-->
+                
+                <div class="mod-guide mod-guide-bind mod-guide-phone">
+                    <p class="tit font16"><%:只差一步,通过小米WiFi APP绑定路由器%></p>
+                    <div class="hr"></div>
+                     <ul class="info pic-line clearfix">
+                        <li>
+                            <div class="ico wifi"></div>
+                            <div>易用</div>
+                            <div class="des">全新小米WiFi APP 极简操作，享受生活</div>
+                        </li>
+                        <li>
+                            <div class="ico safe"></div>
+                             <div>安全</div>
+                            <div class="des">7x24小时安全防护 一键拉黑蹭网老王</div>
+                        </li>
+                        <li>
+                            <div class="ico gamespeedup"></div>
+                            <div>加速</div>
+                            <div class="des">提高带宽，游戏加速 团战胜人一筹</div>
+                        </li>
+                        <li>
+                            
+                            <div class="ico money"></div>
+                            <div>赚钱</div>
+                            <div class="des">分享WiFi赚点钱 欢迎老王来蹭网</div>
+                        </li>
+                    </ul>
+                    <p class="tit font12" style="margin-top:20px"><%:推荐连接到新的无线服务后继续%></p>
+                </div>
+    
+                <!--/reboot-->
+                <div class="mod-guide mod-guide-vas">
+                    <p class="tit font18"><%:路由器配置完成，我们为你准备%></p>
+                    <div class="hr"></div>
+                    <div class="vas-list">
+                        <ul class="clearfix" id="vasListUL">
+                        </ul>
+                    </div>
+                    <p class="vas-tip"><%:提示：以上设置可以在APP的“路由设置”中调整%><br/><a href="http://www1.miwifi.com/wap_download.html"><%:下载小米WiFi APP%></a></p>
+                    <div class="form-contral">
+                        <a href="###" class="btn btn-primary btn-block" id="updateVasBtn"><span><%:下一步%></span></a>
+                    </div>
+                    <!-- <p class="switchstep">
+                        <a href="#" class="a1 goback skipto" data-to="" ><%:返回%></a>
+                    </p> -->
+                </div>
+                <!--/vas-->
+                <div class="mod-guide mod-guide-end">
+                    <p class="tit font18"><%:使用手机客户端，全面体验智能路由器功能%></p>
+                    <div class="hr"></div>
+                    <div class="pic">
+                        <%if ccode == "US" then %>
+                             <img src="<%=resource%>/web/img/code.png?v=<%=ver%>" >
+                        <%else%>
+                            <img src="<%=resource%>/web/img/finishxcode.jpg?v=<%=ver%>" >
+                        <%end%>
+                        
+                    </div>
+                    <p><%:手机扫描二维码安装客户端%></p>
+                    <div class="ap-text-tip hide">
+                        <%:重要提示：如果上级路由器不是小米路由器，它分配给中继路由器的管理后台地址可能会改变，因此会造成无法访问后台，建议安装小米路由手机客户端，绑定当前路由器，即可通过手机使用管理功能。%>
+                    </div>
+                    <a href="<%if (ccode=='CN') then%>http://api.miwifi.com/data/redirect/hello_internet<%else%>http://www.mi.com/en/<%end%>" class="btn btn-primary btn-block"><span><%:开始上网%></span></a>
+                    <a href="<%=luci.dispatcher.build_url("web", "home")%>" class="gotohome"><span><%:管理后台%></span></a>
+                </div>
+                <!--/end-->
+                <div class="mod-guide mod-guide-wds">
+                    <div id="wdsInputSelectDiv">
+                        <p class="tit font18"><%:请选择或输入需要中继的无线网络和密码%></p>
+                        <div class="hr"></div>
+                        <form id="wds" name="wds" class="form clearfix" action="/">
+                            <div class="form-inputs">
+                                <div class="form-item-out toggle-element flag-is-select ssid-select-relative" id="ssidSelectDiv">
+                                    <div class="form-item-select">
+                                        <label class="k"><%:选择网络%></label>
+                                        <span class="v">
+                                             <select id="ssidselect" name="ssidselect" class="beautify">
+                                                <option value=""><%:正在扫描附近的无线网络%></option>
+                                            </select>
+                                        </span>
+                                        <em class="t"></em>
+                                    </div>
+                                    <span id="btnFreshenWIFI" class="icon-freshen"></span>
+                                </div>
+                                <div class="form-item-out toggle-element hide">
+                                    <div class="form-item">
+                                        <label class="k"><%:网络名称%></label>
+                                        <span class="v"><input reqMsg="<%:网络名称%>" datatype="ssid" minlength="1" maxlength="31" name="ssidinput" type="text" class="ipt-text" autocomplete="off"></span>
+                                        <em class="t"></em>
+                                    </div>
+                                </div>
+                                <div class="form-item-out toggle-element">
+                                    <div class="form-item" id="wdsWifiInputDivForSelect">
+                                        <label class="k"><%:输入密码%></label>
+                                        <span class="v"><input reqMsg="<%:网络密码%>" datatype="wifipassword" minlength="8" maxlength="63" name="passwordforselect" data-type="password"  type="password" class="ipt-text" autocomplete="off"></span>
+                                        <em class="t"></em>
+                                    </div>
+                                    <div class="form-item" id="wdsWifiInputDivForSelectWep" style="display:none;">
+                                        <label class="k"><%:输入密码%></label>
+                                        <span class="v"><input reqMsg="<%:网络密码%>" datatype="weppassword" minlength="5" maxlength="32" name="passwordforselectwep" data-type="password"  type="password" class="ipt-text" autocomplete="off"></span>
+                                        <em class="t"></em>
+                                    </div>
+                                </div>
+                                <div class="form-item-out toggle-element hide">
+                                    <div class="form-item" id="wdsWifiInputDivForInput">
+                                        <label class="k"><%:输入密码%></label>
+                                        <span class="v"><input name="passwordforinput" data-type="password"  type="password" class="ipt-text" autocomplete="off"></span>
+                                        <em class="t"></em>
+                                    </div>
+                                </div>
+                                <p class="change-select-type"><a class="a1" href="#" id="changeSelectType"><%:手工输入网络名称%></a></p>
+                            </div>
+                            <button class="btn btn-primary btn-l" type="submit"><span><%:下一步%></span></button>
+                            <div class="switchstep">
+                                <a class="a1 goback skipto" data-to="" href="#"><span><%:返回%></span></a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <!-- wds(wifiap)-->
+                <div class="mod-guide mod-guide-wdsnewssid">
+                    <p class="tit font18"><%:请设置新的WI-FI名称和密码%></p>
+                    <div class="hr"></div>
+                    <form id="wdsnewssid" name="wdsnewssid" class="form clearfix" action="/" autocomplete="off">
+                        <div class="form-item">
+                            <label class="k"><%:2.4G网络名称%></label>
+                            <span class="v"><input reqMsg="<%:2.4G网络名称%>" datatype="ssid" minlength="1" maxlength="31" name="ssidinputfornewssid" id="ssidinputfornewssid" type="text" class="ipt-text" autocomplete="off"></span>
+                            <em class="t"></em>
+                        </div>
+                         <%if hardware ~= "r3l"  and hardware ~= "r4c" and hardware ~= "r1cl" and hardware ~= "r4cm" then%> 
+                            <div class="form-item">
+                                <label class="k"><%:5G网络名称%></label>
+                                <span class="v"><input reqMsg="<%:5G网络名称%>" datatype="ssid" minlength="1" maxlength="31" id="ssidinputfornewssid5g" name="ssidinputfornewssid" type="text" class="ipt-text" autocomplete="off"></span>
+                                <em class="t"></em>
+                            </div>
+                        <%end%>
+                            <div class="form-item-select"  style="display:none;">
+                            <label class="k"><%:加密方式%></label>
+                            <span class="v">
+                                <select name="encryptionkey" class="beautify">
+                                    <option value="mixed-psk" selected="selected"><%:混合加密(WPA/WPA2个人版)%></option>
+                                    <option value="psk2"><%:强加密(WPA2个人版)%></option>
+                                    <option value="none"><%:无加密(允许所有人连接)%></option>
+                                </select>
+                            </span>
+                            <em class="t"></em>
+                        </div>
+                        <div class="form-item" >
+                            <label class="k"><%:Wi-Fi密码%></label>
+                            <span class="v"><input reqMsg="<%:Wi-Fi密码%>" datatype="wifipassword" minlength="8" maxlength="63" name="passwordfornewssid" id="passwordfornewssid"data-type="password"  type="password" class="ipt-text" autocomplete="off"></span>
+                            <em class="t"></em>
+                        </div>
+                        <div class="form-contral">
+                            <button class="btn btn-primary btn-block" type="submit"><span><%:下一步%></span></button>
+                        </div>
+                    </form>
+                    <p class="switchstep">
+                        <a href="#" class="a1 goback skipto" data-to="" ><%:返回%></a>
+                        <!-- <span>|</span>
+                        <a href="#" class="a1" id="skipwdsnewssid"><%:跳过%></a> -->
+                    </p>
+                </div>
+                <!-- newssid end-->
+                <div class="mod-guide mod-guide-lanap">
+                    <div id="lanapInputDiv">
+                        <p class="tit font18"><%:请设置有线中继模式的Wi-Fi名称和密码%></p>
+                        <div class="hr"></div>
+                        <div class="lanap-mode-tip gray">
+                            <p class="hd"><%:有线中继模式说明%></p>
+                            <p ><%:1.确保小米路由器的WAN口与旧路由器通过网线连接%></p>
+                            <p ><%:2.旧路由器与小米路由处于同一局域网中，可以互访%></p>
+                            <p ><%:3.中继模式下部分功能和插件将被屏蔽%></p>
+                        </div>
+                        <form id="lanapform" name="lanapform" class="form clearfix" action="/">
+                            <div class="form-item">
+                                <label class="k"><%:Wi-Fi名称%></label>
+                                <span class="v"><input reqMsg="<%:Wi-Fi名称%>" datatype="ssid" minlength="1" maxlength="31" name="lanapssid" type="text" class="android-input ipt-text" autocomplete="off"></span>
+                                <em class="t"></em>
+                            </div>
+                            <div class="form-item" >
+                                <label class="k"><%:Wi-Fi密码%></label>
+                                <span class="v"><input reqMsg="<%:Wi-Fi密码%>" datatype="wifipassword" minlength="8" maxlength="63" name="lanappassword" data-type="password"  type="password" class="android-input ipt-text" autocomplete="off"></span>
+                                <em class="t"></em>
+                            </div>
+                            <div class="form-contral">
+                                <button class="btn btn-primary btn-block" type="submit"><span><%:下一步%></span></button>
+                            </div>
+                            <div class="switchstep">
+                                <a class="a1 goback skipto" data-to="" href="#" ><span><%:返回%></span></a>
+                            </div>
+                        </form>
+                    </div>
+                    <div id="lanapSettingDiv" class="wds-setting-div hide">
+                        <p><%:正在设置中，请稍候...%><br /><%:请不要关闭浏览器或断开路由器%></p>
+                        <span class="loading"></span>
+                    </div>
+                </div>
+                <!--/lanap-->
+                <div class="mod-guide mod-guide-tipswannolink">
+                    <div class="pic">
+                        <img src="<%=resource%>/web/img/guide_error.png?v=<%=ver%>" >
+                    </div>
+                    <p><%:小米路由器检测未连接到网线 请确认蓝色WAN口是否连接正常%></p>
+                    <div class="hr"></div>
+                    <div class="clearfix">
+                        <button class="btn btn-primary btn-m l skipto retry" data-to="lanap" type="button"><span><%:重试%></span></button>
+                        <button class="btn btn-dft btn-m r skipto goback" data-to="ssidpwd" type="button"><span><%:返回%></span></button>
+                    </div>
+                    <p class="switchstep">
+                        <a href="#" class="a1 skipto" data-to="ssidpwd" data-from="tipswannolink"><%:跳过此步骤%></a>
+                    </p>
+                </div>
+                <!--/tipswannolink-->
+                <div class="mod-guide mod-guide-tipserror">
+                    <div class="pic">
+                        <img src="<%=resource%>/web/img/guide_error.png?v=<%=ver%>" >
+                    </div>
+                    <p class="cont"><%:出错了%></p>
+                    <div class="hr"></div>
+                    <p class="switchstep">
+                        <a href="#" class="goback skipto btn btn-dft btn-l" data-to=""><span><%:返回%></span></a>
+                    </p>
+                </div>
+                <!--/tipserror-->
+            </div>
+        </div>
+    </div>
+    <span class="for-middle"></span>
+</div>
+<script type="tmpl/html" id="tmplVaslist">
+<li>
+    <p class="p1">{$title}</p>
+    <p class="p2" title="{$desc}">{$desc}</p>
+    <img src="/vas/{$icon}">
+    <input type="checkbox" name="vaskey" data-key="{$postkey}" checked="checked" />
+</li>
+</script>
+<%include("web/inc/g.js")%>
+<script>
+var isMobile = {
+    Android: function() {
+        return navigator.userAgent.match(/Android/i);
+    },
+    BlackBerry: function() {
+        return navigator.userAgent.match(/BlackBerry/i);
+    },
+    iOS: function() {
+        return navigator.userAgent.match(/iPhone|iPad|iPod/i);
+    },
+    Opera: function() {
+        return navigator.userAgent.match(/Opera Mini/i);
+    },
+    Windows: function() {
+        return navigator.userAgent.match(/IEMobile/i);
+    },
+    any: function() {
+        return (isMobile.Android() || isMobile.BlackBerry() || isMobile.iOS() || isMobile.Opera() || isMobile.Windows());
+    }
+};
+(function(){
+
+    $.selectBeautify({
+        'maxHeight': '205px'
+    });
+    var obj = {},
+        wan = <%-if wan then-%>true<%-else-%>false<%-end-%>,
+        wanType = <%=wanType%>,// 1 = pppoe else dhcp
+        lanType = <%=lanType%>, // 0 = lan else wifi
+        ipConflict = '<%=ipConflict%>',
+        ccode = '<%=ccode%>',
+        stepMap = {
+            'ipconflict': '.mod-guide-ipconflict',
+            'nowanselect': '.mod-guide-nowanselect',
+            'pppoe': '.mod-guide-pppoe',
+            'forgetpassword': '.mod-guide-forgetpassword',
+            'ssidpwd': '.mod-guide-ssidpwd',
+            'routerpwd': '.mod-guide-routerpwd',
+            'wds': '.mod-guide-wds',
+            'wdsnewssid': '.mod-guide-wdsnewssid',
+            'lanap': '.mod-guide-lanap',
+            'tipswannolink': '.mod-guide-tipswannolink',
+            'tipserror': '.mod-guide-tipserror',
+            'pppoesending': '.mod-guide-pppoesending',
+            'pppoeerror': '.mod-guide-pppoeerror',
+            'operators': '.mod-guide-operators',
+            'operatorsmore': '.mod-guide-operatorsmore',
+            'pppoecatchstep1': '.mod-guide-pppoecatchstep1',
+            'pppoecatchstep2': '.mod-guide-pppoecatchstep2',
+            'pppoecatchstep3': '.mod-guide-pppoecatchstep3',
+            'pppoecatching': '.mod-guide-pppoecatching',
+            'pppoecatcherror': '.mod-guide-pppoecatcherror',
+            'pppoecatchsucc': '.mod-guide-pppoecatchsucc',
+            'finish': '.mod-guide-finish',
+            'reboot': '.mod-guide-reboot',
+            'android' : '.mod-guide-android',
+            'admin' : '.mod-guide-admin',
+            'bind' : '.mod-guide-bind',
+            'ios' : '.mod-guide-ios',
+            'vas': '.mod-guide-vas',
+            'end': '.mod-guide-end'
+        },
+        isinited = false,
+        setWanPPPOE,
+        ua = navigator.userAgent,
+        isIOS = ua.indexOf("iPhone") != -1 || ua.indexOf("iPod")!=-1 || ua.indexOf("iPad") != -1,
+        isAndroid = ua.indexOf('Android') != -1 || ua.indexOf('Linux') != -1;
+
+    //检测中继的ssid是否加密 true 加密
+    var getWifiEncryptionStatus = function(){
+        var index = $('#ssidselect')[0].selectedIndex;
+        var selectoption = $('#ssidselect').find('option').eq(index);
+        var reg = /no-encryption/i;
+        var classname = selectoption.attr('class');
+        var result;
+
+        if( reg.test(classname) ){
+            //未加密
+            result = false;
+        }else{
+            //加密
+            result = true;
+        }
+        console.log(classname, result);
+        return result;
+    };
+    //获取所选中继ssid的encryption
+    var getWifiEncryption = function(){
+        var index = $('#ssidselect')[0].selectedIndex;
+        var selectoption = $('#ssidselect').find('option').eq(index);
+        var encryption = selectoption.attr('data-encryption');
+        return encryption;
+    };
+    //根据选择的ssid类型显示（wep或非wep选择性显示）或隐藏密码输入框
+    var showHideWifiInput = function(){
+        var flag = getWifiEncryptionStatus();
+        var wifiInputDiv = $('#wdsWifiInputDivForSelect');
+        var wifiInputDivWep = $('#wdsWifiInputDivForSelectWep');
+        if( flag ){
+            if( getWifiEncryption() == 'WEP' ){
+                wifiInputDivWep.show();
+                wifiInputDiv.hide();
+            }else{
+                wifiInputDivWep.hide();
+                wifiInputDiv.show();
+            }
+        }else{
+            wifiInputDiv.hide();
+            wifiInputDivWep.hide();
+        }
+    };
+    //刷新附近wifi
+    var updateWifiList = function(){
+        $.ajax({
+            url: '<%=luci.dispatcher.build_url("api", "xqnetwork", "wifi_list")%>',
+            type: 'GET',
+            dataType: 'json',
+            success: function(res){
+                if( res.code == 0 ){
+                    if( res.list.length > 0 ){
+                        var fragment = document.createDocumentFragment();
+                        var list = res.list;
+                        var select = $('#ssidselect');
+
+                        $(list).each(function(index, item){
+                            var option = $('<option />');
+                            option.attr('data-bandwidth', item.bandwidth);
+                            option.attr('data-ssid', StringH.encode4Html( item.ssid ));
+                            option.text(item.ssid );
+                            option.val(StringH.encode4Html( item.ssid ));
+                            option.attr('data-band', item.band);
+                            option.attr('data-channel', item.channel);
+                            option.attr('data-enctype', item.enctype);
+                            option.attr('data-encryption', item.encryption);
+                            option.addClass( 'wds-wifi-option' );
+                            if( item.encryption == 'NONE' ){
+                                if( item.signal > 75 ){
+                                    option.addClass( 'no-encryption-4' );
+                                }else if( item.signal > 50 && item.signal <= 75 ){
+                                    option.addClass( 'no-encryption-3' );
+                                }else if( item.signal > 25 && item.signal <= 50 ){
+                                    option.addClass( 'no-encryption-2' );
+                                }else if( item.signal <= 25 ){
+                                    option.addClass( 'no-encryption-1' );
+                                }
+                            }else{
+                                if( item.signal > 75 ){
+                                    option.addClass( 'is-encryption-4' );
+                                }else if( item.signal > 50 && item.signal <= 75 ){
+                                    option.addClass( 'is-encryption-3' );
+                                }else if( item.signal > 25 && item.signal <= 50 ){
+                                    option.addClass( 'is-encryption-2' );
+                                }else if( item.signal <= 25 ){
+                                    option.addClass( 'is-encryption-1' );
+                                }
+                            }
+                            if(item.band == '5g'){
+                                var text = document.createElement("i");
+                                text.textContent = "5G";
+                                option.append(text);
+                            }
+                            fragment.appendChild(option[0]);
+                        });
+                        select.empty();
+                        $('#dummydata').hide().empty();
+                        select[0].appendChild(fragment);
+                        select.next('.dummy').remove();
+                        $.selectBeautify({
+                            'maxHeight': '205px'
+                        });
+                        select.next('.dummy').show();
+
+                        showHideWifiInput();
+                    }else{
+                        setError( '<%:未能扫描到Wi-Fi,请确保射频开启%>' );
+                        $.pub( 'init:toStep', {step: 'tipserror', from: 'wds'} );
+                    }
+                }
+            }
+        });
+    };
+    //wan口是否有连接 1  连上网线  0  断开网线
+    var getWanLinkStatus = function(){
+        var link;
+        $.ajax({
+            url: '<%=luci.dispatcher.build_url("api", "xqnetwork", "wan_link")%>',
+            type: 'GET',
+            async: false,
+            dataType: 'json',
+            success: function(res){
+                if( res.code == 0 ){
+                    link = res.link;
+                }
+            }
+        });
+        return link;
+    };
+    //检测wan口是pppoe还是dhcp 1---pppoe  其他dhcp
+    var getAutoWanType = function(){
+        var type;
+        $.ajax({
+            url: '<%=luci.dispatcher.build_url("api", "xqnetwork", "check_wan_type")%>',
+            type: 'GET',
+            async: false,
+            dataType: 'json',
+            success: function(res){
+                if( res.code == 0 ){
+                    type = res.wanType;
+                }
+            }
+        });
+        return type;
+    };
+    //获取下级路由器pppoe信息
+    var pppoeCatch = function(){
+        $.pub( 'init:toStep', {step: 'pppoecatching'} );
+
+        $.ajax({
+            url: '<%=luci.dispatcher.build_url("api", "xqnetwork","pppoe_catch")%>',
+            type: "GET",
+            dataType: "json",
+            success : function( res ){
+                if ( res.code == 0 ) {
+                    $('.mod-guide-pppoe').addClass('mod-guide-pppoe-from-pppoecatchsucc');
+                    $('#pppoe input[name="ppoename"]').focus().val( res.name ).blur();
+                    $('#pppoepasswdline').find('input')
+                    .focus()
+                    .val( res.passwd )
+                    .prop('type', 'text')
+                    .blur()
+                    .end()
+                    .find('.bt-showpwd')
+                    .removeClass('bt-showpwd-off')
+                    .addClass('bt-showpwd-on');
+                    $.pub( 'init:toStep', {step: 'pppoe'} );
+                } else {
+                    $.pub( 'init:toStep', {step: 'pppoecatcherror'} );
+                }
+            },
+            timeout: 15000,
+            error: function(){
+                $.pub( 'init:toStep', {step: 'pppoecatcherror'} );
+            }
+        });
+    };
+    //设置公共错误提示页面文字
+    var setError = function( cont ){
+        $('.mod-guide-tipserror .cont').html( cont );
+    };
+    var renderVasInfo = function( res ){
+        var container = $('#vasListUL');
+        var liArr = [];
+        var tpl = $('#tmplVaslist').html();
+        for( var key in res.web ){
+            if( res.web.hasOwnProperty(key) ){
+                 // delete 比价助手
+                if(rsp.web[key]['title'] != "比价助手"){
+                    var li = StringH.tmpl(tpl, {
+                        icon: res.web[key]['icon'],
+                        title: res.web[key]['title'],
+                        desc: res.web[key]['desc'],
+                        postkey: key
+                    });
+                    liArr.push( li );
+                }
+            }
+        }
+        container.html( liArr.join('') );
+    };
+    var getVasInfo = function(){
+        var requestData = {
+            key: "new",
+            web: 1
+        };
+        $.ajax({
+            url: '<%=luci.dispatcher.build_url("api", "misystem","vas_info")%>',
+            type: 'GET',
+            datatype: 'json',
+            data: requestData,
+            success: function( res ){
+                res = $.parseJSON( res );
+                if( res.code == 0 ){
+                    if( res.web && res.web.length !== 0 ){
+                        renderVasInfo( res );
+                    }else{
+                        $.pub( 'init:toStep', {step: 'end'} );
+                    }
+                }
+            }
+        });
+    };
+
+    var checkConnect = function(){
+      var host = location.host;
+      var imgUrl =  'http://' + host + '/xiaoqiang/web/img/logo.png';
+      var img;
+      var loadImg = function( onload, onerror ){
+        img = new Image();
+        img.onload = onload;
+        img.onerror = onerror;
+        img.src = imgUrl+'?' + (+new Date());
+      };
+      loadImg(function(){
+        if (isMobile.Android()) {
+            $.pub( 'init:toStep', {step: 'android', form: 'reboot'} );
+
+        }else if(isMobile.iOS()){
+            $.pub( 'init:toStep', {step: 'ios', form: 'reboot'} );
+            console.log("ios");
+        }else {
+             $.pub( 'init:toStep', {step: 'vas', form: 'reboot'} );
+             getVasInfo();
+        }
+       
+        // $('.mod-guide-vas').find('.switchstep').hide();
+      }, function(){});
+    };
+    //设置初始化成功后一些信息
+    var setRebootPage = function( ){
+        var hardware = '<%=hardware%>';
+        $('.finishwifi24').text( obj.wifi24Ssid );
+        $('.finishwifi50').text( obj.wifi24Ssid );
+        $('.progress-container span').animate(
+            {width: '100%'},
+            30000,
+            function(){
+                if( ccode == 'CN' ){
+                    if( getWanLinkStatus() !== 0 ){
+                        //wan linked
+                       if ((isMobile.Android() || isMobile.iOS()) && hardware != 'r3a' && hardware != 'r3l'  && hardware != 'r4' && hardware != 'r4c' && hardware != 'r4cm' && hardware != 'r4ac' && hardware != 'r4g') {
+
+                                        $.pub('init:toStep', {step: 'bind'});
+                                        setTimeout(function(){
+                                             if (isMobile.Android()) {
+                                                window.location.href = 'miwifi://tab?tab=0&subtab=0';
+                                                setTimeout(function(){
+                                                    
+                                                    $.pub( 'init:downloadApp', {step: 'download'} );
+
+                                                },2000);
+                                            }else{
+                                                var ifr = document.createElement("iframe");
+                                                ifr.src = "miwifi://tab?tab=0&subtab=0";
+                                                ifr.style.display = "none"; 
+                                                document.body.appendChild(ifr);
+                                                window.setTimeout(function(){
+                                                   document.body.removeChild(ifr);
+                                                   window.location.href = "https://itunes.apple.com/cn/app/id859962702?mt=8&ls=1"; 
+                                                },2000)
+                                                    }  
+                                        },3000);
+                                                
+                    }   else {
+
+                         $.pub( 'init:toStep', {step: 'vas'} );
+                        getVasInfo();
+                        $('.mod-guide-vas').find('.switchstep').hide();
+                       }
+                                           
+                    }else{
+                        $('.mod-guide-reboot').find('.tit').html('<%:WiFi创建成功，请手动连接%>');
+                        $('.mod-guide-reboot').find('.is-rebootting').hide();
+                        $('.mod-guide-reboot').find('.rebootted').show();
+                        $('#connectedNext').on('click', function(){
+                            checkConnect();
+                        });
+                    }
+                }else{
+                    $.pub( 'init:toStep', {step: 'end'} );
+                }
+            }
+        );
+
+    };
+
+    var setVasSwitch = function( info ){
+        var requestData = {
+            info: info
+        };
+        $.ajax({
+            url: '<%=luci.dispatcher.build_url("api", "misystem","vas_switch")%>',
+            type: 'GET',
+            datatype: 'json',
+            data: requestData,
+            success: function( res ){
+                res = $.parseJSON( res );
+                if( res.code == 0 ){
+                    $.pub( 'init:toStep', {step: 'end'} );
+                }
+            }
+        });
+    };
+    //pppoe status
+    var pppoeStatus = 0;
+    var pppoeStatusTimer;
+    var pppoeErrorCode;
+    var checkPppoeStatus = function(){
+        // 0:未拨号
+        // 1:正在拨号
+        // 2:拨号成功
+        // 3:正在拨号 但返现拨号错误信息
+        // 4:关闭拨号
+        console.log( 'checkPppoeStatus', pppoeStatus );
+        if( pppoeStatus == 0 || pppoeStatus == 1 || pppoeStatus == 4 ){
+            $.ajax({
+                url: '<%=luci.dispatcher.build_url("api", "misystem","pppoe_status")%>',
+                type: 'GET',
+                datatype: 'json',
+                success: function( res ){
+                    res = $.parseJSON( res );
+                    if( res.code == 0 ){
+                        pppoeStatus = res.status;
+                        if( pppoeStatus == 3 ){
+                            pppoeErrorCode = res.errcode;
+                        }
+                        pppoeStatusTimer = setTimeout( function(){
+                            checkPppoeStatus();
+                        }, 1000 );
+                    }
+                }
+            });
+        }
+        if( pppoeStatus == 2 ){
+            clearTimeout( pppoeStatusTimer );
+            $.pub( 'init:toStep', {step: 'ssidpwd'} );
+        }
+        if( pppoeStatus == 3 ){
+            clearTimeout( pppoeStatusTimer );
+            $('#pppoeerrorcode').html( pppoeErrorCode );
+            $.pub( 'init:toStep', {step: 'pppoeerror'} );
+        }
+    };
+    //set wan
+    var setWanDHCP = function(){
+        if ( setWanPPPOE ){
+            setWanPPPOE.abort();
+            $('#pppoe').find( '[type="submit"]' ).removeClass('btn-primary-disabled').find('span').text('<%:下一步%>');
+        }
+        var requestData = {
+            wanType: 'dhcp'
+        };
+        $.ajax({
+            url: '<%=luci.dispatcher.build_url("api", "xqnetwork","set_wan")%>',
+            type: "POST",
+            data: requestData,
+            dataType: "json"
+        });
+    };
+    $.sub( 'init:toStep', function( evt, data ) {
+        if( data.step == 'hellopage' ){
+            location.href = 'http://' + location.host;
+        }
+        if( data.step == 'wds' ){
+            updateWifiList();
+        }
+        if( data.step == 'lanap' ){
+            var wanLinkStatus = getWanLinkStatus();
+            if( wanLinkStatus == 0 ){
+                //未接入网线
+                $.pub('init:toStep', {step: 'tipswannolink', from: 'ssidpwd'});
+                $('.mod-guide-tipswannolink').find('.switchstep').hide();
+                $('.mod-guide-tipswannolink .retry').attr('data-to', 'lanap');
+                return;
+            }
+        }
+        if ( data.step == 'routerpwd' ){
+            $('#routerpwd .btn-primary').removeClass('btn-primary-disabled').find('span').text('<%:配置完成%>');
+            // if( obj.wifiPassword ){
+            //     $('#routerpwd .form-item-ckbox').show();
+            // }else{
+            //     $('#routerpwd .form-item-ckbox').hide();
+            // }
+        }
+        if( data.step == 'pppoeorssidpwd' ){
+            if ( getWanLinkStatus() !== 0 ) {
+                //wan口有连接
+                if ( getAutoWanType() == 1 ){
+                    //pppoe
+                    $.pub( 'init:toStep', {step: 'pppoe'} );
+                }else{
+                    //DHCP
+                    $.pub( 'init:toStep', {step: 'ssidpwd'} );
+                }
+            }else{
+                //wan口无连接
+                // $('.mod-guide-tipswannolink .retry').attr('data-to', 'pppoeorssidpwd');
+                // $.pub( 'init:toStep', {step: 'tipswannolink', from: 'nowanselect'} );
+                //临时方案
+                $.pub( 'init:toStep', {step: 'ssidpwd'} );
+            }
+            return;
+        }
+        $( '.mod-guide' ).hide();
+        $( stepMap[data.step] ).show();
+        if( data.from ){
+            $( stepMap[data.step] ).find('.goback').attr( 'data-to', data.from );
+        }
+    });
+
+    $.sub( 'init:start', function( evt, data ) {
+        if ( data.ipConflict != 0 ) {//有ip冲突
+            $('.mod-guide-ipconflict .btn-border i').text( data.ipConflict );
+            // $('#btngotohome').attr( 'href', 'http://' + data.ipConflict + $('#btngotohome').attr('href') );
+            $.pub( 'init:toStep', {step: 'ipconflict'} );
+        }else{
+            if ( data.wanType === 1 ) {
+                obj.wanType = 'pppoe';
+                $.pub( 'init:toStep', {step: 'pppoe'} );
+            } else if (data.wanType === 99 ){
+                $.pub( 'init:toStep', {step: 'nowanselect'} );
+            }else {
+                obj.wanType = 'dhcp';
+                $.pub( 'init:toStep', {step: 'ssidpwd'} );
+            }
+        }
+    });
+
+    $.sub( 'init:bindEvent', function( evt, data ){
+        // set PPPoE
+        $( '#pppoe' ).on( 'submit', function( e ) {
+            e.preventDefault();
+            var btn = $(this).find( '[type="submit"]' );
+            if( btn.hasClass('btn-primary-disabled') ){
+                return;
+            }
+            var validator = Valid.checkAll( this );
+            if ( validator ) {
+                var requestData = {
+                    wanType: 'pppoe',
+                    pppoeName: $.trim( this.elements['ppoename'].value ),
+                    pppoePwd: $.trim( this.elements['ppoepwd'].value )
+                };
+                btn.addClass('btn-primary-disabled').find('span').text('<%:处理中...%>');
+                setWanPPPOE = $.ajax({
+                    url: '<%=luci.dispatcher.build_url("api", "xqnetwork","set_wan")%>',
+                    type: "POST",
+                    data: requestData,
+                    dataType: "json",
+                    success : function( res ){
+                        if ( res.code == 0 ) {
+                            $.pub( 'init:toStep', {step: 'pppoesending'} );
+                            pppoeStatus = 0;
+                            checkPppoeStatus();
+                        } else {
+                            setError( res.msg );
+                            $.pub( 'init:toStep', {step: 'tipserror', from: 'pppoe'} );
+                        }
+                        btn.removeClass('btn-primary-disabled').find('span').text('<%:下一步%>');
+                    }
+                });
+            }
+        });
+        // set ssidpwd
+        $( '#ssidpwd' ).on( 'submit', function( e ) {
+            e.preventDefault();
+            var validator = Valid.checkAll( this );
+            if( validator ){
+                var wifi24Ssid = $.trim( this.elements['ssid'].value );
+                var wifi50Ssid = $.trim( this.elements['ssid'].value ) + '_5G';
+                var kqcqmsisCheck = $('#kqcqms').is( ':checked' );
+
+                obj.wifi24Ssid = wifi24Ssid;
+                obj.wifi50Ssid = wifi50Ssid;
+                obj.wifiPassword = $.trim( this.elements['wifipwd'].value );
+                if( kqcqmsisCheck ){
+                    obj.txpwr = 1;
+                }else{
+                    obj.txpwr = 0;
+                }
+                obj.routerWorkType = "normal";
+                $.pub( 'init:toStep', {step: 'routerpwd'} );
+            }
+        });
+        // set wds
+        $( '#wds' ).on( 'submit', function( e ) {
+            e.preventDefault();
+            var validator = Valid.checkAll( this );
+            if( validator ){
+                var index = $('#ssidselect')[0].selectedIndex;
+                var selectoption = $('#ssidselect').find('option').eq(index);
+                var selectType = $('#ssidSelectDiv').hasClass('flag-is-select') ? true : false;
+                var ssidinputfornewssid = $('#ssidinputfornewssid');
+                var ssidinputfornewssid5g = $('#ssidinputfornewssid5g');
+                var passwordfornewssid = $('#passwordfornewssid');
+                if( selectType ){
+                    obj.wifi24Ssid = StringH.decode4Html( $.trim( this.elements['ssidselect'].value ) );
+                    if( getWifiEncryption() == 'WEP' ){
+                        obj.wifiPassword = $.trim( this.elements['passwordforselectwep'].value );
+                    }else{
+                        obj.wifiPassword = $.trim( this.elements['passwordforselect'].value );
+                    }
+                    obj.wifiapssidType = 'selectType';
+                }else{
+                    obj.wifi24Ssid = $.trim( this.elements['ssidinput'].value );
+                    obj.wifiPassword = $.trim( this.elements['passwordforinput'].value );
+                    obj.wifiapssidType = 'inputType';
+                }
+                obj.wifi50Ssid = obj.wifi24Ssid + '_5G';
+                //下拉选择ssid的时候需要传给后端
+                obj.encryption = selectoption.attr('data-encryption');
+                obj.enctype = selectoption.attr('data-enctype');
+                obj.channel = selectoption.attr('data-channel');
+                obj.bandwidth = selectoption.attr('data-bandwidth');
+                obj.band = selectoption.attr('data-band');
+                obj.routerWorkType = 'wifiap';
+
+                ssidinputfornewssid.val(obj.wifi24Ssid + '_plus');
+                ssidinputfornewssid5g.val(obj.wifi24Ssid + '_plus_5G') ;
+                passwordfornewssid.val(obj.wifiPassword);
+                $('.form-item-empty .k ').css({
+                    "right": "40px",
+                    "left": "auto"
+                });
+                $.pub( 'init:toStep', {step: 'wdsnewssid', from: 'wds'} );
+            }
+        });
+        $('#wdsnewssid').on( 'submit', function(e){
+            e.preventDefault();
+            var validator = Valid.checkAll( this );
+            if( validator ){
+                obj.nssid = $.trim( $('#ssidinputfornewssid').val() );
+                if (this.elements['ssidinputfornewssid5g']) {
+                   obj.nssid5G = $.trim( this.elements['ssidinputfornewssid5g'].value); 
+                }
+                
+                obj.nencryption = $.trim( this.elements['encryptionkey'].value );
+                obj.npassword = $.trim( this.elements['passwordfornewssid'].value );
+                $.pub( 'init:toStep', {step: 'routerpwd', from: 'wdsnewssid'} );
+            }
+        });
+        $('#skipwdsnewssid').on( 'click', function(e){
+            e.preventDefault();
+            obj.nssid = null;
+            obj.nssid5G = null;
+            obj.nencryption = null;
+            obj.npassword = null;
+            $.pub( 'init:toStep', {step: 'routerpwd', from: 'wdsnewssid'} );
+        });
+        // $('#bind').on( 'click',function(e){
+            
+        //     e.preventDefault();
+        //     debugger
+        //     if (isMobile.Android()) {
+        //         window.location.href = 'miwifi://tab?tab=0&subtab=0';
+        //         setTimeout(function(){
+        //             $.pub( 'init:downloadApp', {step: 'download'} );
+
+        //         },2000);
+        //     }else if( isMobile.iOS() ){
+        //         var ifr = document.createElement("iframe");
+        //         ifr.src = "miwifi://tab?tab=0&subtab=0";
+        //         ifr.style.display = "none"; 
+        //         document.body.appendChild(ifr);
+        //         window.setTimeout(function(){
+        //           document.body.removeChild(ifr);
+        //            window.location.href = "https://itunes.apple.com/cn/app/id859962702?mt=8&ls=1"; 
+        //         },2000)
+        //             }
+        // });
+        //set lanap
+        $('#lanapform').on( 'submit', function(e){
+            e.preventDefault();
+            var validator = Valid.checkAll( this );
+            if( validator ){
+                if( getWanLinkStatus() != 0 ){
+                    obj.wifi24Ssid = $.trim( this.elements['lanapssid'].value );
+                    obj.wifiPassword = $.trim( this.elements['lanappassword'].value );
+                    obj.wifi50Ssid = obj.wifi24Ssid + '_5G';
+                    obj.routerWorkType = 'lanap';
+                    $.pub( 'init:toStep', {step: 'routerpwd', from: 'lanap'} );
+                }else{
+                    $.pub( 'init:toStep', {step: 'tipswannolink', from: 'lanap'} );
+                }
+            }
+        });
+        //set routerpwd
+        $( '#routerpwd' ).on( 'submit', function(e){
+            e.preventDefault();
+            var btn = $(this).find( '[type="submit"]' );
+            if( btn.hasClass('btn-primary-disabled') ){
+                return;
+            }
+            var validator = Valid.checkAll( this );
+            if( validator ){
+                var postajax;
+                var nonce, oldPwd, newPwd;
+                // obj.routerName = $.trim( this.elements['routername'].value );
+                obj.routerName = obj.wifi24Ssid;//去掉名字输入框，用ssid代替
+                obj.routerLocale = $.trim( this.elements['routerlocale'].value );
+                obj.routerPwd = $.trim( this.elements['routerpwd'].value );
+                // Encrypt string
+                nonce = Encrypt.init();
+                oldPwd = Encrypt.oldPwd( 'admin' );
+                newPwd = Encrypt.newPwd( 'admin', obj.routerPwd );
+                // console.log( obj );
+                var requestData={};
+                var requestUrl;
+
+                if( obj.routerWorkType == 'normal' ){
+                    requestUrl = '<%=luci.dispatcher.build_url("api", "misystem","set_router_normal")%>';
+                    requestData = {
+                        name: obj.routerName,
+                        locale: obj.routerLocale,
+                        ssid: obj.wifi24Ssid,
+                        password: obj.wifiPassword,
+                        encryption: 'mixed-psk',
+                        nonce: nonce,
+                        newPwd: newPwd,
+                        oldPwd: oldPwd,
+                        txpwr: obj.txpwr
+                    };
+                }
+                if( obj.routerWorkType == 'wifiap' ){
+                    requestUrl = '<%=luci.dispatcher.build_url("api", "misystem","set_router_wifiap")%>';
+                    requestData = {
+                        ssid: obj.wifi24Ssid,
+                        nssid: obj.nssid,
+                        nssid5G: obj.nssid5G,
+                        password: obj.wifiPassword,
+                        initialize: 1,
+                        name: obj.nssid,
+                        locale: obj.routerLocale,
+                        nonce: nonce,
+                        newPwd: newPwd,
+                        oldPwd: oldPwd,
+                        txpwr: obj.txpwr
+                    };
+                    //下拉选择中继ssid的时候多以下参数
+                    if( obj.wifiapssidType == 'selectType' ){
+                        requestData.encryption = obj.encryption;
+                        requestData.enctype = obj.enctype;
+                        requestData.channel = obj.channel;
+                        requestData.bandwidth = obj.bandwidth;
+                        requestData.band = obj.band;
+                    }
+                    if( obj.wifiapssidType == 'inputType' ){
+                        if( !obj.wifiPassword ){
+                            requestData.encryption = 'NONE';
+                        }
+                    }
+                    //新建ssid和密码
+                    if( obj.nssid ){
+                        requestData.nssid = obj.nssid;
+                        requestData.nssid5G = obj.nssid5G;
+                        requestData.nencryption = obj.nencryption;
+                        requestData.npassword = obj.npassword;
+                    }
+                }
+                if( obj.routerWorkType == 'lanap' ){
+                    if( getWanLinkStatus() != 0 ){
+                        requestUrl = '<%=luci.dispatcher.build_url("api", "misystem","set_router_lanap")%>';
+                        requestData = {
+                            ssid: obj.wifi24Ssid,
+                            password: obj.wifiPassword,
+                            initialize: 1,
+                            name: obj.routerName,
+                            locale: obj.routerLocale,
+                            nonce: nonce,
+                            newPwd: newPwd,
+                            oldPwd: oldPwd,
+                            txpwr: obj.txpwr
+                        };
+
+
+                    }else{
+                        $.pub('init:toStep', {step: 'tipswannolink', from: 'routerpwd'});
+                        return;
+                    }
+                }
+
+                btn.addClass('btn-primary-disabled').find('span').text('<%:处理中...%>');
+                var hardware = '<%=hardware%>';
+                postajax = $.ajax({
+                    url: requestUrl,
+                    type: "POST",
+                    data: requestData,
+                    dataType: "json",
+                    success : function( res ){
+                        if ( res.code == 0 ) {
+                                if( res.workmode == 0 ){
+                                    if( ipConflict != 0 ){
+                                        if( ccode == 'CN' ){
+                                            $('.mod-guide-end .gotohome').attr('href', 'http://' + ipConflict);
+                                            $('.mod-guide-end .gotohome span').text( $(this).text() + '(' + ipConflict + ')' );
+                                            $.pub( 'init:toStep', {step: 'end'} );
+                                         //wan linked
+                                           if ((isMobile.Android() || isMobile.iOS() ) && (hardware != 'r3a' && hardware != 'r3l'   && hardware != 'r4' && hardware != 'r4c' && hardware != 'r4cm' && hardware != 'r4ac')) {
+
+                                                $.pub('init:toStep', {step: 'bind'});
+                                                setTimeout(function(){
+                                                     if (isMobile.Android()) {
+                                                        window.location.href = 'miwifi://tab?tab=0&subtab=0';
+                                                        setTimeout(function(){
+                                                            
+                                                            $.pub( 'init:downloadApp', {step: 'download'} );
+
+                                                        },2000);
+                                                    }else{
+                                                        var ifr = document.createElement("iframe");
+                                                        ifr.src = "miwifi://tab?tab=0&subtab=0";
+                                                        ifr.style.display = "none"; 
+                                                        document.body.appendChild(ifr);
+                                                        window.setTimeout(function(){
+                                                           document.body.removeChild(ifr);
+                                                           window.location.href = "https://itunes.apple.com/cn/app/id859962702?mt=8&ls=1"; 
+                                                        },2000)
+                                                            }  
+                                                },3000);
+                                                    
+                                                        }
+                                        }else {
+                                         $.pub( 'init:toStep', {step: 'end'} );
+                                      }                    
+                                 }else{
+                                        setRebootPage();
+                                        if( !isMobile.any() ){
+                                            $('.for-middle-cont').addClass('for-middle-cont-width390');
+                                        }
+                                        $.pub( 'init:toStep', {step: 'reboot'} );
+                                    }
+                                }else{
+                                    $('.mod-guide-end .gotohome').attr('href', 'http://' + res.ip);
+                                    $('.mod-guide-end .gotohome span').text( $(this).text() + '(' + res.ip + ')' );
+                                    $('.ap-text-tip').show();
+                                    $.pub( 'init:toStep', {step: 'end'} );
+                                    //wan linked
+
+                                        if((isMobile.Android() || isMobile.iOS() ) && hardware != 'r3a' && hardware != 'r3l'  && hardware != 'r4' && hardware != 'r4c' && hardware != 'r4cm' && hardware != 'r4ac')  {
+
+                                            $.pub('init:toStep', {step: 'bind'});
+                                            setTimeout(function(){
+                                                 if (isMobile.Android()) {
+                                                    window.location.href = 'miwifi://tab?tab=0&subtab=0';
+                                                    setTimeout(function(){
+                                                        
+                                                        $.pub( 'init:downloadApp', {step: 'download'} );
+
+                                                    },2000);
+                                                }else{
+                                                    var ifr = document.createElement("iframe");
+                                                    ifr.src = "miwifi://tab?tab=0&subtab=0";
+                                                    ifr.style.display = "none"; 
+                                                    document.body.appendChild(ifr);
+                                                    window.setTimeout(function(){
+                                                       document.body.removeChild(ifr);
+                                                       window.location.href = "https://itunes.apple.com/cn/app/id859962702?mt=8&ls=1"; 
+                                                    },2000)
+                                                        }  
+                                            },3000);
+                                                    
+                                                        }  
+
+
+
+
+                                }
+                            
+                            } else {
+                                setError( res.msg );
+                                $.pub( 'init:toStep', {step: 'tipserror', from: 'routerpwd'} );
+                            }
+        
+                    }
+                });
+
+                $('#routerpwdgoback').on( 'click', function(e){
+                    e.preventDefault();
+                    if( postajax ){
+                        postajax.abort();
+                    }
+                    btn.removeClass('btn-primary-disabled').find('span').text('<%:配置完成%>');
+                });
+            }
+        });
+        // skip to
+        $( '.skipto' ).on( 'click', function( e ) {
+            e.preventDefault();
+            var me = this,
+                target = $( me ).attr( 'data-to' );
+            var from = $( me ).attr('data-from');
+
+            if ( target === 'ssidpwd' ) {
+                obj.wanType = 'dhcp';
+                setWanDHCP();
+            }
+            $.pub( 'init:toStep', {step: target, from: from} );
+            if( from ){
+                $( stepMap[target] ).find('.goback').attr('data-to', from);
+            }
+        });
+        //skip-pppoe
+        $( '.skip-pppoe' ).on( 'click', function( e ){
+            e.preventDefault();
+            $.pub( 'init:toStep', {step: 'ssidpwd'} );
+        });
+        //cancel pppoe
+        $('#cancelpppoe').on( 'click', function( e ){
+            e.preventDefault();
+            clearTimeout( pppoeStatusTimer );
+            $.pub( 'init:toStep', {step: 'pppoe'} );
+        });
+        //从旧路由器导入宽带设置
+        $('#pppoecatch').on( 'click', function(e){
+            e.preventDefault();
+            pppoeCatch();
+        });
+        //从旧路由器导入宽带设置--重试
+        $('#repppoecatch').on( 'click', function(e){
+            e.preventDefault();
+            pppoeCatch();
+        });
+        //中继ssid输入与选择方式互换
+        $('#changeSelectType').on('click', function(e){
+            e.preventDefault();
+            $('#wds .toggle-element').toggle();
+            $('#ssidSelectDiv').toggleClass('flag-is-select');
+            if( /<%:输入%>/.test( $(this).text() ) ){
+                $(this).html('<%:选择已有网络%>');
+            }else{
+                $(this).html('<%:手工输入网络名称%>');
+            }
+        });
+        //刷新附近wifi
+        $('#btnFreshenWIFI').on('click', function(e){
+            $('#ssidselect').next('.dummy').html('<%:正在扫描附近的无线网络%>');
+            updateWifiList();
+        });
+        //无线中继下拉选择
+        $('body').delegate('#dummydata .wds-wifi-option', 'click', function(e){
+            e.preventDefault();
+            showHideWifiInput();
+        });
+        // 路由器位置输入框失去焦点
+        $('#routerpositioninput').find('input').on('focus', function(){
+            console.log(' input is focus ');
+        });
+        $('#routerpositioninput').find('input').on('blur', function(){
+            var self = this;
+            setTimeout(function(){
+                console.log(' input is blur ');
+                var formItem = $(self).closest('.form-item');
+                var err = formItem.hasClass('form-item-err') ? true : false;
+                console.log( err );
+                if( !err ){
+                    $('#routerpwd .toggle-element').toggle();
+                    if( $.trim( self.value) ){
+                        $('#routerpositionselect .dummy').text( $.trim( self.value ) );
+                        $('#routerpositionselect option:selected').val( $.trim( self.value ) );
+                    }else{
+                        $('#routerpositionselect .dummy').text( $('#routerpositionselect option').eq(0).text() );
+                        $('#routerpositionselect select')[0].selectedIndex = 0;
+                    }
+                }
+            }, 100);
+        });
+        //路由器位置自定义
+        $('body').delegate('.self-define-option', 'click', function(e){
+            e.preventDefault();
+            $('#routerpwd .toggle-element').toggle();
+            $('#routerpositioninput').find('input').trigger('focus');
+        })
+        //与Wi-Fi 密码相同
+        $('#samepwd').on('click', function(){
+            var wifipassword = '';
+            if( obj.npassword ){
+                wifipassword = obj.npassword;
+            }else{
+                wifipassword = obj.wifiPassword;
+            }
+            var checksame = function(){
+                if( $('#routeradminpwd').find('input').val() != wifipassword ){
+                    $('#samepwd').prop('checked', false);
+                }
+            };
+            $('#routeradminpwd').find('input').on('blur', function(){
+                checksame();
+            });
+            if( $(this).is(':checked') ){
+                $('#routeradminpwd').find('input')
+                .focus()
+                .val( wifipassword );
+                setTimeout(function(){
+                    $('#routeradminpwd').find('input').blur();
+                }, 0);
+            }else{
+                $('#routeradminpwd').find('input')
+                .focus()
+                .val( '' )
+                .blur();
+            }
+        });
+        //post vas
+        $('#updateVasBtn').on('click', function(e){
+            e.preventDefault();
+            var inputs = $('#vasListUL input:checked');
+            var keyArr = [];
+            $('#vasListUL li').each(function(index, item){
+                var input = $(item).find('input');
+                if( input.is(':checked') ){
+                    keyArr.push( input.attr('data-key') + '=1' );
+                }else{
+                    keyArr.push( input.attr('data-key') + '=0' );
+                }
+            });
+            setVasSwitch( keyArr.join(',') );
+        });
+    });
+    $.sub( 'init:setPrivacy', function(){
+        var privacy = window.location.hash.replace('#privacy=', '');
+        var privacyData = {
+            privacy: privacy
+        };
+        $.ajax({
+            url: '<%=luci.dispatcher.build_url("api", "xqsystem", "set_privacy")%>',
+            type: 'POST',
+            data: privacyData
+        });
+    });
+    $.sub('init:downloadApp',function(){
+       //跳转函数
+
+        if(isMobile.Android()){
+                $('body').append("<iframe id='ifr' style='display:none'></iframe>");
+                $('#ifr').attr("src", "http://bigota.miwifi.com/xiaoqiang/client/xqapp_rom.apk");  
+            
+        }
+
+    });
+    var formatSsidName = function( ssid ){
+        var input = $('#ssidname');
+        var arr = ssid.split('_');
+        if( arr.length == 3 ){
+            if( arr[0] == 'Xiaomi' ){
+                //16化为10进制
+                var a = parseInt( "FFFF", 16 );
+                var b = parseInt( arr[1], 16 );
+                var c = parseInt( arr[2], 16 );
+                if( (a - b) == c ){
+                    ssid = arr[0] + '_' + arr[1];
+                }
+            }
+        }
+        input.val( ssid );
+    };
+    var bindInputFocus = function(){
+        var elems = $('.android-input');
+        var container = $('#guide-doc');
+        elems.each(function(){
+            $(this)
+            .focus(function(){
+                container.css({
+                    'margin-bottom': '200px'
+                });
+            })
+            .blur(function(){
+                container.css({
+                    'margin-bottom': '0'
+                });
+            });
+        });
+    };
+    $(function(){
+        if( isMobile.Android() ){
+            bindInputFocus();
+        }
+
+        window.scrollTo(0, 1);
+        formatSsidName( "<%=ssid%>" );
+        $.formInit();
+        $.pub( 'init:start', { wanType: wanType, ipConflict: ipConflict } );
+        $.pub( 'init:bindEvent' );
+        $.pub( 'init:setPrivacy' );
+    });
+}());
+</script>
+</body>
+</html>

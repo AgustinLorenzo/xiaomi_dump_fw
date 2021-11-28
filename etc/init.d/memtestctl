@@ -1,0 +1,41 @@
+#!/bin/sh /etc/rc.common
+#
+# This script is used for ddr memtester
+#
+
+START=49
+
+start() {
+	/usr/sbin/memtestctl.helper &
+
+	return 0
+}
+
+
+stop() {
+	if [ -f /usr/sbin/xqled ];then
+		xqled sys_ok
+	else
+		gpio 1 1
+		gpio 2 1
+		gpio 3 0
+	fi
+	killall memtestctl.helper
+	killall memtester
+
+	return 0
+}
+
+restart() {
+	if [ -f /usr/sbin/xqled ];then
+		xqled sys_ok
+	else
+		gpio 1 1
+		gpio 2 1
+		gpio 3 0
+	fi
+	pidof memtestctl.helper >/dev/null && killall -9 memtestctl.helper
+	pidof memtester >/dev/null && killall -9 memtester
+	sleep 1
+	start
+}

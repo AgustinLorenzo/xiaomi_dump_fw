@@ -1,0 +1,8 @@
+Package: qca-qmi-framework
+Version: miwifi_git-1
+Depends: libc, libpthread
+Source: qca_qsdk/qca_qsdk_spf10.0/feeds/qca-platform-utils/qca-qmi-framework
+Section: QCA
+Architecture: aarch64_cortex-a53
+Installed-Size: 23816
+Description:  QCA Linux QMI framework software

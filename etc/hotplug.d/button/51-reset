@@ -1,0 +1,20 @@
+ft_mode=`cat /proc/xiaoqiang/ft_mode`
+[ 1 -eq "$ft_mode" ] && {
+     echo -e "BUTTON:reset ACTION:$ACTION SEEN:$SEEN\n" | tee /dev/console /dev/pts/*
+     exit 0
+}
+
+if [ "$ACTION" = "released" -a "$BUTTON" = "wps" ]; then
+	default_hold=5
+	if [ "$SEEN" -ge $default_hold ]; then
+		echo "" > /dev/console
+		echo "RESET TO FACTORY SETTING EVENT DETECTED" > /dev/console
+		echo "PLEASE WAIT WHILE REBOOTING THE DEVICE..." > /dev/console
+		nvram set restore_defaults=1
+		nvram commit
+		#rm -rf /overlay/*
+		echo "Start ot reboot..." > /dev/console
+		reboot -f
+		echo "waiting to reboot" > /dev/console
+	fi
+fi

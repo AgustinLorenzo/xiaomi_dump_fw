@@ -1,0 +1,8 @@
+Package: datacenter
+Version: 1-1.1
+Depends: libc, curl, libstdcpp, libpthread, libthriftnb, boost-thread, boost-filesystem, libjson-c, boost-date_time, libconfig, libltdl, libzip, common-tools, packagesign, glog, libuuid, uci, libubus, libubox, libblobmsg-json
+Source: package/miwifi/datacenter
+Section: data
+Architecture: aarch64_cortex-a53
+Installed-Size: 1326896
+Description:  the datacenter slim version

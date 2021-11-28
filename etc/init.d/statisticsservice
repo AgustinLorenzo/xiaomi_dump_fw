@@ -1,0 +1,13 @@
+#!/bin/sh /etc/rc.common
+
+START=99
+STOP=09
+
+USE_PROCD=1
+PROG=/usr/sbin/statisticsservice
+
+start_service() {
+	procd_open_instance
+	procd_set_param command "$PROG" -c "/etc/statisticsservice/statisticsservice.conf"
+	procd_close_instance
+}

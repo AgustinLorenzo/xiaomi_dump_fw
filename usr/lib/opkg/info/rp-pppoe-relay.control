@@ -1,0 +1,13 @@
+Package: rp-pppoe-relay
+Version: 3.12-4
+Depends: libc, rp-pppoe-common
+Source: feeds/packages/net/rp-pppoe
+License: LGPL-2.0+
+Section: net
+Maintainer: Daniel Dickinson <lede@cshore.thecshore.com>
+Architecture: aarch64_cortex-a53
+Installed-Size: 13339
+Description:  Dubbed RP-PPPoE, this open-source product is ideal for Linux users with
+ a DSL "modem" whose Internet service provider uses PPPoE.
+ 
+ This package contains pppoe-relay.

@@ -1,0 +1,9 @@
+flag_ota_reboot
+flag_boot_type
+flag_boot_rootfs
+flag_last_success
+flag_format_overlay
+restore_defaults
+SN
+model
+ssh_en

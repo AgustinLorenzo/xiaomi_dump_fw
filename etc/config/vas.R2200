@@ -1,0 +1,36 @@
+config settings 'services'
+    option security_page '0'
+    option shopping_bar '0'
+    option auto_upgrade '-1'
+    option baidu_video_bar '0'
+
+config rule 'countrycode'
+    option security_page 'CN'
+    option shopping_bar 'CN'
+    option auto_upgrade 'CN'
+    option baidu_video_bar 'CN'
+
+config service 'invalid_page'
+    option on 'matool --method setKV --params invalid_page_status on; /etc/init.d/http_status_stat on'
+    option off 'matool --method setKV --params invalid_page_status off; /etc/init.d/http_status_stat off'
+    option status 'uci get http_status_stat.settings.enabled 2>/dev/null'
+
+config service 'security_page'
+    option on 'matool --method setKV --params security_page_status on;uci set security.common.malicious_url_firewall=1;uci commit security;touch /etc/config/securitypage/enable.tag; /etc/init.d/securitypage restart'
+    option off 'matool --method setKV --params security_page_status off;uci set security.common.malicious_url_firewall=0;uci commit security; /etc/init.d/securitypage restart'
+    option status ''
+
+config service 'shopping_bar'
+    option on 'matool --method setKV --params gouwudang_status on; /usr/bin/trmd -f; /usr/bin/trmd'
+    option off 'matool --method setKV --params gouwudang_status off; /usr/bin/trmd -f; /usr/bin/trmd'
+    option status ''
+
+config service 'auto_upgrade'
+    option on 'uci set otapred.settings.auto=1; uci commit otapred'
+    option off 'uci set otapred.settings.auto=0; uci commit otapred'
+    option status 'uci get otapred.settings.auto 2>/dev/null'
+
+config service 'baidu_video_bar'
+    option on 'matool --method setKV --params baidu_video_bar on; /usr/bin/trmd -f; /usr/bin/trmd'
+    option off 'matool --method setKV --params baidu_video_bar off; /usr/bin/trmd -f; /usr/bin/trmd'
+    option status ''

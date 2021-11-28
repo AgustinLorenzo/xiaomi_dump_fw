@@ -1,0 +1,10 @@
+#!/bin/sh
+logger -p notice -t "hotplug.d" "95-ddns: run because of $INTERFACE $ACTION"
+case "$ACTION" in
+ifup)
+/etc/init.d/ddns enabled && /usr/lib/ddns/dynamic_dns_updater.sh -n "$INTERFACE" -- start
+;;
+ifdown)
+/usr/lib/ddns/dynamic_dns_updater.sh -n "$INTERFACE" -- stop
+;;
+esac

@@ -1,0 +1,2 @@
+/lib/modules/4.4.60/nf_nat_proto_sctp.ko
+/etc/modules.d/51-nat-sctp

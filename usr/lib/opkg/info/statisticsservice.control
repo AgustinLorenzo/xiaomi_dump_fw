@@ -1,0 +1,8 @@
+Package: statisticsservice
+Version: 1_0_0-1
+Depends: libc, libstdcpp, libconfig, curl, glog, boost, ubox, ubus, libblobmsg-json
+Source: package/miwifi/statisticsservice
+Section: opt
+Architecture: aarch64_cortex-a53
+Installed-Size: 17645
+Description:  statistics service

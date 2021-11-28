@@ -1,0 +1,25 @@
+#!/bin/sh /etc/rc.common
+
+START=13
+
+USE_PROCD=1
+NAME=tbus
+PROG=/sbin/tbusd
+
+start_service() {
+	mode=$(uci -q get xiaoqiang.common.NETMODE)
+	if [ "$mode" != "whc_re" -a "$mode" != "wifiapmode" -a "$mode" != "lanapmode" ]; then
+	    procd_open_instance
+	    procd_set_param command "$PROG"
+	    procd_set_param respawn
+	    procd_close_instance
+	fi
+}
+
+stop() {
+	service_stop ${PROG}
+}
+
+reload() {
+	service_reload ${PROG}
+}

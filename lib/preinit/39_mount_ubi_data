@@ -1,0 +1,108 @@
+#!/bin/sh
+# Copyright (C) 2006-2010 OpenWrt.org
+# Copyright (C) 2016 Xiaomi
+
+ubi_data_devn=1
+ubi_data_vold_id=0
+
+do_format_ubifs() {
+	if [ $1 ]; then
+		[ -e /dev/ubi$ubi_data_devn ] && ubidetach --devn=$ubi_data_devn
+		ubiformat /dev/mtd$1 --sub-page-size=2048 --yes
+		ubiattach /dev/ubi_ctrl --devn=$ubi_data_devn --mtdn=$1
+		[ "$?" = "0" ] ||  {
+			maj=`cat /sys/class/ubi/ubi$ubi_data_devn/dev|awk -F':' '{print $1}'`
+			min=`cat /sys/class/ubi/ubi$ubi_data_devn/dev|awk -F':' '{print $2}'`
+			[ -c /dev/ubi${ubi_data_devn} ] || mknod /dev/ubi${ubi_data_devn} c $maj $min
+		}
+		ubimkvol /dev/ubi$ubi_data_devn --vol_id=$ubi_data_vold_id --name=data --maxavsize
+		ubidetach --devn=$ubi_data_devn
+	fi
+}
+
+do_data_mnt_fail() {
+	local mtd_dev=$1
+	local flag=$(nvram get flag_data_mount_fail)
+
+	if [ "$flag" = "1" ]; then
+		#save whatever we got in crash
+		dmesg > /tmp/dbgmsg.txt
+		mtd_crash_log -f /tmp/dbgmsg.txt
+
+		echo "FATAL: Data mount fail again. Restoring defaults."
+		nvram set flag_format_overlay=1
+		do_format_ubifs $mtd_dev
+
+		ubiattach /dev/ubi_ctrl --devn=$ubi_data_devn --mtdn=$mtd_dev
+		mount ubi${ubi_data_devn}_${ubi_data_vold_id} -t ubifs /data
+		[ "$?" = "0" ] ||  {
+			# Something is seriously wrong...
+			nvram set restore_defaults=1
+			nvram unset flag_data_mount_fail
+			nvram commit
+			sync
+			reboot -f
+			return 1
+
+		}
+		nvram unset flag_data_mount_fail
+		nvram commit
+	else
+		echo "FATAL: Data mount fail. Reboot and give it another try."
+		nvram set flag_data_mount_fail=1
+		nvram commit
+		sync
+		reboot -f
+		return 1
+	fi
+
+}
+
+find_mount_ubi_data() {
+	local mtd_dev=$(grep overlay /proc/mtd | awk -F: '{print substr($1,4)}')
+
+	nanddump --bb=skipbad --omitoob --length=2048 -f /tmp/ubi_data_firstpage.bin /dev/mtd$mtd_dev > /dev/null 2>&1
+	local overlay_magic=$(hexdump -C -n 4 /tmp/ubi_data_firstpage.bin | awk 'NR<2 {print $2$3$4$5}')
+	if [ "$overlay_magic" = "ffffffff" ]; then
+		echo "overlay appears erased"
+		nvram set flag_format_overlay=1
+		rec_mtd=$(find_mtd_part cfg_bak)
+		[ -n "$rec_mtd"  ] && touch /tmp/need_config_recovery
+	fi
+	rm /tmp/ubi_data_firstpage.bin
+
+	local format_flag=$(nvram get flag_format_overlay)
+	if [ "$format_flag" = "1" ]; then
+		echo "flag_format_overlay is set, format"
+		do_format_ubifs $mtd_dev
+		# DO NOT unset flag_format_overlay here
+		# This flag is also used in 90_mount_bind_etc to recover /etc files
+	fi
+
+	ubiattach /dev/ubi_ctrl --devn=$ubi_data_devn --mtdn=$mtd_dev
+	maj=`cat /sys/class/ubi/ubi$ubi_data_devn/dev|awk -F':' '{print $1}'`
+	min=`cat /sys/class/ubi/ubi$ubi_data_devn/dev|awk -F':' '{print $2}'`
+	[ -c /dev/ubi${ubi_data_devn} ] || mknod /dev/ubi${ubi_data_devn} c $maj $min
+	[ -c /dev/ubi${ubi_data_devn}_${ubi_data_vold_id} ] || ubimkvol /dev/ubi$ubi_data_devn --vol_id=$ubi_data_vold_id --name=data --maxavsize
+	mount ubi${ubi_data_devn}_${ubi_data_vold_id} -t ubifs /data
+	[ "$?" = "0" ] ||  {
+		do_data_mnt_fail $mtd_dev
+		touch /tmp/need_config_recovery
+	}
+
+	mkdir -p /data/userdisk
+	mount -o bind /data/userdisk /userdisk
+	mkdir -p /userdisk/data
+
+	#FIXME: set /userdisk/data to readonly
+	mount --bind /readonly /userdisk/data
+
+}
+
+do_mount_ubi_data() {
+	#check_skip || {
+		find_mount_ubi_data && pi_mount_skip_next=true
+	#}
+}
+
+boot_hook_add preinit_mount_root do_mount_ubi_data

@@ -1,0 +1,11 @@
+/lib/modules/4.4.60/cls_fw.ko
+/lib/modules/4.4.60/cls_route.ko
+/lib/modules/4.4.60/cls_flow.ko
+/lib/modules/4.4.60/sch_ingress.ko
+/lib/modules/4.4.60/act_skbedit.ko
+/lib/modules/4.4.60/cls_u32.ko
+/etc/modules.d/70-sched-core
+/lib/modules/4.4.60/em_u32.ko
+/lib/modules/4.4.60/cls_tcindex.ko
+/lib/modules/4.4.60/sch_hfsc.ko
+/lib/modules/4.4.60/act_mirred.ko

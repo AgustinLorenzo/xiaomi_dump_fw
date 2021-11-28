@@ -1,0 +1,11 @@
+Package: openvpn-openssl
+Version: 2.4.5-4.2
+Depends: libc, kmod-tun, liblzo, libopenssl
+Provides: openvpn, openvpn-crypto
+Source: package/network/services/openvpn
+License: GPL-2.0
+Section: net
+Maintainer: Felix Fietkau <nbd@nbd.name>
+Architecture: aarch64_cortex-a53
+Installed-Size: 185382
+Description:  Open source VPN solution using OpenSSL

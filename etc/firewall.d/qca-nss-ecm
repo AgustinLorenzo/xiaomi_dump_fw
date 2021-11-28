@@ -1,0 +1,31 @@
+#!/bin/sh
+#
+# Copyright (c) 2015-2016, The Linux Foundation. All rights reserved.
+#
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+#
+
+ecm_type=`uci -q get ecm.global.acceleration_engine`
+if [ $ecm_type == "nss" -o $ecm_type == "auto" ]; then
+	chk=$(iptables -L FORWARD 2>/dev/null | grep -c 'PHYSDEV')
+	if [ $chk -lt 1 ]; then
+		iptables -I FORWARD -m physdev --physdev-is-bridged -j ACCEPT
+	fi
+	chk6=$(ip6tables -L FORWARD 2>/dev/null | grep -c 'PHYSDEV')
+	if [ $chk6 -lt 1 ]; then
+		ip6tables -I FORWARD -m physdev --physdev-is-bridged -j ACCEPT
+	fi
+else
+	iptables -D FORWARD -m physdev --physdev-is-bridged -j ACCEPT
+	ip6tables -D FORWARD -m physdev --physdev-is-bridged -j ACCEPT
+fi

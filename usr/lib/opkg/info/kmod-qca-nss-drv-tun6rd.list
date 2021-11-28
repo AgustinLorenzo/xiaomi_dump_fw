@@ -1,0 +1,2 @@
+/etc/modules.d/60-qca-nss-drv-tun6rd
+/lib/modules/4.4.60/qca-nss-tun6rd.ko

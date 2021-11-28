@@ -1,0 +1,8 @@
+Package: stat_points
+Version: 2.0-1.1
+Depends: libc, libcurl, liblua, libjson-c, libpolarssl, libuci
+Source: package/miwifi/system/stat_points
+Section: data
+Architecture: aarch64_cortex-a53
+Installed-Size: 21483
+Description:  stat_points

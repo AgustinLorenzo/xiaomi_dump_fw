@@ -1,0 +1,3 @@
+/usr/sbin/portscan
+/etc/user_password.txt
+/usr/sbin/rmportscanresult.sh

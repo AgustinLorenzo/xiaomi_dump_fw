@@ -1,0 +1,13 @@
+Package: busybox
+Version: 1.25.1-2
+Depends: libc, librpc
+Source: package/utils/busybox
+License: GPL-2.0
+LicenseFiles: LICENSE archival/libarchive/bz/LICENSE
+Section: base
+Essential: yes
+Maintainer: Felix Fietkau <nbd@openwrt.org>
+Architecture: aarch64_cortex-a53
+Installed-Size: 259144
+Description:  The Swiss Army Knife of embedded Linux.
+ It slices, it dices, it makes Julian Fries.

@@ -1,0 +1,2 @@
+/etc/modules.d/61-qca-nss-cfi-ocf
+/lib/modules/4.4.60/qca-nss-cfi-ocf.ko

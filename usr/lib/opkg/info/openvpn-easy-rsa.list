@@ -1,0 +1,10 @@
+/etc/easy-rsa/x509-types/ca
+/lib/upgrade/keep.d/openvpn-easy-rsa
+/etc/easy-rsa/openssl-1.0.cnf
+/etc/easy-rsa/x509-types/code-signing
+/usr/bin/easyrsa
+/etc/easy-rsa/x509-types/client
+/etc/easy-rsa/vars
+/etc/easy-rsa/x509-types/COMMON
+/etc/easy-rsa/openssl-easyrsa.cnf
+/etc/easy-rsa/x509-types/server

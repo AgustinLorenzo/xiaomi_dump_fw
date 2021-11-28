@@ -1,0 +1,8 @@
+/usr/sbin/xqbc
+/usr/sbin/format2domain
+/usr/share/xiaoqiang/public.pem
+/usr/bin/aes_crypt
+/etc/init.d/xqbc
+/usr/sbin/multipartcutter
+/bin/mkxqimage
+/bin/mk_ecos_image

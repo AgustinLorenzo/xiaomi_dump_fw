@@ -1,0 +1,18 @@
+#!/bin/sh
+
+. /lib/functions.sh
+
+MAC=$2
+EVENT=$3
+TYPE=$4
+IFNAME=$5
+IS_REPEAT=$6
+IP=$7
+
+export MAC EVENT TYPE IFNAME IS_REPEAT IP
+
+[ \! -z "$1" -a -d /etc/traffic.d/$1 ] && {
+	for script in $(ls /etc/traffic.d/$1/* 2>&-); do (
+		[ -f $script ] && . $script
+	); done
+}

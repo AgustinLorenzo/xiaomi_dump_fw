@@ -1,0 +1,12 @@
+/usr/bin/pidstat
+/usr/lib/sysstat/sadc
+/etc/config/sysstat
+/usr/bin/iostat
+/etc/sysstat/sysstat.ioconf
+/usr/bin/sadf
+/usr/bin/sar
+/etc/init.d/sysstat
+/lib/upgrade/keep.d/sysstat
+/usr/lib/sysstat/sa1
+/usr/lib/sysstat/sa2
+/usr/bin/mpstat

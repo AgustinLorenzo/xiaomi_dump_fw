@@ -1,0 +1,146 @@
+config misc mount_bind_etc
+	option flag_name flag_format_overlay
+
+config misc format_ext_part
+	option save_boot_status 0
+
+config misc mount_jffs2
+	option do_mount 0
+
+config misc determine_ext_root
+	option skip_det_ext_root 0
+
+config misc wireless
+	option if_2G wifi1
+	option if_5G wifi0
+	option guest_2G wl14
+	option apclient_2G wl11
+	option apclient_5G wl12
+	option wl_if_count 2
+	option ifname_2G wl1
+	option ifname_5G wl0
+	option ifname_guest_2G wl14
+	option ifname_apclient_2G wl11
+	option wl12_scanifname 'wl0'
+	option wl11_scanifname 'wl1'
+	option wl12_scanband  '5g'
+	option wl11_scanband  '2g'
+	option wl12_device  'wifi0'
+	option wl11_device  'wifi1'
+	option wl12_mode  '2'
+	option wl11_mode  '1'
+	list APCLI_IFNAMES 'wl12'
+	list APCLI_IFNAMES 'wl11'
+
+	list DEVICE_LIST 'device_2g'
+	list DEVICE_LIST 'device_5g'
+	option device_2g_band '2g'
+	option device_2g_name 'wifi1'
+	option device_2g_primary 'iface_2g'
+	option device_5g_band '5g'
+	option device_5g_name 'wifi0'
+	option device_5g_primary 'iface_5g'
+	list IFACE_LIST 'iface_2g'
+	list IFACE_LIST 'iface_5g'
+	list IFACE_LIST 'iface_guest_2g'
+	list IFACE_LIST 'iface_ready_2g'
+	option iface_2g_ifname 'wl1'
+	option iface_2g_deviceidx 'device_2g'
+	option iface_2g_network 'lan'
+	option iface_5g_ifname 'wl0'
+	option iface_5g_deviceidx 'device_5g'
+	option iface_5g_network 'lan'
+	option iface_guest_2g_name 'guest_2G'
+	option iface_guest_2g_ifname 'wl14'
+	option iface_guest_2g_deviceidx 'device_2g'
+	option iface_guest_2g_network 'guest'
+	list APCLI_LIST 'apcli_2g'
+	list APCLI_LIST 'apcli_5g'
+	option apcli_2g_ifname 'wl11'
+	option apcli_2g_deviceidx 'device_2g'
+	option apcli_2g_workmode '1'
+	option apcli_2g_network 'lan'
+	option apcli_5g_ifname 'wl12'
+	option apcli_5g_deviceidx 'device_5g'
+	option apcli_5g_workmode '2'
+	option apcli_5g_network 'lan'
+
+config misc httpd
+	option uhttpd 0
+
+config misc sw_reg
+	option sw_lan_ports	'3 4 5'
+	option sw_wan_port	'2'
+
+config misc switchop
+	option bridgeap_connect 'bridgeap_connect_r3600'
+	option bridgeap_open 'bridgeap_open_r3600'
+	option bridgeap_close 'bridgeap_close_r3600'
+	option wifiap_connect 'wifiap_connect_r1d'
+	option wifiap_open 'wifiap_open_r1d'
+	option wifiap_close 'wifiap_close_r1d'
+
+config misc quickpass
+	option ctf 0
+
+config misc log
+	option redundancy_mode 1
+
+config misc boot
+	option syslog 0
+	option checkswap 0
+
+config misc firewall
+	option webinit 1
+
+config misc messagingagent
+	option thread_num 6
+
+config misc iwevent
+	option authorize 1
+
+config misc initd
+	option cpulimit_en 0
+	option cpuctr_en 1
+	option trafctr_en 1
+	option networkdt_en 1
+
+config misc hardware
+	option model R3600 
+	option recovery 0
+	option gpio 0
+	option flash_per 0
+	option bbs 'http://bbs.xiaomi.cn/f-354'
+	option verify 'cd /tmp;mkxqimage -v '
+	option camera '/userdisk/data/'
+	option usbmode 0
+	option rom_up_path '/userdisk/data/upload/'
+	option rom_up_file 'customrom.bin'
+	option rom_down_path '/userdisk/data/otadownload/'
+	option cpufreq '1.4GHz'
+	option wanspeed '1000'
+	option memtype 'DDR3'
+	option memfreq '1333MHz'
+	option memsize '512MB'
+
+config misc modules
+	option guestwifi 'wl14'
+
+config misc config_bkup
+	option cfg_bkup_en 1
+
+config misc fantmp
+	option fantmp_en 0
+
+config misc check_for_boottype
+	option flag31 0
+
+config misc ota_pred
+	option download 1
+
+config misc http_proxy
+	option fastpath "none"
+
+config misc cgroup
+	option memgrp1_en 1
+	option memgrp1_limit '150m'

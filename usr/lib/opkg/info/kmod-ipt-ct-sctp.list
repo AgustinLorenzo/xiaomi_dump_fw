@@ -1,0 +1,2 @@
+/lib/modules/4.4.60/nf_conntrack_proto_sctp.ko
+/etc/modules.d/50-ipt-ct-sctp

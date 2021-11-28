@@ -1,0 +1,54 @@
+#!/bin/sh
+[ -z "$1" ] && echo "Error: should be run by udhcpc" && exit 1
+
+setup_interface() {
+	echo "udhcpc: ifconfig $interface $ip netmask ${subnet:-255.255.255.0} broadcast ${broadcast:-+}"
+	ifconfig $interface $ip netmask ${subnet:-255.255.255.0} broadcast ${broadcast:-+}
+
+	echo "server_ip = $serverid"
+
+	[ -n "$router" ] && [ "$router" != "0.0.0.0" ] && [ "$router" != "255.255.255.255" ] && {
+		echo "udhcpc: setting default routers: $router"
+
+        for i in $router ; do
+            nvram set iot_dev_ipaddr=$router
+        done
+		return
+
+    }
+
+	[ -n "$serverid" ] && {
+		echo "server_ip = $serverid"
+
+		nvram set iot_dev_ipaddr=$serverid
+
+		return
+	}
+
+	[ -n "$dns" ] && {
+		echo "dns = $dns"
+
+		nvram set iot_dev_ipaddr=$serverid
+
+		return
+	}
+}
+
+
+applied=
+case "$1" in
+	deconfig)
+		ifconfig "$interface" 0.0.0.0
+	;;
+	renew)
+		setup_interface update
+	;;
+	bound)
+		setup_interface ifup
+	;;
+esac
+
+# user rules
+[ -f /etc/udhcpc.user ] && . /etc/udhcpc.user
+
+exit 0

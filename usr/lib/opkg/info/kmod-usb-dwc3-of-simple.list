@@ -1,0 +1,4 @@
+/etc/modules.d/53-usb-dwc3-of-simple
+/lib/modules/4.4.60/dbm.ko
+/etc/modules-boot.d/53-usb-dwc3-of-simple
+/lib/modules/4.4.60/dwc3-of-simple.ko

@@ -1,0 +1,53 @@
+#!/bin/sh /etc/rc.common
+# Copyright (C) 2015 OpenWrt.org
+
+START=21
+
+USE_PROCD=1
+
+start_service() {
+	# start fcgi-cgi first
+	procd_open_instance
+	procd_set_param command /usr/bin/spawn-fcgi -a 127.0.0.1 -p 8920 -U nobody -F 1 -- /usr/bin/fcgi-cgi
+	#procd_set_param file /etc/nginx/nginx.conf
+	procd_set_param respawn
+	procd_close_instance
+	echo "start fcgi-cgi by spawn-fcgi."
+	# start nginx
+	[ -d /var/log/nginx ] || mkdir -p /var/log/nginx
+	[ -d /var/lib/nginx ] || mkdir -p /var/lib/nginx
+
+	procd_open_instance
+	procd_set_param command /usr/sbin/nginx -c /etc/nginx/nginx.conf -g 'daemon off;'
+	procd_set_param file /etc/nginx/nginx.conf
+	procd_set_param respawn
+	procd_close_instance
+	echo "start nginx ok."
+}
+
+stop_fcgi() {
+	killall -s 9 fcgi-cgi >/dev/null 2>&1
+	killall -s 9 luci >/dev/null 2>&1
+}
+
+stop_service() {
+	# stop nginx first
+	# by procd
+	echo "stop nginx by procd ok."
+
+	# stop fcgi-cgi
+	#stop_fcgi
+	echo "stop fcgi-cgi ok."
+}
+
+##########################################
+### old cmdline, just for refer ##########
+##########################################
+# fastcgi params
+FCGI_CONNECTION=4
+FCGI_NUM=1
+fcgi_connection=${FCGI_CONNECTION:-8}
+FCGIFLAG="/usr/bin/fcgi-cgi -c $fcgi_connection" # default is 16 connection which is too much
+fcgi_process=${FCGI_NUM:-2}
+FCGILINE="nice -n-5 /usr/bin/spawn-fcgi -a 127.0.0.1 -p 8920 -u root -U nobody -F $fcgi_process -- ${FCGIFLAG}"
+##########################################

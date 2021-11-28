@@ -1,0 +1,9 @@
+Package: luci-lib-json
+Version: 0.11.1-1
+Depends: libc
+Source: feeds/luci/luci
+Section: luci
+Maintainer: LuCI Development Team <luci@lists.subsignal.org>
+Architecture: aarch64_cortex-a53
+Installed-Size: 3953
+Description:  LuCI JSON library

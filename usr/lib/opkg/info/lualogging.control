@@ -1,0 +1,8 @@
+Package: lualogging
+Version: 1-1.3.0
+Depends: libc, lua
+Source: package/lualogging
+Section: lang
+Architecture: aarch64_cortex-a53
+Installed-Size: 3992
+Description:  lualogging

@@ -1,0 +1,1 @@
+WIFI_FW/fw_version.txt

@@ -1,0 +1,2 @@
+/etc/modules.d/51-qca-nss-drv-map-t
+/lib/modules/4.4.60/qca-nss-map-t.ko

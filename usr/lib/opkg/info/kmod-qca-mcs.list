@@ -1,0 +1,2 @@
+/etc/modules.d/41-qca-mcs
+/lib/modules/4.4.60/qca-mcs.ko

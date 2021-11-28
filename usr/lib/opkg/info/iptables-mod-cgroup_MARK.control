@@ -1,0 +1,9 @@
+Package: iptables-mod-cgroup_MARK
+Version: 2.10-1
+Depends: libc, iptables, kmod-ipt-cgroup_MARK
+Source: feeds/packages/net/xtables-addons
+Section: net
+Maintainer: Jo-Philipp Wich <jow@openwrt.org>
+Architecture: aarch64_cortex-a53
+Installed-Size: 2000
+Description:  cgroup_MARK iptables extension

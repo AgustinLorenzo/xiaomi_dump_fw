@@ -1,0 +1,4 @@
+/usr/sbin/memtester
+/etc/init.d/memtestctl
+/usr/sbin/led_ctrl.sh
+/usr/sbin/memtestctl.helper

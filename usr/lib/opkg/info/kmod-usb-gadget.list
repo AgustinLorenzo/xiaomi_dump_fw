@@ -1,0 +1,2 @@
+/etc/modules.d/45-usb-gadget
+/lib/modules/4.4.60/udc-core.ko

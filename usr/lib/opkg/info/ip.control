@@ -1,0 +1,8 @@
+Package: ip
+Version: 3.3.0-2
+Depends: libc, libnl-tiny
+Source: package/network/utils/iproute2
+Section: net
+Architecture: aarch64_cortex-a53
+Installed-Size: 93105
+Description:  Routing control utility

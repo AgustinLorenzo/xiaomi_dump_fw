@@ -1,0 +1,11 @@
+Package: libmagic
+Version: 5.25-2
+Depends: libc, zlib
+Source: feeds/packages/libs/file
+License: BSD-2c
+LicenseFiles: COPYING
+Section: libs
+Maintainer: Marko Ratkaj <marko.ratkaj@sartura.hr>
+Architecture: aarch64_cortex-a53
+Installed-Size: 48476
+Description:  File type determination library

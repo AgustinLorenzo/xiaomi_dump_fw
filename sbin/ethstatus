@@ -1,0 +1,13 @@
+#!/bin/sh
+
+for port in 1 2 3 4; do
+	status=`cat /sys/class/net/eth$port/carrier`
+	
+	port_num=`expr $port + 1`
+	if [ "$status" = "1" ]; then
+		echo "port $port_num:up"
+	else
+		echo "port $port_num:down"
+	fi
+done
+

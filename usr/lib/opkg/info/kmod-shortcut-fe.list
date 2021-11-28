@@ -1,0 +1,5 @@
+/lib/modules/4.4.60/shortcut-fe-ipv6.ko
+/usr/bin/sfe_dump
+/etc/modules.d/09-shortcut-fe
+/lib/modules/4.4.60/shortcut-fe.ko
+/etc/init.d/shortcut-fe

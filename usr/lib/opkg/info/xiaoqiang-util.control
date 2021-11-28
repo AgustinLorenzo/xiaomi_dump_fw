@@ -1,0 +1,8 @@
+Package: xiaoqiang-util
+Version: 1-1.1
+Depends: libc, base-files, luasocket, curl, librt, libuci, libpolarssl, libopenssl
+Source: package/miwifi/xiaoqiang-util
+Section: net
+Architecture: aarch64_cortex-a53
+Installed-Size: 24586
+Description:  OTA

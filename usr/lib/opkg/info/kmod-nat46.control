@@ -1,0 +1,10 @@
+Package: kmod-nat46
+Version: 4.4.60+6-1
+Depends: kernel (=4.4.60-1-685217311214bd18a76fad2cfb7ce2b4), kmod-ipv6
+Source: qca_qsdk/qca_qsdk_spf10.0/feeds/routing/nat46
+License: GPL-2.0
+Section: kernel
+Maintainer: Steven Barth <cyrus@openwrt.org>
+Architecture: aarch64_cortex-a53
+Installed-Size: 17929
+Description:  Stateless NAT46 translation kernel module

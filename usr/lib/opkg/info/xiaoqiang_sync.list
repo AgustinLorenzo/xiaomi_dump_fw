@@ -1,0 +1,4 @@
+/usr/sbin/xiaoqiang_sync
+/etc/init.d/xiaoqiang_sync
+/sbin/notice_tbus_device_maclist.sh
+/usr/sbin/ap_connect.lua

@@ -1,0 +1,7 @@
+/etc/sysctl.d/qca-nss-drv.conf
+/lib/debug/qca-nss-drv
+/etc/modules.d/32-qca-nss-drv
+/etc/init.d/qca-nss-drv
+/lib/modules/4.4.60/qca-nss-drv.ko
+/etc/config/nss
+/etc/hotplug.d/firmware/10-qca-nss-fw

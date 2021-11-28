@@ -1,0 +1,2 @@
+/etc/modules.d/51-qca-nss-drv-bridge-mgr
+/lib/modules/4.4.60/qca-nss-bridge-mgr.ko

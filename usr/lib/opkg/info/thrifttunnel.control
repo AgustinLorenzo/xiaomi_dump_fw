@@ -1,0 +1,8 @@
+Package: thrifttunnel
+Version: 1-1.0
+Depends: libc, libstdcpp, libpthread, libthrift, boost-filesystem, libubus, ubusd
+Source: package/miwifi/thrifttunnel
+Section: opt
+Architecture: aarch64_cortex-a53
+Installed-Size: 52025
+Description:  the utility tunnel to a thrift protocol based service

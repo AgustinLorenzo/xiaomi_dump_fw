@@ -1,0 +1,2 @@
+config core 'common'
+    option 'admin' 'b3a4190199d9ee7fe73ef9a4942a69fece39a771'

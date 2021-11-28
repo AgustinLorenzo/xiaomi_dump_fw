@@ -1,0 +1,9 @@
+Package: kmod-qca-nss-ecm-premium
+Version: 4.4.60+miwifi_git-1
+Depends: kernel (=4.4.60-1-685217311214bd18a76fad2cfb7ce2b4), kmod-qca-nss-drv, iptables-mod-extra, kmod-ipt-conntrack, kmod-pppoe, kmod-qca-hyfi-bridge, kmod-qca-mcs, kmod-nat46, kmod-l2tp, kmod-pppol2tp, kmod-pptp, kmod-shortcut-fe-drv, kmod-bonding
+Provides: kmod-qca-nss-ecm
+Source: qca_qsdk/qca_qsdk_spf10.0/feeds/nss-host/qca-nss-ecm
+Section: kernel
+Architecture: aarch64_cortex-a53
+Installed-Size: 328252
+Description:  QCA NSS Enhanced Connection Manager (ECM) (with premium features)

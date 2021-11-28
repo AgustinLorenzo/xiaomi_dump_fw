@@ -1,0 +1,8 @@
+Package: memtester
+Version: 2.0-1.1
+Depends: libc, libcurl, liblua, libjson-c, libpolarssl, libuci, procps, zlib
+Source: package/miwifi/system/memtester
+Section: data
+Architecture: aarch64_cortex-a53
+Installed-Size: 7974
+Description:  memtester

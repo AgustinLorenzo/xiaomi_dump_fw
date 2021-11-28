@@ -1,0 +1,20 @@
+#!/bin/sh
+# Copyright (C) 2016 Xiaomi
+
+OPT=$1
+
+case $OPT in
+    system)
+	echo "ubifs check: System fail"
+        return $?
+	;;
+    data)
+	# try send push to user?
+	echo "ubifs check: Data fail"
+        return $?
+	;;
+    *)
+        return 0
+	;;
+esac
+

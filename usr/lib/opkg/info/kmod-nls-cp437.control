@@ -1,0 +1,10 @@
+Package: kmod-nls-cp437
+Version: 4.4.60-1
+Depends: kernel (=4.4.60-1-685217311214bd18a76fad2cfb7ce2b4), kmod-nls-base
+Source: package/kernel/linux
+License: GPLv2
+Section: kernel
+Status: unknown hold not-installed
+Architecture: aarch64_cortex-a53
+Installed-Size: 2132
+Description:  Kernel module for NLS Codepage 437 (United States, Canada)

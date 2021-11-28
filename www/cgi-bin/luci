@@ -1,0 +1,11 @@
+#!/usr/bin/lua
+require "luci.cacheloader"
+require "luci.sgi.cgi"
+local posix=require("posix")
+--posix.openlog("luci : ","np")
+posix.openlog("luci : ", LOG_NDELAY, 0)
+luci.dispatcher.indexcache = "/tmp/luci-indexcache"
+
+luci.sgi.cgi.run()
+
+posix.closelog()

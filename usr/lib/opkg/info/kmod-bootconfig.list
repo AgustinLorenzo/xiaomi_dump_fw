@@ -1,0 +1,3 @@
+/etc/modules-boot.d/56-bootconfig
+/etc/modules.d/56-bootconfig
+/lib/modules/4.4.60/bootconfig.ko

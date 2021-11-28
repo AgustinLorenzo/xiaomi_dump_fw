@@ -1,0 +1,3 @@
+/etc/init.d/statisticsservice
+/usr/sbin/statisticsservice
+/etc/statisticsservice/statisticsservice.conf

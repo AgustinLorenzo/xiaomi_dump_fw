@@ -1,0 +1,112 @@
+#!/bin/sh
+
+logger -p notice -t "hotplug.d" "60-wan: run because of $INTERFACE $ACTION"
+
+point_lan_ifnum() {
+
+    loginfo=$(cat /tmp/stat_points_privacy.log | grep lan_ifup_num)
+    if [ -n "$loginfo" ]; then
+        echo "lan ifup loginfo already exist!"
+        return
+    fi
+
+    HARDWARE=$(/sbin/uci get /usr/share/xiaoqiang/xiaoqiang_version.version.HARDWARE)
+    if [ "$HARDWARE" == "R1CM" ]; then
+        portinfo=$(/usr/sbin/ethstt)
+        port0=$(echo $portinfo | awk '{print $2}')
+        port1=$(echo $portinfo | awk '{print $4}')
+
+        if [ "$port0" == "0:up" -a "$port1" == "1:up" ]; then
+            logger stat_points_privacy lan_ifup_num=r1cm:router:2
+            echo "lan num is 2!"
+        elif [ "$port0" == "0:up" -o "$port1" = "1:up" ]; then
+            logger stat_points_privacy lan_ifup_num=r1cm:router:1
+            echo "lan num is 1"
+        elif [ "$port0" == "0:down" -a "$port1" = "1:down" ]; then
+            logger stat_points_privacy lan_ifup_num=r1cm:router:0
+            echo "lan num is 0"
+        else
+            echo "lan num unknown!"
+        fi
+    elif [ "$HARDWARE" == "R3" ]; then
+        portinfo=$(/usr/sbin/ethstt)
+        port0=$(echo $portinfo | awk '{print $4}')
+        port1=$(echo $portinfo | awk '{print $10}')
+
+        if [ "$port0" == "1:up" -a "$port1" == "4:up" ]; then
+            logger stat_points_privacy lan_ifup_num=r3:router:2
+            echo "lan num is 2!"
+        elif [ "$port0" == "1:up" -o "$port1" = "4:up" ]; then
+            logger stat_points_privacy lan_ifup_num=r3:router:1
+            echo "lan num is 1"
+        elif [ "$port0" == "1:down" -a "$port1" = "4:down" ]; then
+            logger stat_points_privacy lan_ifup_num=r3:router:0
+            echo "lan num is 0"
+        else
+            echo "lan num unknown!"
+        fi
+    fi
+}
+
+[ "$ACTION" = "ifup" ] && [ "$INTERFACE" = "wan" ] && {
+    . /lib/network/config.sh
+    [ -f /usr/sbin/smartdns.lua ] && /usr/bin/lua /usr/sbin/smartdns.lua &
+    ubus_call network.interface.wan status
+    json_select "route"
+    __idx=1
+    while json_is_a "$__idx" object; do
+        json_select "$((__idx++))"
+        json_get_var target "target"
+        json_get_var mask "mask"
+        json_get_var nexthop "nexthop"
+        route add -net $target/$mask gw $nexthop metric 50
+        json_select ".."
+    done
+    point_lan_ifnum
+}
+
+mode=$(uci -q get ipv6.settings.mode)
+[ "$INTERFACE" = "wan6" ] && [ "$mode" = "native" -o "$mode" = "nat" ] && {
+    #flush all deprecated address
+    ip -6 address flush scope global deprecated dynamic
+    ip6_addr=$(ip addr show dev br-lan | grep inet6 | grep -v fe80:: | awk 'NR==1 {print $2}')
+    if [ "$ACTION" == "ifupdate" ]; then
+        ip -6 route | grep default 2>&- >&-
+        # no ip6 default route
+        if [ $? -ne 0 ]; then
+            ip address change $ip6_addr dev br-lan preferred_lft 0
+        else
+            if [ "$mode" == "nat" ]; then
+                ip address change $ip6_addr dev br-lan preferred_lft forever
+            fi
+        fi
+    elif [ "$ACTION" == "ifdown" ]; then
+        ip address change $ip6_addr dev br-lan preferred_lft 0
+    elif [ "$ACTION" == "ifup" ]; then
+        if [ "$mode" = "native" ]; then
+            ip address change $ip6_addr dev br-lan preferred_lft 120
+        else
+            #forever for nat and static mode
+            ip address change $ip6_addr dev br-lan preferred_lft forever
+        fi
+    fi
+}
+
+[ "$mode" = "native" ] && [ "$INTERFACE" = "wan6" -o "$INTERFACE" = "wan_6" ] && {
+	wan6_gw0=$(ip -6 route | grep "default via" | awk 'NR==1 {print $3}')
+	[ -z $wan6_gw0 ] && return
+	ip -6 route del default via $wan6_gw0
+}
+
+[ "$mode" = "nat" ] && [ "$INTERFACE" = "wan6" -o "$INTERFACE" = "wan_6" ] && {
+	res=$(ip -6 route | grep "default from")
+	wan6_gw=$(echo $res | awk 'NR==1 {print $5}')
+	wan6_itf=$(echo $res | awk 'NR==1 {print $7}')
+	[ -z $wan6_gw -o -z $wan6_itf ] && return
+	
+	if [ "$ACTION" == "ifup" ]; then
+		ip -6 route add default via $wan6_gw dev $wan6_itf
+	elif [ "$ACTION" == "ifdown" ]; then
+		ip -6 route del default via $wan6_gw dev $wan6_itf
+	fi
+}

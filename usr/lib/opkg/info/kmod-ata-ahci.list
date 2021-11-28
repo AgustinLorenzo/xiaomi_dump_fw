@@ -1,0 +1,4 @@
+/lib/modules/4.4.60/libahci.ko
+/lib/modules/4.4.60/ahci.ko
+/etc/modules-boot.d/41-ata-ahci
+/etc/modules.d/41-ata-ahci
