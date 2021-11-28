@@ -5,5 +5,5 @@ Provides: qca-nss-fw-hk
 Source: qca_qsdk/qca_qsdk_spf10.0/feeds/nss/qca-nss-fw-hk-retail
 Section: QCA
 Architecture: all
-Installed-Size: 336720
+Installed-Size: 336715
 Description:  This package contains the NSS firmwares (retail) for QCA chipset

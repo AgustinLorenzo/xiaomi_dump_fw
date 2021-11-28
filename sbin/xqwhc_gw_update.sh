@@ -2,21 +2,31 @@
 
 ### this script run on WHC_RE, process gateway update notify
 
-. /lib/xqwhc/xqwhc_public.sh
-. /lib/xqwhc/network_lal.sh
+LOGI()
+{
+    logger -s -p 1 -t "xqwhc_gw_update" "$1"
+}
+
+mesh_version=$(uci -q get xiaoqiang.common.MESH_VERSION)
+cap_mode=$(uci -q get xiaoqiang.common.CAP_MODE)
+if [ "$ap_mode" = "whc_cap" ] || [ "$mesh_version" = "2" -a "$ap_mode" = "lanapmode" -a "$cap_mode" = "ap" ]; then
+    LOGI " error, xqwhc_gw_update scr ONLY call on RE!"
+    exit 1
+fi
+
+[ $mesh_version -gt 1 ] && {
+    . /lib/mimesh/mimesh_public.sh
+    . /lib/mimesh/mimesh_stat.sh
+} || {
+    . /lib/xqwhc/xqwhc_public.sh
+    . /lib/xqwhc/network_lal.sh
+}
 
 TOUT=10;   # consider a MAX delay on CAP notify all REs
 RETRY_MAX=10
 
 
 NEED_REBOOT=1   # as for now in miwifi, gateway update need a reboot
-
-
-LOGI()
-{
-    logger -s -p 1 -t "xqwhc_gw_update" "$1"
-}
-
 
 __restore_cfg()
 {
@@ -44,7 +54,11 @@ __reload_lan()
 main()
 {
     ## old gateway
-    gw_pre="$(nlal_get_gw_ip)"
+    [ $mesh_version -gt 1 ] && {
+        gw_pre="$(mimesh_get_gw_ip)"
+    } || {
+        gw_pre="$(nlal_get_gw_ip)"
+    }
     LOGI " pre gateway ip=$gw_pre"
 
     gw_cur="$1"
@@ -65,7 +79,11 @@ main()
         __restore_cfg
         __reload_lan
 
-        gw_cur="$(nlal_get_gw_ip)"
+        [ $mesh_version -gt 1 ] && {
+            gw_cur="$(mimesh_get_gw_ip)"
+        } || {
+            gw_cur="$(nlal_get_gw_ip)"
+        }
 
         if [ -z "$gw_cur" ]; then
             LOGI " gateway NO find!"
@@ -80,14 +98,13 @@ main()
         fi
     done
 
+    [ $mesh_version -gt 1 ] && {
+        /etc/init.d/topomon restart
+    } || {
     # we must restart hyfi-bridge.
-    /etc/init.d/hyfi-bridging restart
-    /etc/init.d/hyd restart
-}
-
-whcal isre || {
-    LOGI " error, xqwhc_gw_update scr ONLY call on RE!"
-    exit 1
+        /etc/init.d/hyfi-bridging restart
+        /etc/init.d/hyd restart
+    }
 }
 
 main

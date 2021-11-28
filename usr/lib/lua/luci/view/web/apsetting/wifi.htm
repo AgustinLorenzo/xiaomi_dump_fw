@@ -41,7 +41,7 @@ local hardware = string.lower( XQSysUtil.getHardware() )
                 </div>
             </div>
             <div class="bd">
-                <p><%:开启后，2.4G和5G会使用同一名称，路由器会自动为终端选择最佳WiFi网络，如离路由器较近，会切换至5G网络，反之会切换至2.4G网络。但由于终端设备存在差异，可能存在：自动切换信号源时网络会短暂中断，甚至频繁掉线等问题。%></p>
+                <p><%:开启后，2.4G和5G将合并显示为同一个名称，路由器将优先为终端选择5G网络。合并名称后部分终端可能离线，需重新连接。%></p>
             </div>
         </div>
     <%end%>
@@ -544,7 +544,7 @@ local hardware = string.lower( XQSysUtil.getHardware() )
 
             if ($bandwidth.val() == '0' && (channelVal <= 161 && channelVal >= 149))
             {
-                    $.alert('<%:160MHz频宽只适用于36至64信道，系统会给你切换频宽至80MHz%>');
+                    $.alert('<%:160MHz频宽只适用于36至64信道，系统将自动为您切换至80MHz频宽%>');
                     $bandwidth.html( item ).val("80")
                     $itemBandwidth
                         .find( '.dummy' )
@@ -606,7 +606,7 @@ local hardware = string.lower( XQSysUtil.getHardware() )
                 //tips.html('<%:推荐使用自动(80M)频宽，以获得更好的覆盖及抗干扰性能%>').show();
                 if ($channel.val()  >= 149)
                 {
-                    $.alert('<%:160MHz频宽只适用于36至64信道，系统会自动给你进行信道切换%>');
+                    $.alert('<%:160MHz频宽只适用于36至64信道，系统将自动为您切换至36信道%>');
                     $channel.val('36');
                     $itemChannel
                         .find( '.dummy' )
@@ -657,6 +657,10 @@ local hardware = string.lower( XQSysUtil.getHardware() )
                         if ((channel >= 52 && channel <= 64) || (bandwidth == 0))
                         {
                             isDFS = 1;
+                            if(on == 0){
+                                isDFS = 0
+                            }
+                            
                         }
                         else
                         {
@@ -758,6 +762,9 @@ local hardware = string.lower( XQSysUtil.getHardware() )
                 if ((channel2 >= 52 && channel2 <= 64) || (bandwidth2 == 0))
                 {
                     isDFS = 1;
+                    if(bsd == 1 && on1 == 0){
+                        isDFS = 0
+                    }
                 }
                 else
                 {

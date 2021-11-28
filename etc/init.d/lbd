@@ -84,9 +84,13 @@ start_service() {
 
 	config_load 'lbd'
 	config_get_bool enabled config 'Enable' '0'
+	local mesh_version=$(uci -q get xiaoqiang.common.MESH_VERSION)
+	if [ -z "$mesh_version" ]; then
+		mesh_version=1
+	fi
 	local lbd_rcd_enabled=`ls /etc/rc.d/S${START}lbd 2> /dev/null`
 
-	[ "$enabled" -gt 0 -a -n "$lbd_rcd_enabled" ] || {
+	[ "$enabled" -gt 0 -a -n "$lbd_rcd_enabled" -a "$mesh_version" = "1" ] || {
 		whc_wifi_config_unlock
 		return 1
 	}

@@ -1,0 +1,90 @@
+#!/bin/sh 
+
+. /lib/mimesh/mimesh_public.sh
+
+LOCKF="/var/lock/mimesh.lock"
+ERR_MIMESH_LOCK=100
+MIMESH_LOCK()
+{
+	lock "$LOCKF" 2>/dev/null
+}
+
+MIMESH_TRYLOCK()
+{
+	lock -n "$LOCKF" 2>/dev/null && lock -u "$LOCKF"
+}
+
+MIMESH_UNLOCK()
+{
+	lock -u "$LOCKF" 2>/dev/null
+}
+
+
+list="iscap isre role sync sync_lite syncbuf initbuf"
+method="$1"
+ret=0
+out=""
+
+
+trap "MIMESH_UNLOCK; exit 1" SIGINT SIGHUP SIGTERM SIGKILL SIGSEGV
+
+case "$method" in
+	iscap)
+		. /lib/mimesh/mimesh_stat.sh
+		mimesh_is_cap
+		ret=$?
+		;;
+
+	isre)
+		. /lib/mimesh/mimesh_stat.sh
+		mimesh_is_re
+		ret=$?
+		;;
+
+	role)
+		. /lib/mimesh/mimesh_stat.sh
+		echo -n "$(mimesh_get_stat)"
+		ret=0
+		;;
+
+	sync)
+		# sync with wifi cfg update
+		. /lib/mimesh/mimesh_sync.sh
+		MIMESH_LOCK
+		MIMESH_LOGI " ** mimesh_action sync ppid=$PPID"
+		mimesh_sync
+		ret=$?
+		MIMESH_UNLOCK
+		;;
+
+	sync_lite)
+		# lite sync withOUT wifi update
+		. /lib/mimesh/mimesh_sync.sh
+		MIMESH_LOCK
+		MIMESH_LOGI " ** mimesh_action sync_lite ppid=$PPID"
+		mimesh_sync_lite
+		ret=$?
+		MIMESH_UNLOCK
+		;;
+
+	syncbuf)
+		. /lib/mimesh/mimesh_sync.sh
+		mimesh_sync_jsonbuf
+		ret=$?
+		;;
+
+	initbuf)
+		. /lib/mimesh/mimesh_sync.sh
+		mimesh_init_jsonbuf
+		ret=$?
+		;;
+
+	*)
+		echo " support cmd:" 
+		echo "$0 $list"
+		ret=1
+	;;
+esac
+
+return $ret
+

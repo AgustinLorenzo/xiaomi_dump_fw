@@ -533,7 +533,9 @@ dhcp_add() {
 	config_get ra "$cfg" ra
 	config_get ra_management "$cfg" ra_management
 	config_get ra_preference "$cfg" ra_preference
-	config_get dns "$cfg" dns
+	config_get dns1 "$cfg" dns1
+	config_get dns2 "$cfg" dns2
+	config_get router "$cfg" router
 
 	config_list_foreach "$cfg" "interface_name" append_interface_name "$ifname"
 
@@ -620,6 +622,30 @@ dhcp_add() {
 	dhcp_option_add "$cfg" "$networkid" 0
 	dhcp_option_add "$cfg" "$networkid" 2
 	dhcp_option_force_add "$cfg" "$networkid"
+	
+	[ -n "$router" ] && {
+		dhcp_option_append "3,$router" "$networkid"
+	}
+	
+	[ -n "$dns1" -o -n "$dns2" ] && {
+		local dns_server
+#		local lan_ip=$(uci -q get network.$networkid.ipaddr)
+		if [ -n "$dns1" -a -n "$dns2" ]; then
+			if [ "$dns1" != "$dns2" ]; then 
+				dns_server="${dns1},${dns2}"
+			else
+				dns_server="$dns1"
+#				[ -n "$lan_ip" -a "$lan_ip" != "$dns1" ] && dns_server="$dns_server,$lan_ip"
+			fi
+		elif [ -n "$dns1" ]; then
+			dns_server="$dns1"
+#			[ -n "$lan_ip" -a "$lan_ip" != "$dns1" ] && dns_server="$dns_server,$lan_ip"
+		else
+			dns_server="$dns2"
+#			[ -n "$lan_ip" -a "$lan_ip" != "$dns2" ] && dns_server="$dns_server,$lan_ip"
+		fi
+		dhcp_option_append "6,$dns_server" "$networkid"
+	}
 }
 
 dhcp_option_append() {

@@ -5,5 +5,5 @@ Source: qca_qsdk/qca_qsdk_spf10.0/feeds/qca_hk/net/qca-hk
 Section: QCA
 Maintainer: Qualcomm Atheros
 Architecture: all
-Installed-Size: 2691792
+Installed-Size: 2695529
 Description:  This package contains the qca-wifi firmware(-hw1-10.4-asic) used in 10.x drivers

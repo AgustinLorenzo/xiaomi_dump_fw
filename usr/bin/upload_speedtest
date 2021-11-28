@@ -252,6 +252,7 @@ function ab_work(url)
 	elseif pid > 0 then
 		--print(string.format("child pid %d\n", pid))
 	else
+		url = string.gsub(url, "'", "'\\''")
 		local cmd = (string.format("%s -N  -p %s '%s' > /dev/null", cfg.ab, cfg.postfile, url))	
 		--print("ab work cmd: "..cmd)
 		os.execute('for i in $(seq '.. math.floor(cfg.nr/cfg.nc) ..'); do ' .. cmd .. "; done")	

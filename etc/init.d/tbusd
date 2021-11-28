@@ -8,7 +8,14 @@ PROG=/sbin/tbusd
 
 start_service() {
 	mode=$(uci -q get xiaoqiang.common.NETMODE)
-	if [ "$mode" != "whc_re" -a "$mode" != "wifiapmode" -a "$mode" != "lanapmode" ]; then
+	if [ "$mode" != "whc_re" -a "$mode" != "wifiapmode" ]; then
+	    if [ "$mode" = "lanapmode" ]; then
+		mesh_version=$(uci -q get xiaoqiang.common.MESH_VERSION)
+		capmode=$(uci -q get xiaoqiang.common.CAP_MODE)
+		if [ "$capmode" != "ap" -o -z "$mesh_version" -o "$mesh_version" = "1" ]; then
+		    return
+		fi
+	    fi
 	    procd_open_instance
 	    procd_set_param command "$PROG"
 	    procd_set_param respawn

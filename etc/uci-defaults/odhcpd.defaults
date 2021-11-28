@@ -26,5 +26,6 @@ set dhcp.odhcpd.loglevel=4
 set dhcp.lan.dhcpv6=$MODE
 set dhcp.lan.ra=$MODE
 set dhcp.lan.ra_default='1'
+set dhcp.lan.ra_preference='high'
 commit dhcp
 EOF

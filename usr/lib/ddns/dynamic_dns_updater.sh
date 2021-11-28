@@ -90,6 +90,8 @@ trap "trap_handler 15" 15
 ################################################################################
 ################################################################################
 load_all_config_options "ddns" "$SECTION_ID"
+lookup_host=\'`echo $lookup_host|sed -e "s/'/'\\\\\\\\''/g"`\'
+domain=\'`echo $domain|sed -e "s/'/'\\\\\\\\''/g"`\'
 ERR_LAST=$?
 [ -z "$enabled" ]	  && enabled=0
 [ -z "$retry_count" ]	  && retry_count=0

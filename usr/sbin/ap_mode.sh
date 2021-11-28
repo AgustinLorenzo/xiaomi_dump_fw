@@ -452,11 +452,12 @@ case $OPT in
         /etc/init.d/dnsmasq stop
         /usr/sbin/dhcp_apclient.sh restart
         /etc/init.d/network restart
+        /etc/init.d/wan_check restart
         /etc/init.d/dnsmasq start
         /usr/sbin/vasinfo_fw.sh off
-        /etc/init.d/trafficd stop
+        /etc/init.d/trafficd restart
         /etc/init.d/xqbc restart
-        /etc/init.d/tbusd stop
+        /etc/init.d/tbusd restart
 	/etc/init.d/xiaoqiang_sync start
         [ -f /etc/init.d/hwnat ] && /etc/init.d/hwnat off
 
@@ -464,6 +465,7 @@ case $OPT in
 
         bridgeap_plugin_restart
         [ -f /etc/init.d/minet ] && /etc/init.d/minet restart
+	[ -f /etc/init.d/cab_meshd ] && /etc/init.d/cab_meshd restart
 
         return $?
     ;;
@@ -475,16 +477,17 @@ case $OPT in
         /etc/init.d/firewall restart
         /etc/init.d/odhcpd start
         /etc/init.d/dnsmasq stop
-        /usr/sbin/dhcp_apclient.sh restart
         /etc/init.d/network restart
-        /etc/init.d/dnsmasq start
+        /usr/sbin/dhcp_apclient.sh restart
+        /etc/init.d/wan_check restart
+        /etc/init.d/dnsmasq restart
         /usr/sbin/vasinfo_fw.sh post_ota
         /etc/init.d/trafficd restart
         /etc/init.d/xqbc restart
 	/etc/init.d/xiaoqiang_sync stop
         /etc/init.d/tbusd start
         [ -f /etc/init.d/minet ] && /etc/init.d/minet restart
-
+        [ -f /etc/init.d/cab_meshd ] && /etc/init.d/cab_meshd restart
         [ -f /etc/init.d/hwnat ] && /etc/init.d/hwnat start
 
         bridgeap_plugin_restart

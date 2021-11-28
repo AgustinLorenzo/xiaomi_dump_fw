@@ -1,0 +1,41 @@
+#!/bin/sh /etc/rc.common
+
+START=99
+
+USE_PROCD=1
+NAME=cab_meshd
+PROG="/usr/sbin/cab_meshd"
+
+start_service() {
+    mesh_mode=$(uci -q get xiaoqiang.common.NETMODE)
+    if [ "$mesh_mode" == "whc_re" -o "$mesh_mode" == "wifiapmode" ]; then
+        exit 0
+    fi
+
+    wan_port=$(uci -q get misc.sw_reg.sw_wan_port)
+    if [ -z "$wan_port" ]; then
+        exit 0
+    fi
+
+    INITTED=$(uci -q get xiaoqiang.common.INITTED)
+    if [ "$INITTED" != "YES" ]; then
+        #RE
+        wanif=$(uci -q get network.wan.ifname)
+        proto=$(uci -q get network.wan.proto)
+        if [ -n "$wanif" -a "$proto" == "dhcp" ]; then
+            procd_open_instance
+            procd_set_param command "$PROG" -C -i "$wanif"
+            procd_set_param respawn
+            procd_close_instance
+        fi
+    else
+        #CAP
+        [ -f "/usr/sbin/mqautogen.lua" ] && lua /usr/sbin/mqautogen.lua
+        lanif="br-lan"
+        procd_open_instance
+        procd_set_param command "$PROG" -S -i "$lanif"
+        procd_set_param respawn
+        procd_close_instance
+    fi
+
+}

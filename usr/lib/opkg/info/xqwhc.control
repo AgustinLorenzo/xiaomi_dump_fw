@@ -1,8 +1,0 @@
-Package: xqwhc
-Version: 1-0.1
-Depends: libc, libjson-c, libuci, libpolarssl
-Source: package/miwifi/xqwhc
-Section: util
-Architecture: aarch64_cortex-a53
-Installed-Size: 40861
-Description:  XiaoQiang whc

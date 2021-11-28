@@ -5,5 +5,5 @@ Provides: qca-nss-fw-eip
 Source: qca_qsdk/qca_qsdk_spf10.0/feeds/nss/qca-nss-fw-eip-hk
 Section: kernel
 Architecture: aarch64_cortex-a53
-Installed-Size: 8565
+Installed-Size: 8559
 Description:  This package contains the NSS firmwares (hk) for QCA chipset

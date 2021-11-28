@@ -26,6 +26,13 @@ start() {
 		echo "hyfi-bridging *** not in cap/re mode, skip handle "
 		return 1
 	}
+
+	mesh_version="`uci get xiaoqiang.common.MESH_VERSION 2>/dev/null`"
+	[ -z "$mesh_version" -o "$mesh_version" = "1" ] || {
+                echo "hyfi-bridging *** not need in mesh version > 1, skip handle "
+                return 1
+        }
+
 	config_load 'hyd'
 	config_get_bool enabled config 'Enable' '0'
 	local hyfi_bridging_rcd_enabled=`ls /etc/rc.d/S${START}hyfi-bridging 2> /dev/null`
@@ -54,6 +61,8 @@ start() {
 		return 1
 	    fi
 	fi
+
+	hyctl setmc br-lan state disable
 
 }
 

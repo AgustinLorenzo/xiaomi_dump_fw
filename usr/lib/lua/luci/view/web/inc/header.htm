@@ -31,8 +31,17 @@
 
     local netmod = 0
     local netmod = XQFunction.getnetmode()
+    local meshVersion = XQFunction.getMeshVersion()
+    local topo_url = "http://miwifi.com/"
+    if meshVersion == "2" and mode == "lanapmode" then
+        netmod = 5
+        local XQLanWanUtil = require("xiaoqiang.util.XQLanWanUtil")
+        ip = XQLanWanUtil.getLanIp()
+        topo_url = "http://" .. ip .. "/cgi-bin/luci/web/topo"
+    end
     --4 mesh主设备  whc_cap
     --3 mesh从设备  whc_re
+    --5 mesh lanap mode	
     --0 router
 
 
@@ -83,11 +92,11 @@ var GLOBALHEADER = true;
                     <span class="goto-topo"><a href="http://miwifi.com/" target="_blank"><%:查看网络拓扑图%></a></span>
                 <%end%>
                 <%if (showTopoLink==1 and hardware~="d01") then%>
-                    <span class="goto-topo"><a href="http://miwifi.com/" target="_blank"><%:查看完整网络%></a></span>
+                    <span class="goto-topo"><a href="<%=topo_url%>" target="_blank"><%:查看完整网络%></a></span>
                 <%end%>
 
 
-                <%if (netmod == 4 or netmod == 0)then%>
+                <%if (netmod == 4 or netmod == 0 or netmod == 5)then%>
                    <span id="addMesh" style="cursor:pointer;margin-top:6px;margin-left:15px"><%:添加Mesh节点路由%></span>
                 <%end%>
 
@@ -235,13 +244,6 @@ var GLOBALHEADER = true;
                         <span><%:QoS智能限速%></span>
                     </a>
                 </li>
-
-                <li <%if string.find(REQUEST_URI, "/dhcpipmacband") then%>class="active"<%end%>>
-                    <a href="<%=luci.dispatcher.build_url("web", "prosetting", "dhcpipmacband")%>">
-                        <i class="ico ico-8"></i>
-                        <span><%:DHCP静态IP分配%></span>
-                    </a>
-                </li>
                 <li <%if string.find(REQUEST_URI, "/ddns") then%>class="active"<%end%>>
                     <a href="<%=luci.dispatcher.build_url("web", "prosetting", "ddns")%>">
                         <i class="ico ico-9"></i>
@@ -291,7 +293,7 @@ var GLOBALHEADER = true;
          <div class="mesh_title"><%:温馨提示%></div>
          <div class="mesh_content">
               <p class="content">
-             为保证Mesh网络良好的使用体验，当前至多可支持4台Mesh路由器组网，更多Mesh路由器建议组成新的Mesh网络。
+             为保证Mesh网络良好的使用体验，当前至多可支持10台Mesh路由器组网，更多Mesh路由器建议组成新的Mesh网络。
               </p>
           </div>
            <button class="mesh_buttons" id="mesh-close-button">知道了</button>

@@ -1,7 +1,17 @@
 /usr/share/udhcpc/mesh_dhcp.script
 /usr/lib/lua/miwifi_mesh.so
+/lib/mimesh/mimesh_public.sh
 /usr/share/mesh/hostapd-template.conf
+/lib/mimesh/mimesh_sync.sh
 /usr/sbin/meshd
+/lib/config_post_ota/mesh_cfg_update.sh
+/lib/mimesh/mimesh_stat.sh
 /usr/sbin/mesh_connect.sh
 /etc/init.d/meshd
+/lib/mimesh/mimesh_init.sh
+/etc/init.d/cab_meshd
+/usr/sbin/parse_json
+/usr/sbin/mesh_cmd
+/etc/taskdaemon.d/linkstatus/03-mesh_cable_dog.sh
 /usr/sbin/set_mesh_info.lua
+/usr/sbin/cab_meshd

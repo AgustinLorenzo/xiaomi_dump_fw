@@ -185,8 +185,8 @@
                         </tr>
                         <tr>
                             <td colspan="2">
-                                <a id="btnSpeedTest" href="#" class="btn btn-primary btn-m"><span id="retestSpeed"><%:重新测速%></span></a>
-                                <a id="btnBandset" href="#" class="btn btn-dft btn-m"><span id="manualSetting"><%:手工设置%></span></a>
+                                <!-- <a id="btnSpeedTest" href="#" class="btn btn-primary btn-m"><span id="retestSpeed"><%:重新测速%></span></a> -->
+                                <a id="btnBandset" href="#" class="btn btn-dft btn-primary btn-m"><span id="manualSetting"><%:手工设置%></span></a>
                             </td>
                         </tr>
                     </table>
@@ -764,7 +764,7 @@ $.sub('status:newget', function(){
                     res =  $.parseJSON(res); 
                     if(res.code == 0){
                         //2.4g
-                        $('.wifi_2g_name').html('Wi-Fi名称：'+res['2g'].ssid);
+                        $('.wifi_2g_name').text('Wi-Fi名称：'+res['2g'].ssid);
                         if(res['2g'].pssswd != ''){
                             $('.wifi_2g_pssswd').val(res['2g'].pssswd);
                         }else{
@@ -772,7 +772,7 @@ $.sub('status:newget', function(){
                         }
                         $('.wifi_2g_online').html('连接设备数量：'+res['2g'].online_sta_count);
                         //5g
-                        $('.wifi_5g_name').html('Wi-Fi名称：'+res['5g'].ssid);
+                        $('.wifi_5g_name').text('Wi-Fi名称：'+res['5g'].ssid);
                         if(res['5g'].passwd != ''){
                             $('.wifi_5g_pssswd').val(res['5g'].passwd);
                         }else{

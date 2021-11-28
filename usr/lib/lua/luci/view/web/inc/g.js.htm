@@ -36,7 +36,7 @@ local netmod = XQFunction.getnetmode()
 --0 router
 
 local isMesh = (netmod == 3 or netmod == 4) and "true" or "false"
-
+local maxMeshCount = XQFunction.getMaxMeshNodeCount()
 
 %>
 <!--[if lt IE 7]>
@@ -52,7 +52,7 @@ local isMesh = (netmod == 3 or netmod == 4) and "true" or "false"
 <div id="dropmenu" class="dropmenu" style="z-index:3; display:none;">
     <ul>
         <li><a href="#" id="toRename"><%:修改路由器名称%></a></li>
-        <%if netmod == 0 then%>
+        <%if netmod == 0 or netmod ==4 then%>
         <li><a href="<%=luci.dispatcher.build_url("web","setting","upgrade")%>"><%:系统升级%></a></li>
         <%else%>
         <li><a href="<%=luci.dispatcher.build_url("web","apsetting","upgrade")%>"><%:系统升级%></a></li>
@@ -852,11 +852,11 @@ local isMesh = (netmod == 3 or netmod == 4) and "true" or "false"
         function downloadClientHandler(e) {
             e.preventDefault();
             var ccode = '<%=ccode%>', content;
-            if (ccode == 'CN') {
-                content = $('#tpldowncn').html();
-            } else {
+            // if (ccode == 'CN') {
+            //     content = $('#tpldowncn').html();
+            // } else {
                 content = $('#tpldownintl').html()
-            }
+            // }
             $.dialog({
                 width: 390,
                 title: '<%:下载客户端%>',
@@ -1104,6 +1104,7 @@ local isMesh = (netmod == 3 or netmod == 4) and "true" or "false"
                                             //取到devicelist中list数组
                                             //  console.log(rsp.list);
                                             var count = 0;
+                                            var maxMeshCount =<%=maxMeshCount%>;
                                             //获取已添加Mesh组网设备数量
                                             if (rsp.graph.leafs) {
 
@@ -1127,9 +1128,9 @@ local isMesh = (netmod == 3 or netmod == 4) and "true" or "false"
                                                 width: 400,
                                             });
 
-                                            // 设置最多只能添加三个路由器
+                                            // 设置最多只能添加九个路由器(新)
 
-                                            if (count >= 3) {
+                                            if (count >= maxMeshCount) {
 
                                                 $('#mesh-overMaxLength').siblings('.switch-step').hide();
                                                 $('#mesh-overMaxLength').show();

@@ -1,0 +1,8 @@
+Package: miwifi-roam
+Version: 1.0
+Depends: libc, libubus, libblobmsg-json, ubusd, libubox, libwifisoncfg, libhyficommon
+Source: package/miwifi/miwifi-roam
+Section: net
+Architecture: aarch64_cortex-a53
+Installed-Size: 61866
+Description:  miwifi roam daemon.

@@ -6,5 +6,5 @@ License: GPLv2
 Section: kernel
 Status: unknown hold not-installed
 Architecture: aarch64_cortex-a53
-Installed-Size: 1816
+Installed-Size: 1814
 Description:  Kernel module for NLS ISO 8859-1 (Latin 1)

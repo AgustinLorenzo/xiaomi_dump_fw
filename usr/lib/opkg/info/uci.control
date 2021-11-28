@@ -6,5 +6,5 @@ License: LGPL-2.1
 Section: base
 Maintainer: Felix Fietkau <nbd@nbd.name>
 Architecture: aarch64_cortex-a53
-Installed-Size: 7477
+Installed-Size: 7476
 Description:  Utility for the Unified Configuration Interface (UCI)

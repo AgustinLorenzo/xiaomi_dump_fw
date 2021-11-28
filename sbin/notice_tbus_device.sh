@@ -57,6 +57,12 @@ wifiap_interface_find_by_device()
 		if [ "$ifname" == "${ifname_2g}" ]; then
 		config_get ssid "$vif" ssid
 		config_get key "$vif" key
+		if [ "$key" == "" ]; then
+			config_get sae "$vif" sae
+			if [ "$sae" == "1" ]; then
+				config_get key "$vif" sae_password
+			fi
+		fi
 		ssid_base64=`echo -n "$ssid" | base64 | tr -d '\n'`
 		key_base64=`echo -n "$key" | base64 | tr -d '\n'`
 		fi
@@ -69,6 +75,12 @@ wifiap_interface_find_by_device()
                 if [ "$ifname" == "${ifname_5g}" ]; then
                 config_get ssid_5g "$vif" ssid
                 config_get key_5g "$vif" key
+                if [ "$key_5g" == "" ]; then
+                    config_get sae "$vif" sae
+                    if [ "$sae" == "1" ]; then
+                        config_get key_5g "$vif" sae_password
+                    fi
+                fi
                 ssid_base64_5g=`echo -n "${ssid_5g}" | base64 | tr -d '\n'`
                 key_base64_5g=`echo -n "${key_5g}" | base64 | tr -d '\n'`
                 fi

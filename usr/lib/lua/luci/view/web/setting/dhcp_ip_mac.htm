@@ -7,16 +7,12 @@ local XQLanWanUtil = require("xiaoqiang.util.XQLanWanUtil")
 local lan = XQLanWanUtil.getLanWanInfo("lan")
 local lanip = lan["ipv4"][1]["ip"]
 %>
-<%include("web/inc/head")%>
-<title><%:小米路由器%></title>
-<meta name="viewport" content="width=1200">
-<link href="<%=resource%>/web/css/bc.css?v=<%=ver%>" rel="stylesheet">
+
+
 <link href="<%=resource%>/web/css/ipmacband.css?v=<%=ver%>" rel="stylesheet">
-</head>
-<body>
-<div id="doc">
-    <%include("web/inc/header")%>
-    <div id="bd">
+
+
+
         <div class="mod-dhcp-ipmacband">
             <div class="hd">
                 <h3><%:DHCP静态IP分配%></h3>
@@ -45,9 +41,9 @@ local lanip = lan["ipv4"][1]["ip"]
                 <button type="button" class="btn btn-primary btn-m" id="dellist" style="display:none;"><span><%:解绑选中%></span></button>
             </div>
         </div>
-    </div>
-    <%include("web/inc/footer")%>
-</div>
+
+
+
 <script type="tmpl/html" id="tplbandlist">
 {if($bandlist.length > 0)}
 {for(var i=0; i<$bandlist.length; i++)}
@@ -425,5 +421,3 @@ $(function(){
     ModelDhcpband.init();
 });
 </script>
-</body>
-</html>

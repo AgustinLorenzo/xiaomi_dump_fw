@@ -4,5 +4,5 @@ Depends: libc, libubus, ubusd, glib2, libjson-c
 Source: package/miwifi/smartcontroller_c
 Section: opt
 Architecture: aarch64_cortex-a53
-Installed-Size: 15300
+Installed-Size: 15301
 Description:  the smart controller c demaon

@@ -6,7 +6,7 @@ License: GPL-2.0+
 Section: net
 Maintainer: Tijs Van Buggenhout <tvbuggen@netzerk.be>, Marcin Jurkowski <marcin1j@gmail.com>
 Architecture: aarch64_cortex-a53
-Installed-Size: 6867
+Installed-Size: 6864
 Description:  The HTTP Time Protocol (HTP) is used to synchronize a computer's time
  with web servers as reference time source. Htpdate will synchronize your
  computer's time by extracting timestamps from HTTP headers found

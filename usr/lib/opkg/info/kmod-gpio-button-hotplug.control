@@ -4,5 +4,5 @@ Depends: kernel (=4.4.60-1-5fafac9592dacdd4ddea8e68ff0daa95)
 Source: package/kernel/gpio-button-hotplug
 Section: kernel
 Architecture: aarch64_cortex-a53
-Installed-Size: 5623
+Installed-Size: 5708
 Description:  Simple GPIO Button Hotplug driver

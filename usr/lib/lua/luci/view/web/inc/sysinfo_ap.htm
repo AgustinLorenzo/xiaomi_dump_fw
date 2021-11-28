@@ -15,6 +15,7 @@ local netmod = XQFunction.getnetmode()
 --3 mesh从设备  whc_re
 --0 router
 
+local capmode = XQFunction.getCAPMode()
 
 %>
 <div class="mod-upgrade">
@@ -93,7 +94,7 @@ local netmod = XQFunction.getnetmode()
         <h3><%:时区设置%></h3>
     </div>
 
-    <%if netmod == 4 then%>
+    <%if netmod == 4 or capmode == 1 then%>
      <!-- 主mesh -->
     <div class="bd" id="zhumesh"  style="display:none">
         <div class="group" >

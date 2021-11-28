@@ -6,5 +6,5 @@ License: ISC
 Section: libs
 Maintainer: Felix Fietkau <nbd@nbd.name>
 Architecture: aarch64_cortex-a53
-Installed-Size: 19191
+Installed-Size: 19269
 Description:  Basic utility library

@@ -29,6 +29,8 @@ setup_interface () {
     ap_hostname_tmp=${ap_hostname_tmp%%-*}
     ap_hostname=MiWiFi-${ap_hostname_tmp}-srv
 
+    old_ip=$(uci -q get network.lan.ipaddr)
+
 uci -q batch <<EOF >/dev/null
 set xiaoqiang.common.ap_hostname=$ap_hostname
 set xiaoqiang.common.vendorinfo=$vendorinfo
@@ -45,9 +47,21 @@ del network.vpn
 EOF
     for d in $dns
     do
-	uci -q add_list network.lan.dns=$d
+        uci -q add_list network.lan.dns=$d
     done
     uci commit network
+
+    if [ "$old_ip" != "$ip" ]; then
+        mesh_version=$(uci -q get xiaoqiang.common.MESH_VERSION)
+        netmode=$(uci -q get xiaoqiang.common.NETMODE)
+        cap_mode=$(uci -q get xiaoqiang.common.CAP_MODE)
+        if [ "$mesh_version" = "2" -a "$netmode" = "lanapmode" -a "$cap_mode" = "ap" ]; then
+            /etc/init.d/mosquitto restart
+            /etc/init.d/xq_info_sync_mqtt restart
+            /usr/sbin/topomon_action.sh cap_init
+        fi
+    fi
+
     exit 0
 }
 
@@ -72,21 +86,21 @@ restart_lan () {
 }
 
 case "$1" in
-    start)	
-	start_dhcp "$2"
+    start)
+        start_dhcp "$2"
     ;;
     restart)
-	restart_lan
+        restart_lan
         exit $?
     ;;
     renew|bound)
         #if xq already in ap mode,it don't need to backup route config file
-	local ap_mode=`uci get network.ap_mode 2>/dev/null`
-	[ "$ap_mode" != "bridgeap" ] && router_config_backup
+        local ap_mode=`uci get network.ap_mode 2>/dev/null`
+        [ "$ap_mode" != "bridgeap" ] && router_config_backup
 
-	setup_interface
+        setup_interface
     ;;
     *)
-	usage
+        usage
     ;;
 esac

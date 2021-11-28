@@ -4,5 +4,5 @@ Depends: libc, libpthread
 Source: package/network/utils/ab
 Section: net
 Architecture: aarch64_cortex-a53
-Installed-Size: 32477
+Installed-Size: 32493
 Description:  This package is used for network speed

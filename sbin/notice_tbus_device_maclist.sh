@@ -40,49 +40,58 @@ else
     policy=0
 fi
 
+#add for repeater mode
+tbus list | grep -v netapi | grep -v master | while read a
+do
+        #call tbus function to notice device change maclist
+        timeout -t 2 tbus call $a access  "{\"policy\":${policy},\"list\":\"${maclist_format}\"}"
+done
+
+
+#add for mesh
 json_init
 
 if [ "$HARDWARE" == "D01" -o "$HARDWARE" == "R3600" -o "$HARDWARE" == "RM1800" ]; then
-        if [ "$level" != "" -a  "$auth" != "" ]; then
-        jmsg="{\"policy\":${policy},\"list\":\"${maclist_format}\",\"level\":${level},\"auth\":${auth}}" 
+    if [ "$level" != "" -a  "$auth" != "" ]; then
+        jmsg="{\"policy\":${policy},\"list\":\"${maclist_format}\",\"level\":${level},\"auth\":${auth}}"
         json_add_string "method" "access"
         json_add_string "payload" $jmsg
         json_str=`json_dump`
         echo $json_str
             logger -p info -t maclist "set both auth:$auth level:$level"
         ubus call xq_info_sync_mqtt send_msg  "$json_str"
-        elif [ "$level" != "" ]; then
-        jmsg="{\"policy\":${policy},\"list\":\"${maclist_format}\",\"level\":${level}}"  
+    elif [ "$level" != "" ]; then
+        jmsg="{\"policy\":${policy},\"list\":\"${maclist_format}\",\"level\":${level}}"
         json_add_string "method" "access"
         json_add_string "payload" $jmsg
         json_str=`json_dump`
         echo $json_str
             logger -p info -t maclist "set only level:$level"
         ubus call xq_info_sync_mqtt send_msg  "$json_str"
-        elif [ "$auth" != "" ]; then
-        jmsg="{\"policy\":${policy},\"list\":\"${maclist_format}\",\"auth\":${auth}}"  
+    elif [ "$auth" != "" ]; then
+        jmsg="{\"policy\":${policy},\"list\":\"${maclist_format}\",\"auth\":${auth}}"
         json_add_string "method" "access"
         json_add_string "payload" $jmsg
         json_str=`json_dump`
         echo $json_str
             logger -p info -t maclist "set only auth:$auth"
         ubus call xq_info_sync_mqtt send_msg  "$json_str"
-        else
-            #call tbus function to notice device change maclist
-        jmsg="{\"policy\":${policy},\"list\":\"${maclist_format}\"}"  
+    else
+        #call tbus function to notice device change maclist
+        jmsg="{\"policy\":${policy},\"list\":\"${maclist_format}\"}"
         json_add_string "method" "access"
         json_add_string "payload" $jmsg
         json_str=`json_dump`
         echo $json_str
         ubus call xq_info_sync_mqtt send_msg  "$json_str"
-        fi
-    else
-        #call tbus function to notice device change maclist
-    jmsg="{\"policy\":${policy},\"list\":\"${maclist_format}\"}"                                    
+    fi
+else
+    #call tbus function to notice device change maclist
+    jmsg="{\"policy\":${policy},\"list\":\"${maclist_format}\"}"
     json_add_string "method" "access"
     json_add_string "payload" $jmsg
     json_str=`json_dump`
     echo $json_str
     ubus call xq_info_sync_mqtt send_msg  "$json_str"
-    fi
+fi
 

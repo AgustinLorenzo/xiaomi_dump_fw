@@ -240,7 +240,7 @@ local netmod = XQFunction.getnetmode()
 
                         //改动lyt
                         // if(list[i].added == 0){
-                        if(list[i].isap != 8){
+                        if(list[i].isap != 8 && list[i].isap != 1 && list[i].online != 0){
                             var tr = StringH.tmpl(tpl, {
                                 name: StringH.encode4Html(list[i].name),
                                 ip: list[i].ip,

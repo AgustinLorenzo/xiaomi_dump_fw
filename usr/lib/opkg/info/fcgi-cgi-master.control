@@ -4,5 +4,5 @@ Depends: libc, glib2, libev, libuci
 Source: package/fcgi-cgi-master
 Section: net
 Architecture: aarch64_cortex-a53
-Installed-Size: 10616
+Installed-Size: 10613
 Description:  fcgi-cgi is a FastCGI application to run normal cgi applications.

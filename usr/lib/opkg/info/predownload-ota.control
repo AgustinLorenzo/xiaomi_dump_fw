@@ -4,5 +4,5 @@ Depends: libc, xiaoqiang-util
 Source: package/miwifi/predownload-ota
 Section: net
 Architecture: aarch64_cortex-a53
-Installed-Size: 2990
+Installed-Size: 2991
 Description:  predownload-ota

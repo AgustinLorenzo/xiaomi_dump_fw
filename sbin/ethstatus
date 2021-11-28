@@ -1,13 +1,27 @@
 #!/bin/sh
 
-for port in 1 2 3 4; do
-	status=`cat /sys/class/net/eth$port/carrier`
-	
-	port_num=`expr $port + 1`
-	if [ "$status" = "1" ]; then
-		echo "port $port_num:up"
-	else
-		echo "port $port_num:down"
-	fi
-done
+dump() {
+        type=$1
+        ports=
+        otype=$type
+        if [ "$type" = "lan" ]; then
+                ports=$(uci -q get misc.sw_reg.sw_lan_ports)
+                otype=""
+        else
+                ports=$(uci -q get misc.sw_reg.sw_wan_port)
+        fi
+
+    for port in $ports; do
+        id=$(($port-1))
+        status=$(cat /sys/class/net/eth${id}/carrier)
+        if [ "$status" = "1" ]; then
+            echo "port $port:up    $otype"
+        else
+            echo "port $port:down    $otype"
+        fi
+    done
+}
+
+dump "lan"
+dump "wan"
 

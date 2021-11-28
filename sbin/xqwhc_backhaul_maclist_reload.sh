@@ -4,8 +4,6 @@
 
 # this script warm process maclist on wifi ap iface
 . /lib/functions.sh
-. /lib/xqwhc/xqwhc_public.sh
-. /lib/xqwhc/network_lal.sh
 
 LOGI()
 {

@@ -1057,29 +1057,22 @@ local hardware = string.lower( XQSysUtil.getHardware() )
                     dataType: "json",
                     success : function( rsp ){
                         if ( rsp.code === 0 ) { 
-
                             setTimeout(function(){
                                 dlgwait_ipv6.close();
                                 $.alert('<%:关闭IPv6设置成功%>');
                                 $.pub( 'getwaninfo' );
-                            },3000)
-
-                            //// mtu
-        
+                            }, 8000)
+                            // mtu
                             $('input[name=mtu]').attr('minValue', 576);
-                            
-                            
                         } else {
                             $.alert('<%:关闭IPv6设置失败%>');
                         }
                     },
                     error:function (e){
-                        $.alert('<%:关闭IPv6设置失败%>');  
-                    } 
+                        $.alert('<%:关闭IPv6设置失败%>');
+                    }
                 });
-
             }
-            
         }
     });
 
@@ -1224,8 +1217,6 @@ local hardware = string.lower( XQSysUtil.getHardware() )
                 return;
             }
 
-
-
             var validator = Valid.checkAll( this );
             if ( validator ) {
                 wait_ipv6();
@@ -1237,30 +1228,25 @@ local hardware = string.lower( XQSysUtil.getHardware() )
                     type: "POST",
                     data: requestData,
                     dataType: "json",
-                    success : function( rsp ){ 
+                    success : function( rsp ){
                         if(rsp.code==0){
                             setTimeout(function(){
-                                $.pub( 'getwaninfo' );
                                 dlgwait_ipv6.close();
                                 $.alert('<%:设置成功%>');
-                            },3000);
+                                $.pub( 'getwaninfo' );
+                            }, 8000);
                             //hidden button
                             $('#ipv6_set').find('form .btn-primary,form .btn-dft').addClass('hidden');
                             ipv6_status_roll();
-
                             // mtu
-                           
                             $('input[name=mtu]').attr('minValue', 1280);
                         }else{
-                           $.alert(rsp.msg);   
-                        }             
-                        
-                        
+                           $.alert(rsp.msg);
+                        }
                     },
-                    error:function (e){  
+                    error:function (e){
                         $.alert('<%:设置失败%>');  
-                    } 
-
+                    }
                 });
             }
         })
@@ -1277,7 +1263,6 @@ local hardware = string.lower( XQSysUtil.getHardware() )
                     success : function( rsp ){
                         if( rsp.code === 0 ){ 
                             // $.pub( 'getwaninfo' );
-                                
                             $.pub( 'fillipv6list', [rsp] );
                             // $.pub( 'fillipv6form', [rsp] );
                         }

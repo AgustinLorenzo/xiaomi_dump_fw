@@ -8,9 +8,9 @@ old_timeout=$(uci get wifishare.global.auth_timeout 2>/dev/null)
 guest_configed=$(uci get wireless.guest_2G  2>/dev/null)
 guest_macfilter=$(uci get wireless.guest_2G.macfilter  2>/dev/null)
 isolate_configed=$(uci get wireless.guest_2G.ap_isolate  2>/dev/null)
-guest_ssid=$(uci get wireless.guest_2G.ssid 2>/dev/null)
-guest_ssid_change=$(uci get wireless.guest_2G.ssid_changed 2>/dev/null)
-guest_suffix=$(getmac |cut -b 13-17 |sed 's/://g' |tr '[a-z]' '[A-Z]')
+#guest_ssid=$(uci get wireless.guest_2G.ssid 2>/dev/null)
+#guest_ssid_change=$(uci get wireless.guest_2G.ssid_changed 2>/dev/null)
+#guest_suffix=$(getmac |cut -b 13-17 |sed 's/://g' |tr '[a-z]' '[A-Z]')
 guest_active=$(uci get wifishare.global.active 2>/dev/null)
 country_code=$(nvram get CountryCode)
 [ "$country_code" == "" ] && country_code="CN"
@@ -32,18 +32,18 @@ country_code=$(nvram get CountryCode)
     uci commit wifishare
 }
 
-#guest default format Xiaomi_xxxx_VIP
-#guest_ssid_matched=$(echo $guest_ssid | grep "^Xiaomi_[[:xdigit:]]\{4\}_VIP$")
-[ "$guest_ssid" != "" -a "$guest_ssid_change" != "2" ] && {
-    if [ "$country_code" == "CN" ]
-    then
-        uci set wireless.guest_2G.ssid="  小米共享WiFi_${guest_suffix}";
-    else
-        uci set wireless.guest_2G.ssid="  MiShareWiFi_${guest_suffix}";
-    fi
-    uci set wireless.guest_2G.ssid_changed=2
-    uci commit wireless
-}
+##guest default format Xiaomi_xxxx_VIP
+##guest_ssid_matched=$(echo $guest_ssid | grep "^Xiaomi_[[:xdigit:]]\{4\}_VIP$")
+#[ "$guest_ssid" != "" -a "$guest_ssid_change" != "2" ] && {
+#    if [ "$country_code" == "CN" ]
+#    then
+#        uci set wireless.guest_2G.ssid="  小米共享WiFi_${guest_suffix}";
+#    else
+#        uci set wireless.guest_2G.ssid="  MiShareWiFi_${guest_suffix}";
+#    fi
+#    uci set wireless.guest_2G.ssid_changed=2
+#    uci commit wireless
+#}
 
 # used for wifishare v2 domain allow and ios allow uci
 domain_white_list=$(uci get wifishare.global.domain_white_list 2>/dev/null)

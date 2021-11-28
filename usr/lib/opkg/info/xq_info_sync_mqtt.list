@@ -1,7 +1,9 @@
 /sbin/whc_to_re_common_api.sh
+/sbin/collect_topo_info.sh
 /usr/sbin/xq_info_sync_mqtt
 /sbin/xqwhc_backhaul_maclist_reload.sh
 /sbin/bind_client.sh
+/sbin/xqwhc_channel.sh
 /sbin/cap_whc_common_push.sh
 /etc/config/bind
 /sbin/xqwhc_gw_update.sh
@@ -10,3 +12,4 @@
 /etc/init.d/xq_info_sync_mqtt
 /sbin/xqwhc_maclist_reload.sh
 /sbin/xqwhc_info_sync.sh
+/sbin/re_restore.sh

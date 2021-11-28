@@ -36,7 +36,7 @@ maccel_clean()
 
 	[ $db_cnt -gt 250 ] && {
 		local del_num=`expr $db_cnt - 250`
-		#maccel_db_del $db_num 250
+		maccel_db_del $db_num 250
 	}
 }
 
@@ -47,7 +47,7 @@ maccel_db_del()
 	local db_cnt=$2
 	[ $del_num -gt 0 ] && {
 		#echo "maccel_db_del: $del_num" > /dev/console
-		lua /usr/sbin/mobile_accel_db.lua del $del_num
+		#lua /usr/sbin/mobile_accel_db.lua del $del_num
 		uci set mobile_accel.settings.db_record=$db_cnt
 		uci commit mobile_accel
 	}
@@ -57,7 +57,7 @@ maccle_iptables_set()
 {
 	local op="-D"
 	local c_ip=$2
-	
+
 	[ "$1" = "add" ] && op="-I"
 	iptables -t mangle $op FORWARD -d $c_ip -j DSCP --set-dscp 48
 }
@@ -94,7 +94,7 @@ maccel_disabled()
 
 	[ $db_cnt -gt 250 ] && {
 		local del_num=`expr $db_cnt - 250`
-		#maccel_db_del $db_num 250
+		maccel_db_del $db_num 250
 	}
 }
 
@@ -120,7 +120,7 @@ maccel_check()
 			local c_ip=$(uci -q get mobile_accel.$c_name.ip)
 			uci delete mobile_accel.$c_name
 
-			maccel_logger "stop accel"
+			maccel_logger "stop accel: $c_name, $c_ip, $c_hname"
 			#close accel
 			maccle_iptables_set del $c_ip
 			del_ecm_record $c_ip
@@ -135,7 +135,7 @@ maccel_check()
 
 	[ $db_cnt -gt 300 ] && {
 		local del_num=`expr $db_cnt - 250`
-		#maccel_db_del $db_num 250
+		maccel_db_del $db_num 250
 	}
 }
 
@@ -191,7 +191,7 @@ EOF
 		#open accel
 		maccle_iptables_set add $client_ip
 		del_ecm_record $client_ip
-		maccel_logger "open accel"
+		maccel_logger "open accel: $name, $client_ip, $hostname"
 	else
 		local reopen_accel=0
 		c_old=$(uci -q get mobile_accel.$name.ip)
@@ -211,12 +211,12 @@ EOF
 			maccle_iptables_set del $c_old
 			del_ecm_record $client_ip
 			del_ecm_record $c_old
-			maccel_logger "reopen accel"
+			maccel_logger "reopen accel: $name, $client_ip"
 		}
 	fi
-}	
-		
-		
+}
+
+
 [ -z "$1" ] && return 1
 
 enabled=$(uci -q get mobile_accel.settings.enabled)

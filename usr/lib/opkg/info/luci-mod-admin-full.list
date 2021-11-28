@@ -9,7 +9,9 @@
 /usr/lib/lua/luci/view/web/inc/password.htm
 /www/xiaoqiang/web/font/din.eot
 /www/xiaoqiang/web/img/icons/router_r3gv2n_100_on .png
+/www/xiaoqiang/web/img/icons/router_ra83_101.png
 /www/xiaoqiang/web/img/zh_hk/newguide.png
+/www/xiaoqiang/web/img/miHome.png
 /www/xiaoqiang/web/img/ico_msg.png
 /www/xiaoqiang/web/img/icons/router_d01_101.png
 /www/xiaoqiang/web/img/topograph/router_r3600_101_on.png
@@ -49,6 +51,7 @@
 /www/xiaoqiang/web/img/icons/router_r4cm_101_on.png
 /usr/lib/lua/luci/view/web/init/guidetoapp.htm
 /www/xiaoqiang/web/css/safe.css
+/www/xiaoqiang/web/img/icons/router_ra50_101_on.png
 /www/xiaoqiang/web/img/ico_speed_test_err.png
 /usr/lib/lua/luci/view/web/inc/nav_set.htm
 /www/xiaoqiang/web/img/topograph/router_r2600_106.png
@@ -104,6 +107,7 @@
 /usr/lib/lua/luci/view/web/inc/footer.htm
 /usr/lib/lua/luci/view/web/inc/privacy_HK.htm
 /www/xiaoqiang/web/img/en/bg_login_tit.png
+/www/xiaoqiang/web/img/icons/router_ra80_101_on.png
 /www/xiaoqiang/web/img/icons/flash_on.png
 /www/xiaoqiang/web/css/dmz.css
 /usr/lib/lua/luci/view/web/inc/privacy.htm
@@ -114,7 +118,9 @@
 /www/xiaoqiang/web/img/guide_bt_pwdshow.png
 /www/xiaoqiang/web/img/store_usb_index_bar.gif
 /www/xiaoqiang/web/img/ico_nav_8.png
+/www/xiaoqiang/web/img/icons/router_ra83_101_on.png
 /www/xiaoqiang/web/js/jquery.dialog.js
+/www/xiaoqiang/web/img/icons/router_ra80_101.png
 /www/xiaoqiang/web/css/syslock.css
 /www/xiaoqiang/web/img/guide_bd_nowanselect_rp_r1c.png
 /usr/lib/lua/luci/view/web/inc/sysinfo_ap.htm
@@ -128,6 +134,7 @@
 /www/xiaoqiang/web/img/icons/router_r01_100.png
 /www/xiaoqiang/web/img/icons/router_r3600_100_on.png
 /www/xiaoqiang/web/img/ico_syserr_2.png
+/www/xiaoqiang/web/img/icons/router_ra50_100.png
 /www/xiaoqiang/web/img/ico_dropup.png
 /www/xiaoqiang/web/img/facebook.jpg
 /www/xiaoqiang/web/img/guide_finish_wifi.png
@@ -140,16 +147,21 @@
 /usr/lib/lua/luci/view/web/setting/dhcp_ip_mac.htm
 /www/xiaoqiang/web/img/finishxcode.jpg
 /www/xiaoqiang/web/img/ico_autodormancy_show.png
+/www/xiaoqiang/web/img/icons/router_ra72_100_on.png
 /www/xiaoqiang/web/img/store_r1c_how4.png
 /usr/lib/lua/luci/view/web/setting/nat_dmz.htm
 /www/xiaoqiang/web/img/bg_line_err.png
 /www/xiaoqiang/web/img/newguide.png
 /usr/lib/lua/luci/view/web/init/privacy.htm
 /usr/lib/lua/luci/view/web/setting/vpn.htm
+/www/xiaoqiang/web/img/icons/router_ra67_100.png
 /www/xiaoqiang/web/img/guide_slide_btn.png
 /www/xiaoqiang/web/img/topograph/router_r2600_100.png
 /www/xiaoqiang/web/img/guide_finish_appshow.png
+/www/xiaoqiang/web/img/icons/router_ra81_100_on.png
+/www/xiaoqiang/web/img/icons/router_ra72_100.png
 /www/xiaoqiang/web/img/topograph/router_rm1800_101_on.png
+/www/xiaoqiang/web/img/icons/router_ra69_100_on.png
 /www/xiaoqiang/web/js/class.pie.js
 /www/xiaoqiang/web/img/code.png
 /www/xiaoqiang/web/img/topograph/router_r4a_101.png
@@ -167,6 +179,7 @@
 /www/xiaoqiang/web/img/ico_nav_1.png
 /www/xiaoqiang/web/js/class.linechart.js
 /www/xiaoqiang/web/img/ico_nav_9.png
+/www/xiaoqiang/web/img/icons/router_ra81_100.png
 /www/xiaoqiang/web/css/ddns.css
 /www/xiaoqiang/web/img/en/bg_login_tit_us.png
 /www/xiaoqiang/web/img/guide_bd_nowanselect_rp_r1d.png
@@ -178,6 +191,7 @@
 /www/xiaoqiang/web/img/icons/router_r01_100_on.png
 /www/xiaoqiang/web/img/icons/router_r1cl_101.png
 /www/xiaoqiang/web/img/icons/router_r01_101.png
+/www/xiaoqiang/web/img/icons/router_ra50_101.png
 /www/xiaoqiang/web/css/wan.css
 /www/xiaoqiang/web/img/icons/router_r3600_100.png
 /www/xiaoqiang/web/css/upgrade.css
@@ -197,6 +211,7 @@
 /usr/bin/luci-bwc
 /www/xiaoqiang/web/img/en/logo_privacy_us.png
 /www/xiaoqiang/web/img/icons/router_rm2100_100_on.png
+/www/xiaoqiang/web/img/icons/router_ra67_101.png
 /www/xiaoqiang/web/img/topograph/router_r3d_106_on.png
 /www/xiaoqiang/web/img/topograph/router_r3d_106.png
 /www/xiaoqiang/web/img/repeat_rt.png
@@ -212,6 +227,7 @@
 /www/xiaoqiang/web/img/zh_cn/bg_login_tit.png
 /www/xiaoqiang/web/css/nat.css
 /www/xiaoqiang/web/img/ico_signal.png
+/www/xiaoqiang/web/img/icons/router_ra72_101.png
 /usr/lib/lua/luci/view/web/inc/reboot.js.htm
 /www/xiaoqiang/web/css/guide.css
 /www/xiaoqiang/web/img/ico_reboot.png
@@ -235,6 +251,7 @@
 /www/xiaoqiang/web/img/icons/router_r1cm_104_on.png
 /www/xiaoqiang/web/img/normal_rt.png
 /www/xiaoqiang/web/img/icons/router_r02_100.png
+/www/xiaoqiang/web/img/icons/router_ra72_101_on.png
 /usr/lib/lua/luci/view/web/inc/g.js.htm
 /usr/lib/lua/luci/view/web/inc/netmod.js.htm
 /www/xiaoqiang/web/css/upgrademanual.css
@@ -262,6 +279,7 @@
 /usr/lib/lua/luci/controller/web/index.lua
 /usr/lib/lua/luci/view/web/inc/upgrade.js.htm
 /www/xiaoqiang/web/img/guide_hd_finish.png
+/www/xiaoqiang/web/img/icons/router_ra69_101_on.png
 /www/xiaoqiang/web/img/ico_disk_warn.png
 /usr/lib/lua/luci/view/web/inc/privacy_KR.htm
 /www/xiaoqiang/web/img/ico_speed_test_norst.png
@@ -290,6 +308,7 @@
 /www/xiaoqiang/web/img/bg_login_tit.png
 /www/xiaoqiang/web/img/ico_nav_3.png
 /www/xiaoqiang/web/img/icons/router_r2100_101.png
+/www/xiaoqiang/web/img/icons/router_ra70_100_on.png
 /www/xiaoqiang/web/img/guide_finish_24.png
 /www/xiaoqiang/web/img/ko_kr/bg_login_tit.png
 /www/xiaoqiang/web/img/guide_bd_nowanselect_r1c.png
@@ -300,6 +319,7 @@
 /www/xiaoqiang/web/img/icons/router_r1cm_101.png
 /www/xiaoqiang/web/img/icons/router_r02_101.png
 /usr/lib/lua/luci/view/web/init/hello.htm
+/www/xiaoqiang/web/img/icons/router_ra67_100_on.png
 /www/xiaoqiang/web/img/icons/router_r2350_101.png
 /www/xiaoqiang/web/img/topograph/router_d01_100.png
 /www/xiaoqiang/web/img/en/newguide.png
@@ -348,6 +368,7 @@
 /www/xiaoqiang/web/img/ico_nav_4.png
 /usr/lib/lua/luci/view/web/init/agreement.htm
 /www/xiaoqiang/web/img/bg_select_open.png
+/www/xiaoqiang/web/img/icons/router_ra82_101.png
 /www/xiaoqiang/web/img/guide_bd_nowanselect_r1d.png
 /www/xiaoqiang/web/img/notice.png
 /usr/lib/lua/luci/view/web/inc/agreement_US_inter.htm
@@ -384,6 +405,7 @@
 /usr/lib/lua/luci/view/web/inc/sysinfo.js.htm
 /www/xiaoqiang/web/img/icons/router_r2600_106.png
 /www/xiaoqiang/web/img/icons/router_r3_101_on.png
+/www/xiaoqiang/web/img/icons/router_ra69_100.png
 /usr/lib/lua/luci/view/web/inc/speedtest.js.htm
 /www/xiaoqiang/web/img/netmod_option.png
 /www/xiaoqiang/web/img/ico_format_show.png
@@ -395,7 +417,9 @@
 /www/xiaoqiang/web/img/zh_tw/bg_login_tit.png
 /usr/lib/lua/luci/view/web/setting/ddns.htm
 /www/xiaoqiang/web/img/ico_downclient.png
+/www/xiaoqiang/web/img/icons/router_ra70_101_on.png
 /www/xiaoqiang/web/css/bc.css
+/www/xiaoqiang/web/img/icons/router_ra70_100.png
 /usr/lib/lua/luci/view/web/inc/aprouterchange.htm
 /www/xiaoqiang/web/img/topograph/router_r4c_101.png
 /www/xiaoqiang/web/img/icons/router_rm1800_100_on.png
@@ -404,10 +428,12 @@
 /www/xiaoqiang/web/img/icons/router_r3l_100_on.png
 /www/xiaoqiang/web/img/icons/router_r1cm_101_on.png
 /www/xiaoqiang/web/img/icons/router_r4cm_100_on.png
+/www/xiaoqiang/web/img/icons/router_ra50_100_on.png
 /www/xiaoqiang/web/img/en/logo_agreement_us.png
 /www/xiaoqiang/web/img/ico_nav_5.png
 /www/xiaoqiang/web/img/bg_body.png
 /www/xiaoqiang/web/img/guide_error.png
+/www/xiaoqiang/web/img/icons/router_ra67_101_on.png
 /www/xiaoqiang/web/img/icons/router_d01_100.png
 /www/xiaoqiang/web/img/icons/router_r4ac_101_on.png
 /www/xiaoqiang/web/img/bt_switch_on.png
@@ -421,6 +447,7 @@
 /www/xiaoqiang/web/img/zh_cn/userguide.png
 /www/xiaoqiang/web/img/icons/router_r1cm_103.png
 /www/xiaoqiang/web/img/icons/USB.png
+/www/xiaoqiang/web/img/icons/router_ra82_101_on.png
 /www/xiaoqiang/web/img/ssid50.png
 /www/xiaoqiang/web/img/ico_notice.png
 /www/xiaoqiang/web/img/topograph/router_rm1800_101.png
@@ -442,6 +469,7 @@
 /www/xiaoqiang/web/img/ssid24.png
 /www/xiaoqiang/web/img/topograph/router_r3_101.png
 /usr/lib/lua/luci/view/web/init/bind.htm
+/www/xiaoqiang/web/img/icons/router_ra69_101.png
 /www/xiaoqiang/web/img/icons/router_r2d_101_on.png
 /www/xiaoqiang/web/css/login.css
 /www/xiaoqiang/web/img/wx_code.png
@@ -452,4 +480,5 @@
 /www/xiaoqiang/web/img/ko_kr/logo_privacy.png
 /www/xiaoqiang/web/img/ico_pro_set.png
 /www/xiaoqiang/web/img/ico_shutdown.png
+/www/xiaoqiang/web/img/icons/router_ra70_101.png
 /www/xiaoqiang/web/img/ico_usb3.png

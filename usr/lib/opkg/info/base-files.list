@@ -27,6 +27,7 @@
 /etc/hotplug.d/button/51-reset
 /bin/reboot_safe.sh
 /usr/sbin/diskeh
+/etc/hotplug.d/button/01-mi-reset-key
 /usr/sbin/guestwifi.sh
 /etc/localtime
 /usr/sbin/parentalctl.sh
@@ -135,6 +136,7 @@
 /usr/sbin/crontab_rom.sh
 /lib/upgrade/nand.sh
 /etc/rc.button/failsafe
+/etc/opkg/keys/a1174740835a460
 /lib/upgrade/fwtool.sh
 /etc/services
 /usr/sbin/get_router_kv.lua
@@ -197,7 +199,6 @@
 /etc/config/parentalctl
 /etc/init.d/timezone
 /usr/sbin/ntpsetclock
-/etc/opkg/keys/3fcbc1f4336c2b6e
 /usr/sbin/iptv.sh
 /rom/note
 /etc/inittab
@@ -205,6 +206,7 @@
 /sbin/hwversion
 /usr/share/xiaoqiang/xiaoqiang_version
 /lib/config_post_ota/wifishare_post_ota.sh
+/lib/config_post_ota/ipv6_post_ota.sh
 /sbin/wifi
 /etc/iptv/route
 /etc/profile

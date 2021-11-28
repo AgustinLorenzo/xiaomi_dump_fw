@@ -731,8 +731,12 @@ start_service() {
 		sleep 3
 	fi
 	local hyd_rcd_enabled=`ls /etc/rc.d/S${START}hyd 2> /dev/null`
+	local mesh_version=$(uci -q get xiaoqiang.common.MESH_VERSION)
+	if [ -z "$mesh_version" ]; then
+		mesh_version=1
+	fi
 
-	[ "$enabled" -gt 0 -a -n "$hyd_rcd_enabled" ] || {
+	[ "$enabled" -gt 0 -a -n "$hyd_rcd_enabled" -a "$mesh_version" = "1" ] || {
 		hyfi_unlock
 		return 1
 	}

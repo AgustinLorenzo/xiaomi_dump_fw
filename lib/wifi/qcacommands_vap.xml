@@ -5239,4 +5239,162 @@
       <Attribute name="get_mtu_size" ID="1" TYPE="u32"/>
     </VendorRsp>
   </VendorCmd>
+  <VendorCmd name="mesh_ver" ID="74" DEFAULTS="17,18">
+    <Attribute name="dparam0" ID="17" TYPE="u32" DEFAULT="200"/>
+    <Attribute name="dparam1" ID="18" TYPE="u32" DEFAULT="667"/>
+    <Attribute name="value0" ID="19" TYPE="u32"/>
+  </VendorCmd>
+  <VendorCmd name="g_mesh_ver" ID="75" DEFAULTS="17,18">
+    <Attribute name="dparam0" ID="17" TYPE="u32" DEFAULT="200"/>
+    <Attribute name="dparam1" ID="18" TYPE="u32" DEFAULT="667"/>
+    <VendorRsp name="g_mesh_ver" ID="75" ATTR_MAX="2">
+      <Attribute name="g_mesh_ver" ID="1" TYPE="u32"/>
+    </VendorRsp>
+  </VendorCmd>
+  <VendorCmd name="mesh_hop" ID="74" DEFAULTS="17,18">
+    <Attribute name="dparam0" ID="17" TYPE="u32" DEFAULT="200"/>
+    <Attribute name="dparam1" ID="18" TYPE="u32" DEFAULT="668"/>
+    <Attribute name="value0" ID="19" TYPE="u32"/>
+  </VendorCmd>
+  <VendorCmd name="g_mesh_hop" ID="75" DEFAULTS="17,18">
+    <Attribute name="dparam0" ID="17" TYPE="u32" DEFAULT="200"/>
+    <Attribute name="dparam1" ID="18" TYPE="u32" DEFAULT="668"/>
+    <VendorRsp name="g_mesh_hop" ID="75" ATTR_MAX="2">
+      <Attribute name="g_mesh_hop" ID="1" TYPE="u32"/>
+    </VendorRsp>
+  </VendorCmd>
+  <VendorCmd name="mesh_capip" ID="74" DEFAULTS="17,18">
+    <Attribute name="dparam0" ID="17" TYPE="u32" DEFAULT="200"/>
+    <Attribute name="dparam1" ID="18" TYPE="u32" DEFAULT="669"/>
+    <Attribute name="value0" ID="19" TYPE="u32"/>
+  </VendorCmd>
+  <VendorCmd name="g_mesh_capip" ID="75" DEFAULTS="17,18">
+    <Attribute name="dparam0" ID="17" TYPE="u32" DEFAULT="200"/>
+    <Attribute name="dparam1" ID="18" TYPE="u32" DEFAULT="669"/>
+    <VendorRsp name="g_mesh_capip" ID="75" ATTR_MAX="2">
+      <Attribute name="g_mesh_capip" ID="1" TYPE="STRING"/>
+    </VendorRsp>
+  </VendorCmd>
+  <VendorCmd name="g_mesh_ulsnr" ID="75" DEFAULTS="17,18">
+    <Attribute name="dparam0" ID="17" TYPE="u32" DEFAULT="200"/>
+    <Attribute name="dparam1" ID="18" TYPE="u32" DEFAULT="670"/>
+    <VendorRsp name="g_mesh_ulsnr" ID="75" ATTR_MAX="2">
+      <Attribute name="g_mesh_ulsnr" ID="1" TYPE="u32"/>
+    </VendorRsp>
+  </VendorCmd>
+  <VendorCmd name="g_mesh_caprssi" ID="75" DEFAULTS="17,18">
+    <Attribute name="dparam0" ID="17" TYPE="u32" DEFAULT="200"/>
+    <Attribute name="dparam1" ID="18" TYPE="u32" DEFAULT="671"/>
+    <VendorRsp name="g_mesh_caprssi" ID="75" ATTR_MAX="2">
+      <Attribute name="g_mesh_caprssi" ID="1" TYPE="u32"/>
+    </VendorRsp>
+  </VendorCmd>
+  <VendorCmd name="mesh_ulrate" ID="74" DEFAULTS="17,18">
+    <Attribute name="dparam0" ID="17" TYPE="u32" DEFAULT="200"/>
+    <Attribute name="dparam1" ID="18" TYPE="u32" DEFAULT="672"/>
+    <Attribute name="value0" ID="19" TYPE="u32"/>
+  </VendorCmd>
+  <VendorCmd name="g_mesh_ulrate" ID="75" DEFAULTS="17,18">
+    <Attribute name="dparam0" ID="17" TYPE="u32" DEFAULT="200"/>
+    <Attribute name="dparam1" ID="18" TYPE="u32" DEFAULT="672"/>
+    <VendorRsp name="g_mesh_ulrate" ID="75" ATTR_MAX="2">
+      <Attribute name="g_mesh_ulrate" ID="1" TYPE="u32"/>
+    </VendorRsp>
+  </VendorCmd>
+  <VendorCmd name="mesh_ethmode" ID="74" DEFAULTS="17,18">
+    <Attribute name="dparam0" ID="17" TYPE="u32" DEFAULT="200"/>
+    <Attribute name="dparam1" ID="18" TYPE="u32" DEFAULT="673"/>
+    <Attribute name="value0" ID="19" TYPE="u32"/>
+  </VendorCmd>
+  <VendorCmd name="g_mesh_ethmode" ID="75" DEFAULTS="17,18">
+    <Attribute name="dparam0" ID="17" TYPE="u32" DEFAULT="200"/>
+    <Attribute name="dparam1" ID="18" TYPE="u32" DEFAULT="673"/>
+    <VendorRsp name="g_mesh_ethmode" ID="75" ATTR_MAX="2">
+      <Attribute name="g_mesh_ethmode" ID="1" TYPE="u32"/>
+    </VendorRsp>
+  </VendorCmd>
+  <VendorCmd name="mesh_factor" ID="74" DEFAULTS="17,18">
+    <Attribute name="dparam0" ID="17" TYPE="u32" DEFAULT="200"/>
+    <Attribute name="dparam1" ID="18" TYPE="u32" DEFAULT="674"/>
+    <Attribute name="value0" ID="19" TYPE="u32"/>
+  </VendorCmd>
+  <VendorCmd name="g_mesh_factor" ID="75" DEFAULTS="17,18">
+    <Attribute name="dparam0" ID="17" TYPE="u32" DEFAULT="200"/>
+    <Attribute name="dparam1" ID="18" TYPE="u32" DEFAULT="674"/>
+    <VendorRsp name="g_mesh_factor" ID="75" ATTR_MAX="2">
+      <Attribute name="g_mesh_factor" ID="1" TYPE="u32"/>
+    </VendorRsp>
+  </VendorCmd>
+  <VendorCmd name="g_mesh_bssid" ID="75" DEFAULTS="17,18">
+    <Attribute name="dparam0" ID="17" TYPE="u32" DEFAULT="200"/>
+    <Attribute name="dparam1" ID="18" TYPE="u32" DEFAULT="677"/>
+    <VendorRsp name="g_mesh_bssid" ID="75" ATTR_MAX="2">
+      <Attribute name="g_mesh_bssid" ID="1" TYPE="STRING"/>
+    </VendorRsp>
+  </VendorCmd>
+  <VendorCmd name="mesh_hyst" ID="74" DEFAULTS="17,18">
+    <Attribute name="dparam0" ID="17" TYPE="u32" DEFAULT="200"/>
+    <Attribute name="dparam1" ID="18" TYPE="u32" DEFAULT="678"/>
+    <Attribute name="value0" ID="19" TYPE="u32"/>
+  </VendorCmd>
+  <VendorCmd name="g_mesh_hyst" ID="75" DEFAULTS="17,18">
+    <Attribute name="dparam0" ID="17" TYPE="u32" DEFAULT="200"/>
+    <Attribute name="dparam1" ID="18" TYPE="u32" DEFAULT="678"/>
+    <VendorRsp name="g_mesh_hyst" ID="75" ATTR_MAX="2">
+      <Attribute name="g_mesh_hyst" ID="1" TYPE="u32"/>
+    </VendorRsp>
+  </VendorCmd>
+  <VendorCmd name="mesh_apmac" ID="74" DEFAULTS="17">
+    <Attribute name="dparam0" ID="17" TYPE="u32" DEFAULT="294"/>
+    <Attribute name="value0" ID="19" TYPE="MAC_ADDR"/>
+  </VendorCmd>
+  
+  <VendorCmd name="g_mesh_apmac" ID="74" DEFAULTS="17">
+    <Attribute name="dparam0" ID="17" TYPE="u32" DEFAULT="295"/>
+    <VendorRsp name="g_mesh_apmac" ID="74" ATTR_MAX="2">
+      <Attribute name="g_mesh_apmac" ID="1" TYPE="MAC_ADDR"/>
+    </VendorRsp>
+  </VendorCmd>
+  <VendorCmd name="g_mesh_ulmac" ID="74" DEFAULTS="17">
+    <Attribute name="dparam0" ID="17" TYPE="u32" DEFAULT="296"/>
+    <VendorRsp name="g_mesh_ulmac" ID="74" ATTR_MAX="2">
+      <Attribute name="g_mesh_ulmac" ID="1" TYPE="MAC_ADDR"/>
+    </VendorRsp>
+  </VendorCmd>
+  <VendorCmd name="mesh_aplimit" ID="74" DEFAULTS="17,18">
+    <Attribute name="dparam0" ID="17" TYPE="u32" DEFAULT="200"/>
+    <Attribute name="dparam1" ID="18" TYPE="u32" DEFAULT="682"/>
+    <Attribute name="value0" ID="19" TYPE="u32"/>
+  </VendorCmd>
+  <VendorCmd name="g_mesh_aplimit" ID="75" DEFAULTS="17,18">
+    <Attribute name="dparam0" ID="17" TYPE="u32" DEFAULT="200"/>
+    <Attribute name="dparam1" ID="18" TYPE="u32" DEFAULT="682"/>
+    <VendorRsp name="g_mesh_aplimit" ID="75" ATTR_MAX="2">
+      <Attribute name="g_mesh_aplimit" ID="1" TYPE="u32"/>
+    </VendorRsp>
+  </VendorCmd>
+ <VendorCmd name="mesh_id" ID="74" DEFAULTS="17,18">
+    <Attribute name="dparam0" ID="17" TYPE="u32" DEFAULT="200"/>
+    <Attribute name="dparam1" ID="18" TYPE="u32" DEFAULT="683"/>
+    <Attribute name="value0" ID="19" TYPE="u32"/>
+  </VendorCmd>
+  <VendorCmd name="g_mesh_id" ID="75" DEFAULTS="17,18">
+    <Attribute name="dparam0" ID="17" TYPE="u32" DEFAULT="200"/>
+    <Attribute name="dparam1" ID="18" TYPE="u32" DEFAULT="683"/>
+    <VendorRsp name="g_mesh_id" ID="75" ATTR_MAX="2">
+      <Attribute name="g_mesh_id" ID="1" TYPE="STRING"/>
+    </VendorRsp>
+  </VendorCmd>
+  <VendorCmd name="mesh_dbg" ID="74" DEFAULTS="17,18">
+    <Attribute name="dparam0" ID="17" TYPE="u32" DEFAULT="200"/>
+    <Attribute name="dparam1" ID="18" TYPE="u32" DEFAULT="684"/>
+    <Attribute name="value0" ID="19" TYPE="u32"/>
+  </VendorCmd>
+  <VendorCmd name="g_mesh_dbg" ID="75" DEFAULTS="17,18">
+    <Attribute name="dparam0" ID="17" TYPE="u32" DEFAULT="200"/>
+    <Attribute name="dparam1" ID="18" TYPE="u32" DEFAULT="684"/>
+    <VendorRsp name="g_mesh_dbg" ID="75" ATTR_MAX="2">
+      <Attribute name="g_mesh_dbg" ID="1" TYPE="u32"/>
+    </VendorRsp>
+  </VendorCmd>
 </WCN_VenTool>

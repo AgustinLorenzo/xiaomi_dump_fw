@@ -6,7 +6,7 @@ License: GPLv2
 Section: kernel
 Status: unknown hold not-installed
 Architecture: aarch64_cortex-a53
-Installed-Size: 1632
+Installed-Size: 1629
 Description:  Netfilter (IPv4) kernel modules for packet content inspection
  Includes:
  - string

@@ -4,5 +4,5 @@ Depends: libc, base-files, luasocket, curl, librt, libuci, libpolarssl, libopens
 Source: package/miwifi/xiaoqiang-util
 Section: net
 Architecture: aarch64_cortex-a53
-Installed-Size: 24645
+Installed-Size: 30221
 Description:  OTA

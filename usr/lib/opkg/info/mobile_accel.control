@@ -4,5 +4,5 @@ Depends: libc
 Source: package/miwifi/mobile_accel
 Section: data
 Architecture: all
-Installed-Size: 3317
+Installed-Size: 3331
 Description:  mobile_accel

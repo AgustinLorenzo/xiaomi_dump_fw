@@ -782,12 +782,14 @@ var modelVpn = (function(){
                 var tpl = $('#tmplDevice').html();
                 if($.isArray(list) && list.length > 0){
                     for(var i = 0, len = list.length; i < len; i++){
-                        var tr = StringH.tmpl(tpl, {
-                            name: list[i].name,
-                            status: list[i].online == 1 ? '<%:在线%>' : '<%:离线%>',
-                            mac: list[i].mac
-                        });
-                        trarr.push(tr);
+			if(list[i].isap != 8){
+                            var tr = StringH.tmpl(tpl, {
+                                name: list[i].name,
+                                status: list[i].online == 1 ? '<%:在线%>' : '<%:离线%>',
+                                mac: list[i].mac
+                            });
+                            trarr.push(tr);
+			}
                     }
                     $('#dialogdeviceslist').html(trarr.join(''));
                     $('#listAddClose').on('click', function(e){

@@ -5,21 +5,32 @@
 
 START=90
 USE_PROCD=1
-CONF=/etc/mosquitto/mosquitto.conf
+SRC_CONF=/etc/mosquitto/mosquitto.conf
+TMP_CONF=/tmp/mosquitto.conf
 
 start_service() {
     #only work for CAP mode
+    cp $SRC_CONF $TMP_CONF
     ap_mode=$(uci -q get xiaoqiang.common.NETMODE)
-    [ "$ap_mode" != "whc_cap" ] && return 0
+    [ "$ap_mode" != "whc_cap" -a "$ap_mode" != "lanapmode" ] && return 0
+    
+    cap_mode=$(uci -q get xiaoqiang.common.CAP_MODE)
+    [ "$ap_mode" = "lanapmode" -a "$cap_mode" != "ap" ] && return 0
+
+    if [ "$ap_mode" = "lanapmode" ]; then
+    	ip=$(uci -q get network.lan.ipaddr)
+    	hostname="xiaoqiang"
+    	sed -i "s/$hostname/$ip/" $TMP_CONF
+    fi
 
     [ -f "/usr/sbin/mqautogen.lua" ] && lua /usr/sbin/mqautogen.lua
 
 	procd_open_instance
 	procd_set_param command mosquitto
-	procd_append_param command -c $CONF
+	procd_append_param command -c $TMP_CONF
 	procd_set_param respawn
 	# Makes /etc/init.d/mosquitto reload work if you edit the final file.
-	procd_set_param file $CONF
+	procd_set_param file $TMP_CONF
 	procd_close_instance
 }
 

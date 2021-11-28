@@ -59,7 +59,6 @@ case ${action} in
         delete network.lan.ip6addr
 	delete network.lan.ip6assign
         set network.${iface}.ipv6=0
-	set network.lan.ipv6='0'
 	commit network
 EOF
     ;;
@@ -94,7 +93,6 @@ EOF
 			add_list network.lan.ip6class=${iface}_6
 			set network.lan.ip6assign=${ip6assign}
 			set network.lan.ip6addr=${ip6prefix}
-			set network.lan.ipv6='1'
 			set network.${iface}.ipv6="auto"
 			commit network
 EOF
@@ -113,7 +111,6 @@ EOF
 			add_list network.lan.ip6class=${iface}_6
 			set network.lan.ip6assign=${ip6assign}
 			set network.lan.ip6addr=${ip6prefix}
-			set network.lan.ipv6='1'
 			commit network
 EOF
 	fi
@@ -136,7 +133,6 @@ EOF
         del_list network.lan.ip6class=${iface}_6
         set network.${iface}.ipv6="auto"
         set network.lan.ip6assign=${ip6assign}
-        set network.lan.ipv6='1'
         commit network
 EOF
     else
@@ -153,7 +149,6 @@ EOF
 	set network.${iface}_6.reqaddress=try
 	set network.${iface}_6.reqprefix=auto
 	set network.lan.ip6assign=${ip6assign}
-	set network.lan.ipv6='1'
 	commit network
 EOF
     fi
@@ -175,7 +170,6 @@ EOF
 		delete network.${iface}_6
 		delete network.lan.ip6addr
 		del_list network.lan.ip6class=${iface}_6
-		set network.lan.ipv6='1'
 		set network.lan.ip6assign=${ip6assign}
 		set network.${iface}.ipv6="auto"
 		commit network
@@ -187,7 +181,6 @@ EOF
 		delete network.${iface}_6
 		delete network.lan.ip6addr
 		del_list network.lan.ip6class=${iface}_6
-		set network.lan.ipv6='1'
 		set network.lan.ip6assign=${ip6assign}
 		set network.${iface}_6=interface
 		set network.${iface}_6.ifname=${wan_iface}
@@ -266,50 +259,27 @@ EOF
 		fi
 	;;
 
-"wan6_on")
-    #set wan6 interface on
-    if [ "$proto_type" == "pppoe" ]; then
-        logerr "ERROR: Support dhcp or static, but now mode is $proto_type. exit."
-        exit 0
-    fi
-    ip6_enabled=$(uci -q get ipv6.settings.enabled)
-    if [ "$ip6_enabled" = "1" ]; then
-        uci -q batch <<EOF
-        set network.${iface}.ipv6="auto"
-        set network.${iface}_6.auto=1
-        commit network
-EOF
-    fi
-    ;;
-
-"wan6_off")
-    #set wan6 interface off
-    if [ "$proto_type" != "pppoe" ]; then
-        logerr "ERROR: Support pppoe, but now mode is $proto_type. exit."
-        exit 0
-    fi
-
-    ip6iface=$(uci -q get network.${iface}6.ifname)
-    if [ -n "$ip6iface" ]; then
-        uci -q batch <<EOF
-		set network.${iface}_6.auto=0
-		commit network
-EOF
-    fi
-    ;;
-
 "reload_network")
-	ip6_enabled=$(uci -q get ipv6.settings.enabled)
+    ip6_enabled=$(uci -q get ipv6.settings.enabled)
     mode=$(uci -q get ipv6.settings.mode)
+    mode_old=$3
+    [ -z "$mode_old" ] && mode_old=$mode
+
     logger stat_points_none ip6_enabled=$ip6_status,$mode
 
     ubus call network reload
+    #up-down ipv6 interface: trigger hotplug
+    [ "$ip6_enabled" == "1" -a "$mode" != "off" -a "$mode" != "static" ] && {
+        ifup ${iface}_6 >/dev/null 2>&1
+    }
 
-	if [ "$ip6_enabled" == "1" -a "$mode" == "nat" ]; then
-		[ -d "/sys/module/shortcut_fe_cm" ] && /etc/init.d/qca-nss-ecm restart
-	else
-		[ ! -d "/sys/module/shortcut_fe_cm" ] && /etc/init.d/qca-nss-ecm restart
+    [ "$mode_old" != "$mode" ] && {
+	if [ "$ip6_enabled" = "1" -a "$mode" = "nat" ]; then
+	    [ -d "/sys/module/shortcut_fe_cm" ] && /etc/init.d/qca-nss-ecm restart
+	elif [ "$mode_old" = "nat" ]; then
+	    [ ! -d "/sys/module/shortcut_fe_cm" -a ! -d "/sys/kernel/debug/ecm/ecm_nss_ipv6" ] && /etc/init.d/qca-nss-ecm restart
 	fi
+    }
 
     /etc/init.d/dnsmasq restart
     ;;

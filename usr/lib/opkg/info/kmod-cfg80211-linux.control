@@ -6,5 +6,5 @@ License: GPLv2
 Section: kernel
 Status: unknown hold not-installed
 Architecture: aarch64_cortex-a53
-Installed-Size: 116118
+Installed-Size: 116117
 Description:  cfg80211 is the Linux wireless LAN (802.11) configuration API.

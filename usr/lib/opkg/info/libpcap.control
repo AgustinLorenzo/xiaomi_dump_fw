@@ -6,6 +6,6 @@ License: BSD-3-Clause
 Section: libs
 Maintainer: Felix Fietkau <nbd@nbd.name>
 Architecture: aarch64_cortex-a53
-Installed-Size: 86108
+Installed-Size: 86104
 Description:  This package contains a system-independent library for user-level network packet
  capture.

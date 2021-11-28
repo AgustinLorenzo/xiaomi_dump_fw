@@ -8,7 +8,7 @@ LicenseFiles: LICENSE.txt
 Section: libs
 Maintainer: Karl Palsson <karlp@etactica.com>
 Architecture: aarch64_cortex-a53
-Installed-Size: 35229
+Installed-Size: 35227
 Description:  Library required for mosquitto's command line client tools, also for
  use by any third party software that wants to communicate with a
  mosquitto server.

@@ -4,6 +4,7 @@ local XQSysUtil = require "xiaoqiang.util.XQSysUtil"
 local XQBackup = require("xiaoqiang.module.XQBackup")
 local romVersion = XQSysUtil.getRomVersion()
 local uploadUrl = luci.dispatcher.build_url("api", "xqsystem","upload_rom")
+local uploadUrl_plug = luci.dispatcher.build_url("api", "xqsystem","upload_plug")
 local backupKeys = XQBackup.defaultKeys()
 local hardware = string.lower( XQSysUtil.getHardware() )
 local backupKeys = XQBackup.defaultKeys()
@@ -39,6 +40,29 @@ local isMesh = (netmod == 3 or netmod == 4) and 'true'  or  'false'
     </div>
     <div class="item item-contral">
         <button type="button" class="btn btn-block btn-primary-disabled" id="uploadFormBtn" disabled><span><%:开始升级%></span></button>
+    </div>
+</form>
+</script>
+
+<script type="tmpl/text" id="uploadform_plug">
+<p><%:路由器正常工作情况下建议使用小米WiFi app进行安装，当安装失败或需要降级到前一版本时使用手动安装插件。%></p>
+<div class="uploadprogress" id="uploadprogress" style="display:none;">
+    <div class="progress-text">0%</div>
+    <div class="progress"><div class="value"></div></div>
+</div>
+<div class="uploadloading" id="uploadloading" style="display:none;">
+    <div class="loading-bar"></div>
+</div>
+<form class="form form-upload" name="uploadForm_plug" id="uploadForm_plug" method="post" enctype="multipart/form-data" >
+    <div class="item">
+        <label class="k"><%:请选择插件安装包:%></label>
+        <span class="v">
+            <input type="file" name="image" id="image" />
+        </span>
+        <em class="t"></em>
+    </div>
+    <div class="item item-contral">
+        <button type="button" class="btn btn-block btn-primary-disabled" id="uploadFormBtn_plug" disabled><span><%:开始安装%></span></button>
     </div>
 </form>
 </script>
@@ -108,7 +132,9 @@ local isMesh = (netmod == 3 or netmod == 4) and 'true'  or  'false'
 
     </p>
     <div class="btns">
+        <%if (netmod == 0) then%>
         <a href="#" id="toconfigbackup" class="btn btn-primary btn-m"><span><%:备份路由器设置%></span></a>
+        <%end%>
         <a href="#" id="toresetwindow" class="btn btn-primary btn-m"><span><%:直接恢复出厂设置%></span></a>
     </div>
 </div>
@@ -546,6 +572,127 @@ $.sub( 'upgrade:upload', function() {
             $.pub( 'reset:tip' )
         } );
     } );
+
+    $.sub( 'langset', function(){
+        $.i18nSet('#lang').done(function(){
+            $.selectBeautify();
+        });
+    } );
+});
+
+$.sub( 'upgrade:upload_plug', function() {
+
+    var plugDia; //弹窗
+
+    function usbservice(enbale) {
+        if ( parseInt(G_FEATURES['hardware']['usb_deploy'], 10) == 0) {
+            return {
+                done: function( f ){ f(); }
+            };
+        }
+        var requestURL = '<%=luci.dispatcher.build_url("api", "xqsystem","usbservice")%>',
+            requestData = {'enable': enbale};
+
+        return $.ajax({
+            url: requestURL,
+            type: 'get',
+            dataType: 'json',
+            data: requestData
+        });
+    }
+
+    function uploadfile(){
+        var apiUpload = '<%=uploadUrl_plug%>',
+            options;
+        var useInfileUpload = G_FEATURES['system']['infileupload'] === '1';
+        if ( useInfileUpload ) {
+            apiUpload = '/uploadfile' + apiUpload;
+        }
+
+        options = {
+            type: 'post',
+            dataType: "json",
+            url: apiUpload,
+            success: function( rsp ) {
+                if ( rsp.code == 0 ) {
+                    //上传成功后确认关闭
+                    plugDia.close()
+                    $.alert( '<%:插件安装成功，请返回小米WiFi app查看、使用%>' ).lock();
+                } else {
+                    $('#uploadprogress, #uploadloading').hide();
+                    $( '#uploadForm_plug' ).show();
+                    $.alert( rsp.msg ).lock();
+                    usbservice(1);
+                }
+                $('#uploadFormBtn_plug').show();
+            },
+            error: function() {
+                $.alert( '<%:安装失败，系统错误或路由器空间不足。%>' ).lock();
+                $('#uploadFormBtn_plug').show();
+            }
+        };
+        $('#uploadFormBtn_plug').hide();
+        usbservice(0).done(function(){
+            $( '#uploadForm_plug' ).ajaxUpload( options );
+        });
+    }
+
+    $( 'body' ).delegate( '#image', 'change', function( e ){
+
+        $( '#uploadFormBtn_plug' ).on( 'enable', function( e, data ) {
+            if ( data.disabled ) {
+                this.className = 'btn btn-primary-disabled btn-block';
+                this.disabled = true;
+            } else {
+                this.className = 'btn btn-primary btn-block';
+                this.disabled = false;
+            }
+        });
+
+        var image = $( '#image' );
+        var err = $( '#uploadForm_plug .t' );
+        var item = $( '#uploadForm_plug .item' ).eq( 0 );
+        if ( image.val() == '' ) {
+            err.html( '<%:你未选择文件，请重新选择%>' ).show();
+            item.addClass( 'item-err' );
+            $( '#uploadFormBtn_plug' ).trigger( 'enable', {disabled: true} );
+            return false;
+        }
+        var val = image.val();
+        var ext = val.substring( val.lastIndexOf( '.' ) + 1 );
+        ext = $.trim( ext );
+        var validExt = ext == 'mpk' || ext == 'MPK';
+        if ( !validExt ) {
+            err.html( '<%:文件格式错误，请重新选择%>' ).show();
+            item.addClass( 'item-err' );
+            $( '#uploadFormBtn_plug' ).trigger( 'enable', {disabled: true} );
+            return false;
+        }
+        err.hide();
+        item.removeClass( 'item-err' );
+        $( '#uploadFormBtn_plug' ).trigger( 'enable', {disabled: false} );
+
+    } );
+
+    var uploadHander = $.throttle(function( e ) {
+        e.preventDefault();
+        var uploadform_plug = $( '#uploadform_plug' ).html();
+        plugDia = $.dialog({
+            id: 'usbcheck_upload',
+            width: 390,
+            title: '<%:手动安装插件%>',
+            content: '<div class="mod-uploadflash">' + uploadform_plug + '</div>'
+        }).lock();
+    }, 1000);
+
+    $( '#btnUpload_plug,.btnUpload_plug' ).on( 'click', uploadHander);
+
+
+    $( 'body' ).delegate( '#uploadFormBtn_plug', 'click', function( e ){
+        e.preventDefault();
+        uploadfile();
+        return false;
+    });
 
     $.sub( 'langset', function(){
         $.i18nSet('#lang').done(function(){
@@ -1369,6 +1516,7 @@ $(function(){
     $.pub( 'upgrade:check' );
     $.pub( 'upgrade:download' );
     $.pub( 'upgrade:upload' );
+    $.pub( 'upgrade:upload_plug' );
     $.pub( 'uploadlog' );
     $.pub( 'reset' );
     if (document.getElementById('lang')) {

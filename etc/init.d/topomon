@@ -1,0 +1,28 @@
+#!/bin/sh /etc/rc.common
+
+START=99
+USE_PROCD=1
+
+NAME=topomon
+PROG=/usr/sbin/topomon
+
+start_service() {
+	local netmode=$(uci -q get xiaoqiang.common.NETMODE)
+
+	[ -z "$netmode" ] && return
+
+	local mesh_version=$(uci -q get xiaoqiang.common.MESH_VERSION)
+	local capmode=$(uci -q get xiaoqiang.common.CAP_MODE)
+
+	if [ "$mesh_version" = "2" ]; then
+		if [ "$netmode" = "whc_re" ]; then
+			mkdir -p /var/run/topomon
+			procd_open_instance
+			procd_set_param command "$PROG" -l 6
+			procd_set_param respawn
+			procd_close_instance
+		elif [ "$netmode" = "whc_cap" -o "$capmode" = "ap" ]; then
+			/usr/sbin/topomon_action.sh cap_init &
+		fi
+	fi
+}

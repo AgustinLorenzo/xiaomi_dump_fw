@@ -1,7 +1,7 @@
 #!/bin/sh
 # Copyright (C) 2015 Xiaomi
 #
-. /lib/xqwhc/xqwhc_public.sh
+
 . /usr/share/libubox/jshn.sh
 
 RETRY_MAX=3
@@ -49,34 +49,25 @@ notify_re()
 # send log update message to RE
 call_re_upload_log()
 {
-    if [ "$HARDWARE" == "D01"  -o  "$HARDWARE" == "R3600" -o "$HARDWARE" == "RM1800" -o "$HARDWARE" == "RA69" ]; then
         json_init
         json_add_string "method" $cmd
         json_add_string "payload" $jmsg
         json_str=`json_dump`
         echo $json_str
         ubus call xq_info_sync_mqtt send_msg "$json_str"
-    fi
     return
 }
 
 # send log update message to RE
 tell_re_do_action()
 {
-    if [ "$HARDWARE" == "D01"  -o  "$HARDWARE" == "R3600" -o "$HARDWARE" == "RM1800" -o "$HARDWARE" == "RA69" ]; then
         json_init
         json_add_string "method" "$cmd"
         json_add_string "payload" "$jmsg"
         json_str=`json_dump`
         echo $json_str
         ubus call xq_info_sync_mqtt send_msg "$json_str"
-    fi
     return
-}
-
-whcal iscap || {
-    whc_to_re_log " error, whc_to_re_common_api scr ONLY call on cap!"
-    exit 1
 }
 
 OPT=$1
@@ -114,7 +105,7 @@ case $OPT in
     ;;
     whc_sync)
         cmd="whc_sync"
-        jmsg=`whcal syncbuf`
+        jmsg=`mesh_cmd syncbuf`
     ;;
     *)
         my_usage

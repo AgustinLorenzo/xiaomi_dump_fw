@@ -1,0 +1,13 @@
+#!/bin/sh
+
+if [ "$ACTION" = "reset" -a "$BUTTON" = "wps" ]; then
+	uptime
+	xqled sys_booting;xqled func_off
+	echo "Reset key is reset" | tee /dev/console
+	ap_mode=$(uci -q get xiaoqiang.common.NETMODE)
+	mesh_version=$(uci -q get xiaoqiang.common.MESH_VERSION)
+	cap_mode=$(uci -q get xiaoqiang.common.CAP_MODE)
+	if [ "$ap_mode" = "whc_cap" ] || [ "$mesh_version" = "2" -a "$ap_mode" = "lanapmode" -a "$cap_mode" = "ap" ]; then
+		ubus call xq_info_sync_mqtt restore
+	fi
+fi

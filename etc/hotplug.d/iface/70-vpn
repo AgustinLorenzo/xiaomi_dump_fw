@@ -48,6 +48,12 @@ del_tcpmss() {
 	bootcheck=$( cat /proc/xiaoqiang/boot_status )
 	[ "$bootcheck" == "3" ] || return
 
+	wanproto=$(uci -q get network.wan.proto)
+	vpnproto=$(uci -q get network.vpn.proto)
+	wan_device=$(uci -q get network.wan.ifname)
+	[ "$wanproto" == "pppoe" ] && wan_device="pppoe-wan"
+	[ -z "$wan_device" ] && wan_device="eth1"
+
 	if [ -f /etc/ppp/vpndown.sh ]; then
 		. /etc/ppp/vpndown.sh
 	fi
@@ -65,13 +71,14 @@ del_tcpmss() {
 		ip rule del table vpn
 	done
 
+	vpn_table_wan_rule=$(ip route show table vpn | grep $wan_device)
+	vpn_table_wan_rule=${vpn_table_wan_rule%scope*}
+	[ -n "$vpn_table_wan_rule" ] && {
+		ip route del to $vpn_table_wan_rule table vpn
+	}
+
 	_nexthop=$(ubus call network.interface.wan status |jason.sh -b | awk '{if($1~/route\",0,\"nexthop/) {nexthop=$2; gsub(/^ *"|\" *$/,"", nexthop); printf("%s",nexthop); return} }' 2>/dev/null)
 	[ -z $_nexthop ] && return
-
-	wanproto=$(uci get network.wan.proto 2>/dev/null);
-	wan_device=$(uci get network.wan.ifname 2>/dev/null);
-	[ "$wanproto" == "pppoe" ] && wan_device="pppoe-wan"
-	[ -z $wan_device ] && wan_device="eth1"
 
 	ip route del default dev $wan_device
 	ip route del default dev $wan_device metric 50
@@ -128,19 +135,18 @@ del_tcpmss() {
 		ip rule add to $dnsserver table vpn
 	done
 
+	wanproto=$(uci -q get network.wan.proto)
+	vpnproto=$(uci -q get network.vpn.proto)
 	#send all traffic to vpn
-	wanproto=$(uci get network.wan.proto 2>/dev/null);
-
-	wan_device=$(uci get network.wan.ifname 2>/dev/null);
+	wan_device=$(uci -q get network.wan.ifname)
 	[ "$wanproto" == "pppoe" ] && wan_device="pppoe-wan"
-	[ -z $wan_device ] && wan_device="eth1"
+	[ -z "$wan_device" ] && wan_device="eth1"
 
-	trafficall=$(uci get network.vpn.trafficall 2>/dev/null);
-	vpnproto=$(uci get network.vpn.proto 2>/dev/null);
+	trafficall=$(uci -q get network.vpn.trafficall)
 
 	vpn_debug "try start, proto=$vpnproto, trafficall=$trafficall, wan_device=$wan_device."
 
-	[ "$trafficall" == "yes" -a $vpnproto != "" ] && {
+	[ "$trafficall" == "yes" -a "$vpnproto" != "" ] && {
 		_nexthop=$(ubus call network.interface.wan status |jason.sh -b | awk '{if($1~/route\",0,\"nexthop/) {nexthop=$2; gsub(/^ *"|\" *$/,"", nexthop); printf("%s",nexthop); return} }' 2>/dev/null)
 		vpn_debug "send all traffic to vpn, dev $DEVICE to vpn, wan_device=$wan_device, _nexthop=$_nexthop"
 
@@ -173,13 +179,25 @@ del_tcpmss() {
 
 		vpn_debug "add default proto for ${vpnproto}-vpn."
 		ip route add default dev ${vpnproto}-vpn
+
+		[ "$wanproto" = "pppoe" ] && {
+			cnt=$(route | grep -c "pppoe-wan")
+			[ $cnt -eq 0 ] && {
+				vpn_debug "add route for pppoe-wan."
+				route add -net $_nexthop netmask 255.255.255.255 pppoe-wan
+			}
+		}
+
 		ip route flush cache
-		return;
+		return
 	}
 
 	#send all traffic to vpn except local
 	vpn_debug "send traffic to vpn except local, dev $DEVICE to vpn"
 	ip route add to 0/0 dev $DEVICE table vpn
+
+	network_get_subnet subnet wan
+	ip route add to $(fix_subnet $subnet) dev $wan_device table vpn
 
 	network_get_subnet subnet lan
 	ip rule add from $(fix_subnet $subnet) table vpn

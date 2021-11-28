@@ -8,7 +8,7 @@ LicenseFiles: LICENSE.txt
 Section: net
 Maintainer: Karl Palsson <karlp@etactica.com>
 Architecture: aarch64_cortex-a53
-Installed-Size: 91475
+Installed-Size: 91660
 Description:  Mosquitto is an open source (BSD licensed) message broker that implements
  the MQTT protocol version 3.1 and 3.1.1. MQTT provides a lightweight
  method of carrying out messaging using a publish/subscribe model.

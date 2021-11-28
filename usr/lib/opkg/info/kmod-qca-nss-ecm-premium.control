@@ -5,5 +5,5 @@ Provides: kmod-qca-nss-ecm
 Source: qca_qsdk/qca_qsdk_spf10.0/feeds/nss-host/qca-nss-ecm
 Section: kernel
 Architecture: aarch64_cortex-a53
-Installed-Size: 338092
+Installed-Size: 338195
 Description:  QCA NSS Enhanced Connection Manager (ECM) (with premium features)

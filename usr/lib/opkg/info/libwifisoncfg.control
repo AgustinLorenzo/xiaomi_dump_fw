@@ -5,5 +5,5 @@ Source: qca_qsdk/qca_qsdk_spf10.0/feeds/qca-lib/libwifisoncfg
 Section: QCA
 Maintainer: Qualcomm Atheros, Inc.
 Architecture: aarch64_cortex-a53
-Installed-Size: 21002
+Installed-Size: 21003
 Description:  This Package contains the WiFi-SON Configuration layer support

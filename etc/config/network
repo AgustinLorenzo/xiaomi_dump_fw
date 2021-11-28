@@ -14,13 +14,21 @@ config interface 'lan'
         option proto 'static'
         option ipaddr '192.168.31.1'
         option netmask '255.255.255.0'
-        option ipv6 '0'
         option multicast_querier '0'
         option igmp_snooping '0'
 
 config interface 'eth1'
         option ifname 'eth1'
         option keepup 1
+
+config interface 'eth2'
+        option ifname 'eth2'
+
+config interface 'eth3'
+        option ifname 'eth3'
+
+config interface 'eth4'
+        option ifname 'eth4'
 
 config interface 'wan'
         option ifname 'eth1'

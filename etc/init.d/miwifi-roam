@@ -1,0 +1,76 @@
+#!/bin/sh /etc/rc.common
+
+START=56
+USE_PROCD=1
+
+NAME=miwifi-roam
+PROG=/usr/sbin/miwifi-roam
+ROAM_CONFIG_FILE="/tmp/roam.conf"
+
+dual_band=0
+
+check_bands() {
+	local band_24g
+	local band_5g
+
+	driver=$(lsmod | cut -d' ' -f 1 | grep ath10k_core)
+
+	if [ "$driver" == "ath10k_core" ]; then
+		BANDS=$(/usr/sbin/iw dev 2> /dev/null | grep channel | cut -d' ' -f 2 | cut -d'.' -f 1)
+		for channel in $BANDS
+		do
+			if [ "$channel" -le "13" ]; then
+				band_24g=1
+			elif [ "$channel" -ge "32" ]; then
+				band_5g=1
+			fi
+		done
+	else
+		BANDS=$(/usr/sbin/iwconfig 2> /dev/null | grep Frequency | cut -d':' -f 3 | cut -d'.' -f 1)
+		for band in $BANDS
+		do
+			if [ "$band" == "2" ]; then
+				band_24g=1
+			elif [ "$band" == "5" ]; then
+				band_5g=1
+			fi
+		done
+	fi
+
+	if [ "$band_24g" == "1" ] && [ "$band_5g" == "1" ]; then
+		dual_bands=1
+	else
+		dual_bands=0
+	fi
+}
+start_service() {
+	local mesh_version=$(uci -q get xiaoqiang.common.MESH_VERSION)
+	local bsd=$(uci -q get wireless.@wifi-iface[0].bsd)
+	local netmode=$(uci -q get xiaoqiang.common.NETMODE)
+	local capmode=$(uci -q get xiaoqiang.common.CAP_MODE)
+	if [ "$mesh_version" = "2" ] && [ "$bsd" = "1" -o "whc_cap" = "$netmode" -o "whc_re" = "$netmode" -o "lanapmode" = "$netmode" ]; then
+		
+		if [ "lanapmode" = "$netmode" -a "ap" != "$capmode" -a "1" != "$bsd" ]; then
+			echo "ap mode without mesh. exit"
+			return 1
+		fi
+
+		check_bands
+		if [ "$bsd" = "1" ] && [ "$dual_bands" -ne "1" ]; then
+			echo "require both 2.4 GHz and 5 GHz to be configured. Aborting start" >>/dev/console
+			return 1
+		fi
+		cp /etc/roam.conf /tmp/
+		procd_open_instance
+		procd_set_param command "$PROG" -d -C "$ROAM_CONFIG_FILE"
+		procd_set_param respawn
+		procd_close_instance
+		
+		echo "starting miwifi-roam success" >> /dev/console
+		ubus call xq_info_sync_mqtt topo_changed
+	fi
+}
+
+stop_service() {
+	echo "stopping miwifi-roam" >> /dev/console
+}

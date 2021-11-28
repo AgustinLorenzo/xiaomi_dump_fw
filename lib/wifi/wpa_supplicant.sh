@@ -398,6 +398,12 @@ wpa_supplicant_setup_vif() {
 	config_get bssid "$vif" bssid
 	bssid=${bssid:+"bssid=$bssid"}
 
+	config_get backhaul "$vif" backhaul
+	if [ "$backhaul" = "1" ];then
+		mimesh="mimesh=1"
+	fi
+
+	config_get pmf "$vif" ieee80211w 0
 	config_get_bool wps_pbc "$vif" wps_pbc 0
 
 	config_get config_methods "$vif" wps_config
@@ -441,6 +447,7 @@ network={
 	$modestr
 	scan_ssid=1
 	ssid="$ssid"
+	$mimesh
 	$bssid
 	key_mgmt=$key_mgmt
 	$proto

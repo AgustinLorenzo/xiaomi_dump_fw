@@ -155,3 +155,7 @@ config misc backhauls
 	option backhaul '5g'
 	option backhaul_5g_sta_iface 'wl01'
 	option backhaul_5g_ap_iface 'wl5'
+
+config misc mesh
+	list version '2'
+	option max_node_count 9

@@ -14,6 +14,14 @@ validate_system_section()
 		'zonename:string'
 }
 
+set_user(){
+	local init_pwd=`mkxqimage -I`
+	[ -n "$init_pwd" ] && {
+		(echo $init_pwd; sleep 1; echo $init_pwd) | passwd root
+		nvram unset flag_init_root_pwd
+	}
+}
+
 system_config() {
 	local cfg="$1"
 
@@ -32,6 +40,8 @@ system_config() {
 
 	# apply timezone to kernel
 	date -k
+
+	set_user
 }
 
 reload_service() {

@@ -5,5 +5,5 @@ Source: package/base-files
 License: GPL-2.0
 Section: base
 Architecture: aarch64_cortex-a53
-Installed-Size: 160423
+Installed-Size: 161276
 Description:  This package contains a base filesystem and system scripts for OpenWrt.

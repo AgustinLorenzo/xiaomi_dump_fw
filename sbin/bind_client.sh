@@ -6,13 +6,22 @@
 . /lib/functions.sh
 . /usr/share/libubox/jshn.sh
 
-LOCKFILE=/var/lock/re_bind.lock
-
 bind_log()
 {
     echo "$1"
     local date=$(date)
     logger -p warn "stat_points_none bind=$1 at $date"
+}
+
+run_with_lock(){
+    {
+        bind_log "$$, ====== TRY locking......"
+        flock -x -w 10 1000
+        [ $? -eq "1" ] && { bind_log "$$, ===== GET lock failed. exit 1" ; exit 1 ; }
+        bind_log "$$, ====== GET lock to RUN."
+        $@
+        bind_log "$$, ====== END lock to RUN."
+    } 1000<>/var/run/re_bind.lock
 }
 
 # parse json code
@@ -172,20 +181,13 @@ case $OPT in
         return 0
         ;;
     bind_me)
-	trap "lock -u ${LOCKFILE}; exit" EXIT HUP INT QUIT PIPE TERM
-	if ! lock -n $LOCKFILE; then
-    	    dlog "re bind already running, skip this process"
-    	    trap '' EXIT
-    	    exit 0
-	fi
-
         #check_my_bind_status
         # just do when not binded
         #if [ $? -eq 0 ]; then
         #    bind_me "$2" "$3" "$4"
         #fi
         # bind all the time
-        bind_me "$2" "$3" "$4"
+        run_with_lock bind_me "$2" "$3" "$4"
                 
         return 0
         ;;

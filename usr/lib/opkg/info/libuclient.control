@@ -6,5 +6,5 @@ License: ISC
 Section: libs
 Maintainer: Felix Fietkau <nbd@nbd.name>
 Architecture: aarch64_cortex-a53
-Installed-Size: 9500
+Installed-Size: 9491
 Description:  HTTP/1.1 client library

@@ -6,5 +6,5 @@ License: MIT
 LicenseFiles: LICENSE
 Section: lang
 Architecture: aarch64_cortex-a53
-Installed-Size: 23008
+Installed-Size: 23013
 Description:  LuaSec is a binding for OpenSSL library to provide TLS/SSL communication.

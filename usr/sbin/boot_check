@@ -163,6 +163,8 @@ start() {
 		/usr/sbin/logupload.lua 0 3 0 "/data/usr/log/sysmonitor.log.gz" & 2>/dev/null
 	fi
 
+	echo "boot_done" > /tmp/boot_check_done
+
 	do_config_backup
 	if [ "$upgrad_flag" = "1" ] ; then
 		elog "upload ugrade info"

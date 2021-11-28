@@ -46,7 +46,22 @@ get_front_end_mode() {
 	esac
 }
 
+enable_bypass_routing() {
+	local gw=$(uci -q get dhcp.lan.router)
+	local dns1=$(uci -q get dhcp.lan.dns1)
+	local dns2=$(uci -q get dhcp.lan.dns2)
+	local lanip=$(uci -q get network.lan.ipaddr)
+
+	[ -n "$gw" -a "$gw" != "$lanip" ] && return 0
+	[ -n "$dns1" -a "$dns1" != "$lanip" ] && return 0
+	[ -n "$dns2" -a "$dns2" != "$lanip" ] && return 0
+
+	return 1
+}
+
 support_bridge() {
+	enable_bypass_routing && return 1
+
 	#NSS support bridge acceleration
 	[ -d /sys/kernel/debug/ecm/ecm_nss_ipv4 ] && return 0
 	#SFE doesn't support bridge acceleration
@@ -76,7 +91,7 @@ load_ecm() {
 			/etc/init.d/hyd stop
 		fi
 		insmod ecm front_end_selection=$(get_front_end_mode)
-		sleep 1
+		sleep 3
 	}
 
 	support_bridge && {
@@ -111,7 +126,7 @@ unload_ecm() {
 		sleep 5;
 
 		rmmod ecm
-		sleep 1
+		sleep 3
 		if [ "$netmode" = "whc_cap" -o "$netmode" = "whc_re" ]; then
 			/etc/init.d/hyd start
 		fi

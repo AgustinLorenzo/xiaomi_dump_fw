@@ -9,6 +9,7 @@ local ver = require("xiaoqiang.XQVersion").webVersion
 <meta name="viewport" content="width=1200">
 <link href="<%=resource%>/web/css/bc.css?v=<%=ver%>" rel="stylesheet">
 <link href="<%=resource%>/web/css/proset.css?v=<%=ver%>" rel="stylesheet">
+<link href="<%=resource%>/web/css/ddns.css?v=<%=ver%>" rel="stylesheet">
 </head>
 <body>
 <div id="doc">
@@ -16,12 +17,34 @@ local ver = require("xiaoqiang.XQVersion").webVersion
     <div id="bd">
         <div class="mod-set mod-dhcp" id="lanDhcp">
             <div class="hd">
+                <div class="help">
+                    <span class="ico"></span>
+                    <span class="arrow-wrap" id="helpArrow">
+                        <span class="arrow1"></span>
+                        <span class="arrow2"></span>
+                    </span>
+                </div>
                 <h3><%:DHCP服务%></h3>
                 <div class="switch">
                     <a href="#" id="dhcpswitch" class="btn-switch btn-switch-off"></a>
                 </div>
             </div>
             <div class="bd">
+                <div class="section section-help" id="helpSection">
+                    <div class="help-cont">
+                        <span class="help-close"></span>
+                        <div class="what">
+                            <h3><%:什么是DHCP？%></h3>
+                        </div>
+                        <div class="qa">
+                            <p><%:1、DHCP 服务器：开启后，小米路由可以自动向您的接入设备分配 IP 地址、DNS 服务器地址等网络参数，并通过此功能实现 IP 地址的集中管理；关闭后，小米路由将不为您的计算机自动分配 IP 地址、DNS 服务器地址等网络参数，当另一台路由器通过 Wi-Fi 中继方式连接此路由器时，中继连接将会失败。%></p>
+                            <p><%:2、租期：IP 地址分配给局域网计算机以后，如果使用时间超过这个租期，小米路由将给计算机分配新的 IP 地址。%></p>
+                            <p><%:3、路由器局域网IP地址：登陆Web配置后台的地址。%></p>
+                            <p><%:4、默认网关：路由器下接入设备的默认网关，默认是路由器内网IP。%></p>
+                            <p><%:5、静态 IP 地址绑定：通常您计算机的 IP 地址由路由器动态分配。如果您希望计算机拥有静态 IP 地址，您可以在静态 IP 地址绑定列表中手动添加您计算机的 MAC 地址和希望使用的静态 IP 地址。注意，静态 IP 地址需与路由器的局域网 IP 地址在同一网段。%></p>
+                        </div>
+                    </div>
+                </div>
                 <form method="post" class="form form-dhcp" name="netDhcp" id="netDhcp" action="#">
                     <input type="hidden" name="ignore">
                     <div class="set" style="display:none;">
@@ -46,6 +69,21 @@ local ver = require("xiaoqiang.XQVersion").webVersion
                             </span>
                             <em class="t"></em>
                         </div>
+                        <div class="form-item">
+                            <label class="k"><%:DNS1%></label>
+                            <span class="v"><input type="text" name="dns1" class="ipt-text" maxlength="15" datatype="ipaddr"></span>
+                            <em class="t"></em>
+                        </div>
+                        <div class="form-item">
+                            <label class="k"><%:DNS2%></label>
+                            <span class="v"><input type="text" name="dns2" class="ipt-text" maxlength="15" datatype="ipaddr"></span>
+                            <em class="t"></em>
+                        </div>
+                        <div class="form-item">
+                            <label class="k"><%:默认网关%></label>
+                            <span class="v"><input type="text" name="router" class="ipt-text" maxlength="15" datatype="ipaddr"></span>
+                            <em class="t"></em>
+                        </div>
                     </div>
                     <div class="form-contral">
                         <button class="btn btn-primary btn-l hidden" type="submit" id="btnDhcpSubmit"><span><%:保存%></span></button>
@@ -53,6 +91,8 @@ local ver = require("xiaoqiang.XQVersion").webVersion
                 </form>
             </div>
         </div>
+
+
 
         <div class="mod-set mod-lanip" id="lanIp">
             <div class="hd">
@@ -72,7 +112,7 @@ local ver = require("xiaoqiang.XQVersion").webVersion
                 </form>
             </div>
         </div>
-
+        <%include("web/setting/dhcp_ip_mac")%>
     </div>
 
     <%include("web/inc/footer")%>
@@ -114,6 +154,9 @@ local ver = require("xiaoqiang.XQVersion").webVersion
                     ignore = info.ignore,
                     start = info.start,
                     limit = info.limit,
+                    dns1 = info.dns1 ? info.dns1 : '',
+                    dns2 = info.dns2 ? info.dns2 : '',
+                    router = info.router ? info.router : '',
                     leasetime = info.leasetime,
                     leasetimeNum = info.leasetimeNum,
                     leasetimeUnit = info.leasetimeUnit,
@@ -125,7 +168,9 @@ local ver = require("xiaoqiang.XQVersion").webVersion
                 $( 'input[name="end"]' ).val( end );
                 $( 'input[name="leasetime"]' ).val( _leasetime );
                 $( 'input[name="ignore"]' ).val( ignore );
-
+                $( 'input[name="dns1"]' ).val( dns1 );
+                $( 'input[name="dns2"]' ).val( dns2 );
+                $( 'input[name="router"]' ).val( router );
                 dhcpOldval['start'] = start;
                 dhcpOldval['end'] = end;
                 dhcpOldval['leasetime'] = _leasetime;
@@ -196,6 +241,12 @@ local ver = require("xiaoqiang.XQVersion").webVersion
     } );
 
     $.sub( 'addEvent', function( evt, data ){
+        $('.help .ico').on('click', function(){
+            $.pub('dhcp:showHelp');
+        });
+        $('.help-close').on('click', function(){
+            $.pub('dhcp:hideHelp');
+        });
         // switch
         $( '#dhcpswitch' ).click(function( e ){
             e.preventDefault();
@@ -224,6 +275,9 @@ local ver = require("xiaoqiang.XQVersion").webVersion
                     leasetime = parseInt( $( 'input[name=leasetime]' ).val(), 10 ),
                     start = $( 'input[name=start]' ).val(),
                     end = $( 'input[name=end]' ).val(),
+                    dns1 = $( 'input[name=dns1]' ).val(),
+                    dns2 = $( 'input[name=dns2]' ).val(),
+                    router = $( 'input[name=router]' ).val(),
                     leasetime_num,
                     leasetime_unit,
                     requestData,
@@ -235,7 +289,10 @@ local ver = require("xiaoqiang.XQVersion").webVersion
                     leasetime: leasetime_num + leasetime_unit,
                     start: start,
                     end: end,
-                    ignore: ignore
+                    ignore: ignore,
+                    dns1:dns1,
+                    dns2:dns2,
+                    router:router
                 };
 
                 if ( ignore === '1' ) {
@@ -244,17 +301,20 @@ local ver = require("xiaoqiang.XQVersion").webVersion
                     };
                 }
 
-                $.pub( 'wait', {id: '#btnDhcpSubmit'} );
-                $.getJSON( requestURL, requestData, function( rsp ){
-                    if ( rsp.code === 0 ) {
-                        $.alert('<%:设置成功%>', function(){
-                            location.reload( true );
-                        }).lock();
-                    }else{
-                        $.alert( rsp.msg );
-                    }
-                    $.pub( 'done', {id: '#btnDhcpSubmit'} );
-                })
+                $.confirm('<%:此操作需要重启才能生效，是否提交?%>', function(){
+                    $.pub( 'wait', {id: '#btnDhcpSubmit'} );
+                    $.getJSON( requestURL, requestData, function( rsp ){
+                        if( rsp.code === 0 ){
+                            rebootWait({
+                                action: '<%:重启路由器%>',
+                                refresh: true
+                            });
+                        } else {
+                            $.alert( rsp.msg );
+                        }
+                        $.pub( 'done', {id: '#btnDhcpSubmit'} );
+                    });
+                });
             }
         });
         // lanip
@@ -288,17 +348,30 @@ local ver = require("xiaoqiang.XQVersion").webVersion
                 });
             }
         } );
+
+
+
         function onControlFocus() {
             $(this).parents('form').find('.btn-primary').removeClass('hidden');
         }
 
-        $('#netDhcp, #ipaddr').delegate('input[type=text], input[type=checkbox], input[type=radio]', 'click', onControlFocus);
+
+
+
+        $('#netDhcp, #ipaddr , #gateway_ipaddr, #dns_ipaddr').delegate('input[type=text], input[type=checkbox], input[type=radio]', 'click', onControlFocus);
 
         $('#dhcpswitch').on('click', function onDhcpswitchFocus() {
             $('#netDhcp').find('.btn-primary').removeClass('hidden');
         });
     } );
-
+    $.sub('dhcp:showHelp', function(evt, data){
+        $('#helpArrow').show();
+        $('#helpSection').show();
+    });
+    $.sub('dhcp:hideHelp', function(evt, data){
+        $('#helpArrow').hide();
+        $('#helpSection').hide();
+    });
 }());
 
 $(function(){

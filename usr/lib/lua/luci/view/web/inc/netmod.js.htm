@@ -11,12 +11,13 @@ local netmod = XQFunction.getnetmode()
 
 local isMesh = (netmod == 3 or netmod == 4) and "true" or "false"
 
-
+local capmode = XQFunction.getCAPMode()
 
 %>
 
 <script>
     var netmod = <%=netmod%>;
+    var capmode = <%=capmode%>;
 // r1c netmod.js
 $(function(){
     var netModeDialog;
@@ -27,7 +28,11 @@ $(function(){
         e.preventDefault();
         if(netmod == 4){
             $.alert('<%:Mesh模式下不支持切换为中继模式。%>');
-        }else{
+        }
+        else if (capmode == 1){
+            $.alert('<%:Mesh模式下不支持切换为路由模式。%>');
+        }
+        else{
             netModeDialog = $.dialog({
                 title:'<%:工作模式切换%>',
                 content: $('#tmplNetMode').html(),

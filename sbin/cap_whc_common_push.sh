@@ -19,13 +19,6 @@ LOGD()
 }
 
 
-
-whcal iscap || {
-    LOGI " netmode NOT CAP, ignore ! "
-    exit 1
-}
-
-
 jstr="$1"
 echo "$jstr"
 

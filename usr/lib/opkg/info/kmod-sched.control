@@ -6,5 +6,5 @@ License: GPLv2
 Section: kernel
 Status: unknown hold not-installed
 Architecture: aarch64_cortex-a53
-Installed-Size: 52895
+Installed-Size: 52888
 Description:  Extra kernel schedulers modules for IP traffic

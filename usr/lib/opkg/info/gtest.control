@@ -4,5 +4,5 @@ Depends: libc, libstdcpp
 Source: package/feeds/packages/gtest
 Section: opt
 Architecture: aarch64_cortex-a53
-Installed-Size: 93657
+Installed-Size: 93655
 Description:  gtest

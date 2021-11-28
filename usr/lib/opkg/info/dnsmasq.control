@@ -7,5 +7,5 @@ LicenseFiles: COPYING
 Section: net
 Require-User: dnsmasq=453:dnsmasq=453
 Architecture: aarch64_cortex-a53
-Installed-Size: 121768
+Installed-Size: 121932
 Description:  It is intended to provide coupled DNS and DHCP service to a LAN.
