@@ -6,5 +6,5 @@ License: GPLv2
 Section: kernel
 Status: unknown hold not-installed
 Architecture: aarch64_cortex-a53
-Installed-Size: 1653
+Installed-Size: 1654
 Description:  IPv6 UDP tunneling support

@@ -219,8 +219,8 @@ do_re_init_json() {
 		fi
 	fi
 
-	uci set wireless.@wifi-iface[0].hidden="$hidden_2g"
-	uci set wireless.@wifi-iface[1].hidden="$hidden_5g"
+	uci set wireless.@wifi-iface[1].hidden="$hidden_2g"
+	uci set wireless.@wifi-iface[0].hidden="$hidden_5g"
 
 	uci set wireless.@wifi-iface[0].disabled="$disabled_2g"
 	uci set wireless.@wifi-iface[1].disabled="$disabled_5g"
@@ -315,12 +315,12 @@ do_cap_init_bsd() {
 	echo "syncd" > /tmp/${name}-status
 	cap_delete_vap
 
-	local backhaul_5G_index=2
-	ifconfig wifi2 >/dev/null 2>&1 && backhaul_5G_index=3 || backhaul_5G_index=2
-	local backhaul_2G_index=$(expr $backhaul_5G_index + 1)
-
 	local mode=$(uci -q get xiaoqiang.common.NETMODE)
-	local maclist_5g=$(uci -q get wireless.@wifi-iface[$backhaul_5G_index].maclist | sed 's/ /,/g')
+
+	local backhaul_5G_index=$(uci show wireless|grep "$ifname_5g"|awk -F "." '{print $2}')
+	#local backhaul_2G_index=$(expr $backhaul_5G_index + 1)
+
+	local maclist_5g=$(uci -q get wireless.$backhaul_5G_index.maclist | sed 's/ /,/g')
 	#local maclist_2g=$(uci -q get wireless.@wifi-iface[$backhaul_2G_index].maclist | sed 's/ /,/g')
 	#local exist_2g=$(echo $maclist_2g | grep -i -c $2)
 	local exist_5g=$(echo $maclist_5g | grep -i -c $3)
@@ -331,8 +331,8 @@ do_cap_init_bsd() {
 			cfg80211tool $ifname_5g addmac_sec $5
 			cfg80211tool $ifname_5g maccmd_sec 1
 
-			uci -q add_list wireless.@wifi-iface[$backhaul_5G_index].maclist=$3
-			uci -q add_list wireless.@wifi-iface[$backhaul_5G_index].maclist=$5
+			uci -q add_list wireless.$backhaul_5G_index.maclist=$3
+			uci -q add_list wireless.$backhaul_5G_index.maclist=$5
 			uci commit wireless
 		}
 		#[ "$exist_2g" -eq 0 ] && {
@@ -410,12 +410,11 @@ do_cap_init() {
 	echo "syncd" > /tmp/${name}-status
 	cap_delete_vap
 
-	local backhaul_5G_index=2
-	ifconfig wifi2 >/dev/null 2>&1 && backhaul_5G_index=3 || backhaul_5G_index=2
-	local backhaul_2G_index=$(expr $backhaul_5G_index + 1)
-
 	local mode=$(uci -q get xiaoqiang.common.NETMODE)
-	local maclist_5g=$(uci -q get wireless.@wifi-iface[$backhaul_5G_index].maclist | sed 's/ /,/g')
+	local backhaul_5G_index=$(uci show wireless|grep $ifname_5g|awk -F "." '{print $2}')
+	#local backhaul_2G_index=$(expr $backhaul_5G_index + 1)
+
+	local maclist_5g=$(uci -q get wireless.$backhaul_5G_index.maclist | sed 's/ /,/g')
 	#local maclist_2g=$(uci -q get wireless.@wifi-iface[$backhaul_2G_index].maclist | sed 's/ /,/g')
 	#local exist_2g=$(echo $maclist_2g | grep -i -c $2)
 	local exist_5g=$(echo $maclist_5g | grep -i -c $3)
@@ -426,8 +425,8 @@ do_cap_init() {
 			cfg80211tool $ifname_5g addmac_sec $5
 			cfg80211tool $ifname_5g maccmd_sec 1
 
-			uci -q add_list wireless.@wifi-iface[$backhaul_5G_index].maclist=$3
-			uci -q add_list wireless.@wifi-iface[$backhaul_5G_index].maclist=$5
+			uci -q add_list wireless.$backhaul_5G_index.maclist=$3
+			uci -q add_list wireless.$backhaul_5G_index.maclist=$5
 			uci commit wireless
 		}
 		#[ "$exist_2g" -eq 0 ] && {
@@ -459,7 +458,7 @@ do_cap_init() {
 		fi
 
 		if [ "$mgmt_5g" == "ccmp" ]; then
-			pswd_2g=$(uci -q get wireless.@wifi-iface[0].sae_password)
+			pswd_5g=$(uci -q get wireless.@wifi-iface[0].sae_password)
 		fi
 
 		ssid_2g=$(printf "%s" $ssid_2g | base64 | xargs)

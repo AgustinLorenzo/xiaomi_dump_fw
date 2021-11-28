@@ -44,7 +44,7 @@ config misc wireless
 	list IFACE_LIST 'iface_2g'
 	list IFACE_LIST 'iface_5g'
 	list IFACE_LIST 'iface_guest_2g'
-	list IFACE_LIST 'iface_ready_2g'
+	list IFACE_LIST 'iface_miot_2g'
 	option iface_2g_ifname 'wl1'
 	option iface_2g_deviceidx 'device_2g'
 	option iface_2g_network 'lan'
@@ -55,6 +55,10 @@ config misc wireless
 	option iface_guest_2g_ifname 'wl14'
 	option iface_guest_2g_deviceidx 'device_2g'
 	option iface_guest_2g_network 'guest'
+    option iface_miot_2g_name 'miot_2G'
+    option iface_miot_2g_ifname 'wl13'
+    option iface_miot_2g_deviceidx 'device_2g'
+    option iface_miot_2g_network 'miot'
 	list APCLI_LIST 'apcli_2g'
 	list APCLI_LIST 'apcli_5g'
 	option apcli_2g_ifname 'wl11'
@@ -65,6 +69,7 @@ config misc wireless
 	option apcli_5g_deviceidx 'device_5g'
 	option apcli_5g_workmode '2'
 	option apcli_5g_network 'lan'
+	option support_160m '1'
 
 config misc httpd
 	option uhttpd 0

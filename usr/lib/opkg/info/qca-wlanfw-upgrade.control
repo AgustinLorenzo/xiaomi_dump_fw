@@ -4,6 +4,6 @@ Depends: libc
 Source: qca_qsdk/qca_qsdk_spf10.0/feeds/qca-platform-utils/qca-wlanfw-upgrade
 Section: QCA
 Architecture: aarch64_cortex-a53
-Installed-Size: 1328
+Installed-Size: 1327
 Description:  This package contains a wlan firmware upgrade script which can be used
  internally by QCA to update the wlan firmware components like q6 and m3 images.

@@ -235,7 +235,11 @@ __init_wifi_cap()
     local iface_list="" ii=0 iface_idx_start=2
     local main_ssid main_mgmt main_pswd
     ifconfig wifi2 >/dev/null 2>&1 && export WIFI2_EXIST=1 || export WIFI2_EXIST=0
+    local miot_iface="`uci -q get wireless.miot_2G`"
+    [ -n "$miot_iface" ] && export MIOT_EXIST=1 || export MIOT_EXIST=0
     [ "$WIFI2_EXIST" = "1" ] && iface_idx_start=3 || iface_idx_start=2
+    [ "$MIOT_EXIST" = "1" ] && iface_idx_start=3 || iface_idx_start=2
+    [ "$MIOT_EXIST" = "1" -a "$WIFI2_EXIST" = "1" ] && iface_idx_start=4
 
     # backup guest vap cfg and restore later
     local sguest="$(uci -q get misc.wireless.iface_guest_2g_name)"
@@ -830,6 +834,8 @@ __init_wifi_re()
     uci -q set wireless.wifi1.repacd_auto_create_vaps=0
     uci -q delete wireless.wifi1.whc_uninit
     ifconfig wifi2 >/dev/null 2>&1 && export WIFI2_EXIST=1 || export WIFI2_EXIST=0
+    local miot_iface="`uci -q get wireless.miot_2G`"
+    [ -n "$miot_iface" ] && export MIOT_EXIST=1 || export MIOT_EXIST=0
     [ "$WIFI2_EXIST" = "1" ] && {
         uci -q set wireless.wifi2.repacd_auto_create_vaps=0
         uci -q delete wireless.wifi2.whc_uninit
@@ -846,6 +852,8 @@ __init_wifi_re()
     local iface_list="" ii=0 idx=0 iface_idx_start=2
     local main_ssid main_mgmt main_pswd
     [ "$WIFI2_EXIST" = "1" ] && iface_idx_start=3 || iface_idx_start=2
+    [ "$MIOT_EXIST" = "1" ] && iface_idx_start=3 || iface_idx_start=2
+    [ "$MIOT_EXIST" = "1" -a "$WIFI2_EXIST" = "1" ] && iface_idx_start=4
     case "$BH_METHOD" in
         $USE_DUAL_BAND_BH)
             # config wifi ap ifaces

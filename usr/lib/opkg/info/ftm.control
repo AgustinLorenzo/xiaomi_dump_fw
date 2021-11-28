@@ -5,5 +5,5 @@ Source: qca_qsdk/qca_qsdk_spf10.0/feeds/qca/utils/ftm
 Section: QCA
 Maintainer: Qualcomm Atheros
 Architecture: aarch64_cortex-a53
-Installed-Size: 13469
+Installed-Size: 13468
 Description:  QCA ftm utils

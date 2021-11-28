@@ -53,6 +53,11 @@ else \
 	print('EVENT=\'\'') \
 end ")
 
+    #ignore hide interface event
+    if [ "$DEVNAME" == "wl13" ];then
+        continue;
+    fi
+
     if [ "$EVENT" = "had associated successfully" ]; then
         ACTION="ASSOC"
     elif [ "$EVENT" = "had disassociated" -o "$EVENT" = "had deauthenticated" ]; then

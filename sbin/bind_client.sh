@@ -134,6 +134,16 @@ bind_me()
         uci commit bind
         bind_log "[method joint_bind] ok!"
 
+        uci set wireless.miot_2G.bindstatus=1
+        uci commit wireless
+
+        local userSwitch=$(uci -q get wireless.miot_2G.userswitch) 
+
+        if [ "$userSwitch" != "0" ]; then
+            hostapd_cli -i wl13 -p /var/run/hostapd-wifi1 enable
+			/usr/sbin/sysapi.firewall  miot
+        fi
+
         # push xqwhc setkv on bind success
         logger -p 1 -t "xqwhc_push" " RE push xqwhc kv info on bind success"
         sh /usr/sbin/xqwhc_push.cron now &

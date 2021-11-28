@@ -395,7 +395,7 @@ dhcp_this_host_add() {
 			network_get_ipaddr lanaddr "$net"
 			network_get_ipaddrs6 lanaddrs6 "$net"
 
-			if [ -n "$lanaddr" ]; then
+			if [ -n "$lanaddr" -a "$net" = "lan" ]; then
 				dhcp_domain_add "" "$routername" "$lanaddr"
 			fi
 
@@ -991,6 +991,7 @@ dnsmasq_start() {
 		config_list_foreach "$cfg" rebind_domain append_rebind_domain
 	}
 
+	if [ "$mode" != "wifiapmode" -a "$mode" != "lanapmode" -a "$mode" != "whc_re" ]; then
 	[ -f "/www/xiaoqiang/diagnosis/index.html" ] && {
 		# network troubleshoot intercept
 		local intercept="$(uci -q get network.lan.ipaddr)"
@@ -999,6 +1000,7 @@ dnsmasq_start() {
 			[ -f "/etc/intercept_wlist" ] && xappend "--intercept-white-list=/etc/intercept_wlist"
 		}
 	}
+	fi
 
 	config_get_bool dnssec "$cfg" dnssec 0
 	[ "$dnssec" -gt 0 ] && {
@@ -1101,6 +1103,7 @@ dnsmasq_start() {
 	config_load network
 	config_get lanipaddr lan ipaddr '192.168.31.1'
 
+	if [ "$mode" != "wifiapmode" -a "$mode" != "lanapmode" -a "$mode" != "whc_re" ]; then
 	# add own hostname
 	[ $ADD_LOCAL_HOSTNAME -eq 1 ] && [ -n "$lanipaddr" ] && {
 		local hostname="$(uci get system.@system[0].hostname)"
@@ -1149,11 +1152,13 @@ dnsmasq_start() {
 	#xappend "--servers-file=/tmp/ip6_server"
 	#xappend "--AAAA-dns-only-file=/tmp/ip6_dns"
 	#}
+	fi
 
 	echo >>$CONFIGFILE_TMP
 	mv -f $CONFIGFILE_TMP $CONFIGFILE
 	mv -f $HOSTFILE_TMP $HOSTFILE
 
+	if [ "$mode" != "wifiapmode" -a "$mode" != "lanapmode" -a "$mode" != "whc_re" ]; then
 	grep -E "^\s*server=|^\s*address=|^\s*ipset=" $CONFIGFILE >/tmp/dnsmasq.d/filter_main_opt.conf
 
 	[ "$localuse" -gt 0 ] && {
@@ -1166,6 +1171,7 @@ dnsmasq_start() {
 			echo "nameserver $DNS_SERVER" >>/tmp/resolv.conf
 		done
 	}
+	fi
 
 	procd_open_instance $cfg
 	procd_set_param command $PROG --user=root -C $CONFIGFILE -k -x /var/run/dnsmasq/dnsmasq."${cfg}".pid
@@ -1219,17 +1225,17 @@ boot() {
 start_service() {
 	local mode
 	mode=$(uci -q get xiaoqiang.common.NETMODE)
-	if [ "$mode" == "wifiapmode" -o "$mode" == "lanapmode" -o "$mode" == "whc_re" ]; then
-		# we need dnsmasq for dhcp if minet is enabled
-		minet_en=$(uci -q get minet.setting.enabled)
-		minet_if=$(uci -q get minet.setting.ready_intf)
-		if [ "$minet_en" != "1" -o -z "$minet_if" ]; then
-			syslog "INFO: In AP mode, needn't dnsmasq. exit!"
-			stop
-			return 0
-		fi
-		minet_rep_mode="true"
-	fi
+	#if [ "$mode" == "wifiapmode" -o "$mode" == "lanapmode" -o "$mode" == "whc_re" ]; then
+	#	# we need dnsmasq for dhcp if minet is enabled
+	#	minet_en=$(uci -q get minet.setting.enabled)
+	#	minet_if=$(uci -q get minet.setting.ready_intf)
+	#	if [ "$minet_en" != "1" -o -z "$minet_if" ]; then
+	#		syslog "INFO: In AP mode, needn't dnsmasq. exit!"
+	#		stop
+	#		return 0
+	#	fi
+	#	minet_rep_mode="true"
+	#fi
 
 	local instance="$1"
 	local instance_found=0

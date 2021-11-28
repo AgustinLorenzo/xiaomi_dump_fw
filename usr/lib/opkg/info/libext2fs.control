@@ -5,5 +5,5 @@ Source: package/utils/e2fsprogs
 License: GPL-2.0
 Section: libs
 Architecture: aarch64_cortex-a53
-Installed-Size: 124841
+Installed-Size: 124840
 Description:  libext2fs is a library which can access ext2, ext3 and ext4 filesystems.

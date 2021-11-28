@@ -95,15 +95,11 @@ __get_wifi()
     ieee80211w_5g="`uci -q get wireless.@wifi-iface[0].ieee80211w`"
     [ -z "$ieee802211w_5g" ] && ieee802211w_5g=""
 
-    support160="`uci -q get wireless.wifi0.support160`"
-    [ -z "$support160" ] && {
-        local HARDWARE=`/sbin/uci get /usr/share/xiaoqiang/xiaoqiang_version.version.HARDWARE`
-        if [ "$HARDWARE" = "R3600" -o "$HARDWARE" = "RA69" ]; then
-            support160=1
-        else
-            support160=0
-        fi
-    }
+    support160="`uci -q get misc.wireless.support_160m`"
+    [ -z "$support160" ] && support160=0
+
+    iot_switch="`uci -q get wireless.miot_2G.userswitch`"
+    [ -z "$iot_switch" ] && iot_switch=""
 
     [ "$USE_ENCODE" -gt 0 ] || {
     # support special string escape
@@ -215,7 +211,8 @@ if [ "$SUPPORT_GUEST_ON_RE" -gt 0 ]; then
 \"sae_2g\":\"$sae_2g\",\"sae_5g\":\"$sae_5g\",\"sae_passwd_2g\":\"$sae_pwd_2g\",\"sae_passwd_5g\":\"$sae_pwd_5g\",\
 \"ieee80211w_2g\":\"$ieee80211w_2g\",\"ieee80211w_5g\":\"$ieee80211w_5g\",\
 \"gst_disab\":\"$gst_disab\",\"gst_ssid\":\"$gst_ssid\",\"gst_pswd\":\"$gst_pswd\",\"gst_mgmt\":\"$gst_mgmt\",\
-\"timezone\":\"$timezone\",\"ota_auto\":\"$ota_auto\",\"ota_time\":\"$ota_time\",\"led_blue\":\"$led_blue\",\"miscan_enable\":\"$miscan_enable\",\"support160\":\"$support160\"\
+\"timezone\":\"$timezone\",\"ota_auto\":\"$ota_auto\",\"ota_time\":\"$ota_time\",\"led_blue\":\"$led_blue\",\"miscan_enable\":\"$miscan_enable\",\"support160\":\"$support160\",\
+\"iot_switch\":\"$iot_switch\"\
 }"
 
     msg="$msg_decode"
@@ -229,7 +226,8 @@ if [ "$SUPPORT_GUEST_ON_RE" -gt 0 ]; then
 \"sae_2g\":\"$sae_2g\",\"sae_5g\":\"$sae_5g\",\"sae_passwd_2g\":\"$(base64_enc "$sae_pwd_2g")\",\"sae_passwd_5g\":\"$(base64_enc "$sae_pwd_5g")\",\
 \"ieee80211w_2g\":\"$ieee80211w_2g\",\"ieee80211w_5g\":\"$ieee80211w_5g\",\
 \"gst_disab\":\"$gst_disab\",\"gst_ssid\":\"$gst_ssid\",\"gst_pswd\":\"$gst_pswd\",\"gst_mgmt\":\"$gst_mgmt\",\
-\"timezone\":\"$timezone\",\"ota_auto\":\"$ota_auto\",\"ota_time\":\"$ota_time\",\"led_blue\":\"$led_blue\",\"miscan_enable\":\"$miscan_enable\",\"support160\":\"$support160\"\
+\"timezone\":\"$timezone\",\"ota_auto\":\"$ota_auto\",\"ota_time\":\"$ota_time\",\"led_blue\":\"$led_blue\",\"miscan_enable\":\"$miscan_enable\",\"support160\":\"$support160\",\
+\"iot_switch\":\"$iot_switch\"\
 }"
     fi
 else
@@ -241,7 +239,8 @@ else
 \"bw_2g\":\"$bw_2g\",\"bw_5g\":\"$bw_5g\",\"bsd_2g\":\"$bsd_2g\",\"bsd_5g\":\"$bsd_5g\",\"txbf_2g\":\"$txbf_2g\",\"txbf_5g\":\"$txbf_5g\",\
 \"sae_2g\":\"$sae_2g\",\"sae_5g\":\"$sae_5g\",\"sae_passwd_2g\":\"$sae_pwd_2g\",\"sae_passwd_5g\":\"$sae_pwd_5g\",\
 \"ieee80211w_2g\":\"$ieee80211w_2g\",\"ieee80211w_5g\":\"$ieee80211w_5g\",\
-\"timezone\":\"$timezone\",\"ota_auto\":\"$ota_auto\",\"ota_time\":\"$ota_time\",\"led_blue\":\"$led_blue\",\"miscan_enable\":\"$miscan_enable\",\"support160\":\"$support160\"\
+\"timezone\":\"$timezone\",\"ota_auto\":\"$ota_auto\",\"ota_time\":\"$ota_time\",\"led_blue\":\"$led_blue\",\"miscan_enable\":\"$miscan_enable\",\"support160\":\"$support160\",\
+\"iot_switch\":\"$iot_switch\"\
 }"
 
     msg="$msg_decode"
@@ -254,7 +253,8 @@ else
 \"bw_2g\":\"$bw_2g\",\"bw_5g\":\"$bw_5g\",\"bsd_2g\":\"$bsd_2g\",\"bsd_5g\":\"$bsd_5g\",\"txbf_2g\":\"$txbf_2g\",\"txbf_5g\":\"$txbf_5g\",\
 \"sae_2g\":\"$sae_2g\",\"sae_5g\":\"$sae_5g\",\"sae_passwd_2g\":\"$(base64_enc "$sae_pwd_2g")\",\"sae_passwd_5g\":\"$(base64_enc "$sae_pwd_5g")\",\
 \"ieee80211w_2g\":\"$ieee80211w_2g\",\"ieee80211w_5g\":\"$ieee80211w_5g\",\
-\"timezone\":\"$timezone\",\"ota_auto\":\"$ota_auto\",\"ota_time\":\"$ota_time\",\"led_blue\":\"$led_blue\",\"miscan_enable\":\"$miscan_enable\",\"support160\":\"$support160\"\
+\"timezone\":\"$timezone\",\"ota_auto\":\"$ota_auto\",\"ota_time\":\"$ota_time\",\"led_blue\":\"$led_blue\",\"miscan_enable\":\"$miscan_enable\",\"support160\":\"$support160\",\
+\"iot_switch\":\"$iot_switch\"\
 }"
     fi
 

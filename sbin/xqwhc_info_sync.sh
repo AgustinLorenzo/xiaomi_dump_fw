@@ -17,6 +17,7 @@ cfgf_fake="/var/run/xq_whc_sync_fake"
 son_changed=0   # wifi change, need wifi reset
 sys_changed=0
 miscan_changed=0
+iot_switch_changed=0
 B64_ENC=0
 
 SUPPORT_GUEST_ON_RE=0   # for now, we only support guest network on CAP. so we don not handle guest opts
@@ -76,11 +77,11 @@ wifi_parse()
     [ "$pswd_2_cur" != "$pswd_2" ] && {
         son_changed=1
         WHC_LOGI " xq_whc_sync, 2g pswd change $pswd_2_cur -> $pswd_2"
-	if [ -n "$pswd_2" ]; then
-           uci set wireless.@wifi-iface[1].key="$pswd_2"
-	else
-	   uci -q delete wireless.@wifi-iface[1].key
-	fi
+        if [ -n "$pswd_2" ]; then
+            uci set wireless.@wifi-iface[1].key="$pswd_2"
+        else
+            uci -q delete wireless.@wifi-iface[1].key
+        fi
     }
     [ "$mgmt_2_cur" != "$mgmt_2" ] && {
         son_changed=1
@@ -503,6 +504,16 @@ wifi_parse()
         uci set wireless.wifi0.ax="$ax_5"
     }
 
+    #iot switch
+    local iot_switch_cur="`uci -q get wireless.miot_2G.userswitch`"
+    [ -z "$iot_switch_cur" ] && iot_switch_cur=1
+    local iot_switch="`cat $cfgf | grep -w "iot_switch" | awk -F ":=" '{print $2}'`"
+    [ -n "$iot_switch" -a "$iot_switch" -ne "$iot_switch_cur" ] && {
+        iot_switch_changed=1
+        WHC_LOGI " xq_whc_sync, iot user switch changed [$iot_switch_cur] -> [$iot_switch]"
+        uci set wireless.miot_2G.userswitch="$iot_switch"
+    }
+
     uci commit wireless && sync
     return 0;
 }
@@ -660,6 +671,20 @@ miscan_parse
 if [ "$miscan_changed" -gt 0 ]; then
     WHC_LOGI " xq_whc_sync, miscan_changed, restart miscan!"
     (/etc/init.d/scan restart) &
+fi
+
+if [ "$iot_switch_changed" -gt 0 ]; then
+    WHC_LOGI " xq_whc_sync, iot user switch changed!"
+    userswitch="`uci -q get wireless.miot_2G.userswitch`"
+    miot_2g_ifname="`uci -q get misc.wireless.iface_miot_2g_ifname`"
+    bindstatus="`uci -q get wireless.miot_2G.bindstatus`"
+    if [ "$bindstatus" = "1" ]; then
+        if [ "$userswitch" != "0" ]; then
+            hostapd_cli -i "$miot_2g_ifname" -p /var/run/hostapd-wifi1 enable
+        else
+            hostapd_cli -i "$miot_2g_ifname" -p /var/run/hostapd-wifi1 disable
+        fi
+    fi
 fi
 
 if [ "$sys_changed" -gt 0 ]; then

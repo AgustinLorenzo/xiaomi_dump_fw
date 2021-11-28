@@ -146,6 +146,20 @@ local hardware = string.lower( XQSysUtil.getHardware() )
                 <p><%:AIoT智能天线自动扫描功能可以自动发现未初始化的小米智能设备，通过米家APP快速入网。%><br/><%:此功能可能在网络拥塞的环境下导致网络出现一定的丢包变多及延时提高的问题。%></p>
             </div>
         </div>
+        <%if netmod ~= 3 then%>
+        <div class="mod-set mod-wifi">
+            <div class="hd">
+                <h3><%:畅快连%></h3>
+                <div class="switch">
+                    <a href="#cklswitch" id="cklswitch" class="btn-switch btn-switch-on" data-on="1"></a>
+                </div>
+            </div>
+            <div class="bd">
+                <p><%:开启此功能，路由器可自动发现支持畅快连的未初始化Wi-Fi设备，通过米家APP快速配网；修改路由器密码也将自动同步给支持畅快连的设备。
+                    %></p>
+            </div>
+        </div>
+        <%end%>
 
         <!-- 多终端接入优先 -->
 <!--        <div class="mod-set mod-wifi">-->
@@ -670,6 +684,25 @@ local hardware = string.lower( XQSysUtil.getHardware() )
                 $.pub('wifi:bindEventBandwidth');
             }, 100 );
         });
+
+        $.getJSON('<%=luci.dispatcher.build_url("api","xqnetwork","get_miotrelay_switch")%>')
+            .done(function( rsp ){
+                if ( rsp.code == 0 ) {
+                    if( rsp.enabled == 1 ){
+                        $('#cklswitch')
+                            .removeClass('btn-switch-off')
+                            .addClass('btn-switch-on')
+                            .attr('data-on', '1');
+                    }else{
+                        $('#cklswitch')
+                            .removeClass('btn-switch-on')
+                            .addClass('btn-switch-off')
+                            .attr('data-on', '0');
+                    }
+
+                }
+            });
+
     });
 
     $.sub( 'wifi:bindEventEncryption', function(){
@@ -1331,6 +1364,46 @@ local hardware = string.lower( XQSysUtil.getHardware() )
                             var msg = StringH.encode4Html( rsp.msg );
                             $.alert( msg ).lock();
                         }
+                    }
+                },
+                error: function() {
+                    $.alert( '<%:网络异常，请检查是否联网%>' );
+                }
+            });
+
+        });
+        $('#cklswitch').on('click', function(e){
+            e.preventDefault();
+            var cklOn = $(this).attr('data-on') == 1 ? 0 : 1
+            var self = this;
+
+            var requestData = {
+                on: cklOn
+            };
+            $.ajax({
+                url: '<%=luci.dispatcher.build_url("api", "xqnetwork", "miotrelay_switch")%>',
+                dataType: 'json',
+                timeout: 5000,
+                type: 'POST',
+                data: requestData,
+                success: function( rsp ){
+                    if( rsp.code === 0 ){
+                        if(cklOn == 1) {
+                            $(self)
+                                .removeClass('btn-switch-off')
+                                .addClass('btn-switch-on')
+                                .attr('data-on', '1');
+                        }else {
+                            $(self)
+                                .removeClass('btn-switch-on')
+                                .addClass('btn-switch-off')
+                                .attr('data-on', '0');
+                        }
+                    } else {
+                        // if ( rsp.code !== 401) {
+                        //     var msg = StringH.encode4Html( rsp.msg );
+                        //     $.alert( msg ).lock();
+                        // }
                     }
                 },
                 error: function() {

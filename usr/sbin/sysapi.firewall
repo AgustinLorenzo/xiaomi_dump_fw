@@ -500,6 +500,23 @@ set_tcpmss_doit() {
 	#}
 }
 
+miot_doit() {
+	iptables -D FORWARD -i br-miot -j DROP 2>/dev/null
+	iptables -F miot_input 2>/dev/null
+
+	iptables -L miot_input 2>&- >&-
+	if [ $? -ne 0 ]; then
+		iptables -N miot_input  2>/dev/null
+		iptables -I INPUT -i br-miot -j miot_input 2>/dev/null
+	fi
+
+	iptables -I FORWARD -i br-miot -j DROP 2>/dev/null
+	iptables -A miot_input -p udp --sport 54321 -j ACCEPT
+	iptables -A miot_input -p udp -m udp --sport 67:68 --dport 67:68 -j ACCEPT
+	iptables -A miot_input -j DROP
+}
+
+
 modules_doit(){
 
 	case "$ctlop" in
@@ -556,6 +573,9 @@ modules_doit(){
 		;;
 	set_tcpmss)
 		set_tcpmss_doit
+		;;
+	miot)
+		miot_doit
 		;;
 	*)
 		echo "not support $ctlop"

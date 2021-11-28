@@ -24,7 +24,7 @@ iface_5g_no=`uci show wireless|grep $device_5g_name|awk -F "." '{print $2}'`
 }
 
 HARDWARE=`/sbin/uci get /usr/share/xiaoqiang/xiaoqiang_version.version.HARDWARE`
-if [ "$HARDWARE" == "R3600" -o "$HARDWARE" == "RM1800" ]; then
+if [ "$HARDWARE" == "R3600" -o "$HARDWARE" == "RM1800" -o "$HARDWARE" == "RA69" ]; then
     #call tbus function to notice device change maclist
     if [ -n "$iface_2g_no"  ]; then
         jmsg="{\"policy_2g\":\"${filter_2g}\",\"list_2g\":\"${maclist_2g_format}\",\"policy_5g\":\"${filter_5g}\",\"list_5g\":\"${maclist_5g_format}\"}"

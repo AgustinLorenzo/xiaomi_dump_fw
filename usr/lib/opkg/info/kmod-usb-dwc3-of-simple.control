@@ -6,5 +6,5 @@ License: GPLv2
 Section: kernel
 Status: unknown hold not-installed
 Architecture: aarch64_cortex-a53
-Installed-Size: 10173
+Installed-Size: 10175
 Description:  This driver provides generic platform glue for the integrated DesignWare USB3 IP Core.

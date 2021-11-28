@@ -4,5 +4,5 @@ Depends: libc, libiw, libpthread, liblua
 Source: package/miwifi/miwifi-mesh
 Section: net
 Architecture: all
-Installed-Size: 26756
+Installed-Size: 26758
 Description:  miwifi-mesh daemon.

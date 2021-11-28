@@ -6,5 +6,5 @@ License: ISC
 Section: net
 Maintainer: Felix Fietkau <nbd@nbd.name>
 Architecture: aarch64_cortex-a53
-Installed-Size: 7405
+Installed-Size: 7406
 Description:  Tiny wget replacement using libuclient

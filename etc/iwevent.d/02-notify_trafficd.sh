@@ -53,7 +53,7 @@ is_dev_encry()
 	$BUS send trafficd '{"iwevent":{"hw":"'$STA'","ifname":"'$DEVNAME'","type":1}}'
     elif [ x"$ACTION" = x"ASSOC" -a x"$authorize" != x"1" ]; then
 	$BUS send trafficd '{"iwevent":{"hw":"'$STA'","ifname":"'$DEVNAME'","type":1}}'
-    elif [ x"$ACTION" = x"DISASSOC" ]; then
+    elif [ x"$ACTION" = x"DISASSOC" -o x"$ACTION" = x"BLACKLISTED" ]; then
 	$BUS send trafficd '{"iwevent":{"hw":"'$STA'","ifname":"'$DEVNAME'","type":0}}'
     fi
 }

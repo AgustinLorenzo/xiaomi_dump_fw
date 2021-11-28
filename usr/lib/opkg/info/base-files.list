@@ -98,7 +98,6 @@
 /etc/iwevent.d/01-feedpush.sh
 /etc/hotplug.d/iface/10-phy_check.sh
 /etc/os-release
-/etc/opkg/keys/efb26340e23d4431
 /sbin/ethstatus
 /usr/sbin/sysapi.firewall
 /usr/sbin/jason.sh
@@ -198,6 +197,7 @@
 /etc/config/parentalctl
 /etc/init.d/timezone
 /usr/sbin/ntpsetclock
+/etc/opkg/keys/3fcbc1f4336c2b6e
 /usr/sbin/iptv.sh
 /rom/note
 /etc/inittab

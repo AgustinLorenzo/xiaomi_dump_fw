@@ -49,9 +49,9 @@ notify_re()
 # send log update message to RE
 call_re_upload_log()
 {
-    if [ "$HARDWARE" == "D01"  -o  "$HARDWARE" == "R3600" -o "$HARDWARE" == "RM1800" ]; then
+    if [ "$HARDWARE" == "D01"  -o  "$HARDWARE" == "R3600" -o "$HARDWARE" == "RM1800" -o "$HARDWARE" == "RA69" ]; then
         json_init
-	json_add_string "method" $cmd
+        json_add_string "method" $cmd
         json_add_string "payload" $jmsg
         json_str=`json_dump`
         echo $json_str
@@ -63,7 +63,7 @@ call_re_upload_log()
 # send log update message to RE
 tell_re_do_action()
 {
-    if [ "$HARDWARE" == "D01"  -o  "$HARDWARE" == "R3600" -o "$HARDWARE" == "RM1800" ]; then
+    if [ "$HARDWARE" == "D01"  -o  "$HARDWARE" == "R3600" -o "$HARDWARE" == "RM1800" -o "$HARDWARE" == "RA69" ]; then
         json_init
         json_add_string "method" "$cmd"
         json_add_string "payload" "$jmsg"
@@ -112,7 +112,10 @@ case $OPT in
         whc_to_re_log "=============== common api test "
         return $?
     ;;
-
+    whc_sync)
+        cmd="whc_sync"
+        jmsg=`whcal syncbuf`
+    ;;
     *)
         my_usage
         return 0

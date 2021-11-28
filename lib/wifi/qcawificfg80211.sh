@@ -504,13 +504,13 @@ load_qcawificfg80211() {
 	config_get sa_validate_sw qcawifi sa_validate_sw
 	[ -n "$sa_validate_sw" ] && update_ini_file sa_validate_sw "$sa_validate_sw"
 
-	if [ -e /sys/firmware/devicetree/base/MP_512 ]; then
-		config_get enable_monitor_mode qcawifi enable_monitor_mode
-		if [ -n "$enable_monitor_mode" ]; then
-			update_ini_for_monitor_buf_ring QCA8074_i.ini
-			update_ini_for_monitor_buf_ring QCA8074V2_i.ini
-		fi
-	fi
+	#if [ -e /sys/firmware/devicetree/base/MP_512 ]; then
+	#	config_get enable_monitor_mode qcawifi enable_monitor_mode
+	#	if [ -n "$enable_monitor_mode" ]; then
+	#		update_ini_for_monitor_buf_ring QCA8074_i.ini
+	#		update_ini_for_monitor_buf_ring QCA8074V2_i.ini
+	#	fi
+	#fi
 
 	config_get nss_wifi_olcfg qcawifi nss_wifi_olcfg
 	if [ -n "$nss_wifi_olcfg" ]; then
@@ -1778,6 +1778,16 @@ enable_qcawificfg80211() {
 				;;
 		esac
 
+		if [ $ifname == "wl13" ]; then
+			config_get_bool bindstatus "$vif" bindstatus 0
+			config_get_bool userswitch "$vif" userswitch 1
+			#解决wl13概率无法正常up的问题
+			if [ $bindstatus == 1 ] && [ $channel == 0 ]; then
+				sleep 4
+			fi
+			/usr/sbin/sysapi.firewall  miot
+		fi
+
 		[ "$nosbeacon" = 1 ] || nosbeacon=""
 		if [ -z "$recover" ] || [ "$recover" -eq "0" ]; then
 			wlanconfig "$ifname" create wlandev "$phy" wlanmode "$pmode" ${wlanaddr:+wlanaddr "$wlanaddr"} ${nosbeacon:+nosbeacon} -cfg80211
@@ -2721,7 +2731,7 @@ enable_qcawificfg80211() {
 		[ -n "$caprssi" ] && "$device_if" "$ifname" caprssi "${caprssi}"
 
 		config_get_bool ap_isolation_enabled $device ap_isolation_enabled 0
-		config_get_bool ap_isolate "$vif" isolate 0
+		config_get ap_isolate "$vif" ap_isolate 0
 
 		if [ $ap_isolation_enabled -ne 0 ]; then
 			[ "$mode" = "wrap" ] && isolate=1
@@ -2786,8 +2796,7 @@ enable_qcawificfg80211() {
 		case "$mode" in
 			ap|wrap|ap_monitor|ap_smart_monitor|mesh|ap_lp_iot)
 
-
-				"$device_if" "$ifname" ap_bridge "$((isolate^1))"
+				"$device_if" "$ifname" ap_bridge "$((ap_isolate^1))"
 
 				config_get_bool l2tif "$vif" l2tif
 				[ -n "$l2tif" ] && "$device_if" "$ifname" l2tif "$l2tif"
@@ -2995,6 +3004,11 @@ enable_qcawificfg80211() {
 
 	if [ $ifname = "wl2" ]; then
 		ifconfig $ifname down
+	fi
+	
+	#need to check router bind or not
+	if [ $ifname == "wl13" ] && [ $bindstatus == 0 -o $userswitch == 0 ];then
+		hostapd_cli -i wl13 -p /var/run/hostapd-wifi1 disable
 	fi
 
 	lock -u /var/run/wifilock
@@ -3609,10 +3623,10 @@ detect_qcawificfg80211() {
 #		update_ini_for_lowmem QCA8074V2_i.ini
 #	fi
 
-	if [ -e /sys/firmware/devicetree/base/MP_512 ]; then
-		update_ini_for_512MP QCA8074_i.ini
-		update_ini_for_512MP QCA8074V2_i.ini
-	fi
+#	if [ -e /sys/firmware/devicetree/base/MP_512 ]; then
+#		update_ini_for_512MP QCA8074_i.ini
+#		update_ini_for_512MP QCA8074V2_i.ini
+#	fi
 
 	devidx=0
 	socidx=0
@@ -3733,7 +3747,7 @@ detect_qcawificfg80211() {
 			esac
 		reload=1
 		fi
-	
+	devidx24g=1
 	radioidx=$devidx
 	ssid=`nvram get wl${radioidx}_ssid`
 	if [ $devidx = 0 ]; then
@@ -3795,7 +3809,6 @@ EOF
     if [ $devidx = 0 ]; then
         cat <<EOF
     option bw 80
-    option support160 '1'
 EOF
     fi
 	cat <<EOF
@@ -3818,6 +3831,20 @@ EOF
 	fi
 	devidx=$(($devidx + 1))
 	done
+cat <<EOF
+config wifi-iface 'miot_2G'
+	option ifname 'wl13'
+	option network 'miot'
+	option encryption 'none'
+	option device 'wifi$devidx24g'
+	option mode 'ap'
+	option hidden '1'
+	option maxsta '20'
+	option ssid '25c829b1922d3123_miwifi'
+	option bsd '0'
+	option disabled '${wifi_disable}'
+	option ap_isolate '1'
+EOF
 
 	if [ $reload == 1 ] ; then
 		if [ $avoid_load == 1 ]; then

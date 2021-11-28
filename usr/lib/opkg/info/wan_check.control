@@ -4,5 +4,5 @@ Depends: libc
 Source: package/miwifi/wan_check
 Section: util
 Architecture: aarch64_cortex-a53
-Installed-Size: 2891
+Installed-Size: 2893
 Description:  miwifi wan check utils
