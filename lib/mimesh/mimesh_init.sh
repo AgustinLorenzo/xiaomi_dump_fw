@@ -473,7 +473,7 @@ __init_re()
 	__init_network_re
 	__init_wifi_re
 
-	/etc/init.d/network restart
+	/etc/init.d/network reload
 
 	return 0
 }

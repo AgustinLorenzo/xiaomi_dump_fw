@@ -4,5 +4,5 @@ Depends: libc, kmod-sched-core
 Source: package/network/utils/iproute2
 Section: net
 Architecture: aarch64_cortex-a53
-Installed-Size: 46354
+Installed-Size: 46358
 Description:  Traffic control utility

@@ -7,5 +7,5 @@ LicenseFiles: COPYING
 Section: libs
 Maintainer: Marko Ratkaj <marko.ratkaj@sartura.hr>
 Architecture: aarch64_cortex-a53
-Installed-Size: 48476
+Installed-Size: 48479
 Description:  File type determination library

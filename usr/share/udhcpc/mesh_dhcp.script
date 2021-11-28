@@ -50,6 +50,12 @@ save_for_mesh_re()
 	ap_hostname_tmp=${ap_hostname_tmp%%-*}
 	ap_hostname=MiWiFi-${ap_hostname_tmp}-srv
 	echo "ap_hostname:${ap_hostname}" >> $nw_cfg
+
+	local miotip=$(lua /usr/sbin/miot_ip_conflict.lua $ip)
+
+	if [ -n "$miotip" ]; then
+	    ifconfig br-miot $miotip netmask ${subnet:-255.255.255.0}
+	fi
 }
 
 applied=

@@ -4,5 +4,5 @@ Depends: libc, libubox
 Source: package/miwifi/enid
 Section: net
 Architecture: aarch64_cortex-a53
-Installed-Size: 2680
+Installed-Size: 2683
 Description:  MiWiFi Ethernet Neighbor Info Detect

@@ -5,5 +5,5 @@ Source: qca_qsdk/qca_qsdk_spf10.0/feeds/ieee1905-security/qca-ieee1905-security-
 Section: QCA
 Maintainer: Qualcomm Atheros, Inc.
 Architecture: aarch64_cortex-a53
-Installed-Size: 7251
+Installed-Size: 7254
 Description:  This Package contains the IEEE1905.1 library

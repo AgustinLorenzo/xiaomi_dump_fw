@@ -6,7 +6,7 @@ License: GPLv2
 Section: utils
 Maintainer: Nathaniel Wesley Filardo <nwfilardo@gmail.com>
 Architecture: aarch64_cortex-a53
-Installed-Size: 34173
+Installed-Size: 34179
 Description:  Daemon for adding entropy to kernel entropy pool. By default it uses
  /dev/urandom as the source but the init script can be modified
  to use a hardware source like /dev/hwrng if present

@@ -6,6 +6,6 @@ License: Zlib
 LicenseFiles: README
 Section: libs
 Architecture: aarch64_cortex-a53
-Installed-Size: 39444
+Installed-Size: 39447
 Description:  zlib is a lossless data-compression library.
  This package includes the shared library.

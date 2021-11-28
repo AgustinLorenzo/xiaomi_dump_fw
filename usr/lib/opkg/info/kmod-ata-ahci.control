@@ -6,5 +6,5 @@ License: GPLv2
 Section: kernel
 Status: unknown hold not-installed
 Architecture: aarch64_cortex-a53
-Installed-Size: 21264
+Installed-Size: 21265
 Description:  Support for AHCI Serial ATA controllers

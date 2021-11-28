@@ -6,5 +6,5 @@ License: GPLv2
 Section: kernel
 Status: unknown hold not-installed
 Architecture: aarch64_cortex-a53
-Installed-Size: 3003
+Installed-Size: 3006
 Description:  Netfilter (IPv6) kernel modules for NAT targets

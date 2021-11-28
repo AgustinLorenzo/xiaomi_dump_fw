@@ -5,5 +5,5 @@ Source: qca_qsdk/qca_qsdk_spf10.0/feeds/qca-lib/libqcacommon
 Section: QCA
 Maintainer: Qualcomm Atheros, Inc.
 Architecture: aarch64_cortex-a53
-Installed-Size: 28096
+Installed-Size: 28099
 Description:  This Package contains the Hy-Fi Common Functionality Library

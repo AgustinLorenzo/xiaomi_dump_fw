@@ -370,8 +370,8 @@ smartvpn_doit(){
     local smartvpn_switch=$(uci -q get smartvpn.vpn.switch)
     local smartvpn_disabled=$(uci -q get smartvpn.vpn.disabled)
 
-    [ -n $smartvpn_disabled -a "$smartvpn_disabled" == "1" ] && {
-	[ -z $smartvpn_switch -o "$smartvpn_switch" == "0" ] && return 0
+    [ -n "$smartvpn_disabled" -a "$smartvpn_disabled" = "1" ] && {
+        [ -z "$smartvpn_switch" -o "$smartvpn_switch" = "0" ] && return 0
     }
 
     [ -f "/etc/init.d/smartvpn" ] && /etc/init.d/smartvpn start
@@ -463,17 +463,17 @@ ipv6_masq_doit() {
     local ip6_mode=$(uci -q get ipv6.settings.mode)
     local ip6_on=$(uci -q get ipv6.settings.enabled)
     ip6tables -t nat -D POSTROUTING -j MASQUERADE >/dev/null 2>&1
-    if [ "$ip6_on" = "1" -a "$ip6_mode" = "nat" ]; then
+    [ "$ip6_on" = "1" -a "$ip6_mode" = "nat" ] && {
         ip6tables -t nat -A POSTROUTING -j MASQUERADE >/dev/null 2>&1
-    fi
+    }
 
     local wan=$(uci -q get network.wan.ifname)
     local proto=$(uci -q get network.wan.proto)
     [ "$proto" = "pppoe" ] && wan="pppoe-wan"
-    ip6tables -t filter -D zone_wan_dest_REJECT -i $wan -j ACCEPT
-    if [ "$ip6_on" = "1" -a "$ip6_mode" != "nat" ]; then
-        ip6tables -t filter -I zone_wan_dest_REJECT -i $wan -j ACCEPT
-    fi
+    ip6tables -t filter -D zone_wan_forward -i $wan -j ACCEPT >/dev/null 2>&1
+    [ "$ip6_on" = "1" -a "$ip6_mode" != "nat" ] && {
+        ip6tables -t filter -A zone_wan_forward -i $wan -j ACCEPT >/dev/null 2>&1
+    }
 
     return 0
 }

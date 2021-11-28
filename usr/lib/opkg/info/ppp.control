@@ -6,5 +6,5 @@ License: BSD-4-Clause
 Section: net
 Maintainer: Felix Fietkau <nbd@nbd.name>
 Architecture: aarch64_cortex-a53
-Installed-Size: 130871
+Installed-Size: 130878
 Description:  This package contains the PPP (Point-to-Point Protocol) daemon.

@@ -86,7 +86,7 @@ config rule
 config rule
 	option name		Allow-ICMPv6-Forward
 	option src		wan
-	option dest		*
+	option dest		lan
 	option proto		icmp
 	list icmp_type		echo-request
 	list icmp_type		echo-reply
@@ -172,6 +172,7 @@ config rule 'ready_dhcp'
         option src_port '67-68'
         option dest_port '67-68'
         option proto 'udp'
+        option family ipv4
         option target 'ACCEPT'
 
 config rule 'ready_dhcp_out'
@@ -180,6 +181,7 @@ config rule 'ready_dhcp_out'
         option src_port '67-68'
         option dest_port '67-68'
         option proto 'udp'
+        option family ipv4
         option target 'ACCEPT'
 
 config rule 'ready_minet_in'

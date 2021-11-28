@@ -35,6 +35,7 @@ uci -q batch <<EOF >/dev/null
 set xiaoqiang.common.ap_hostname=$ap_hostname
 set xiaoqiang.common.vendorinfo=$vendorinfo
 commit xiaoqiang
+$(lua /usr/sbin/miot_ip_conflict.lua $ip)
 set network.lan=interface
 set network.lan.type=bridge
 set network.lan.proto=static

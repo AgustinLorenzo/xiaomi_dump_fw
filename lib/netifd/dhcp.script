@@ -141,6 +141,7 @@ setup_for_mesh_re () {
     ap_hostname=MiWiFi-${ap_hostname_tmp}-srv
     cap_mode=$(uci -q get xiaoqiang.common.CAP_MODE)
     logger -p warn -t udhcpc " ============ mesh re set ip=$ip gw=$router."
+    $(lua /usr/sbin/miot_ip_conflict.lua $ip)
 	if [ "$cap_mode" != "ap" ] ; then     
 		logger -p warn -t udhcpc " ============ mesh re set vendorinfo=$vendorinfo."
 		uci -q set xiaoqiang.common.vendorinfo="$vendorinfo"

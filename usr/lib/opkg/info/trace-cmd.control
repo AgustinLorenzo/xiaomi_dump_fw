@@ -5,5 +5,5 @@ Source: package/devel/trace-cmd
 License: GPL-2.0
 Section: devel
 Architecture: aarch64_cortex-a53
-Installed-Size: 122952
+Installed-Size: 122950
 Description:  Linux trace command line utility

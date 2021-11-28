@@ -6,5 +6,5 @@ License: GPLv2
 Section: kernel
 Status: unknown hold not-installed
 Architecture: aarch64_cortex-a53
-Installed-Size: 5805
+Installed-Size: 5810
 Description:  Kernel support for USB Gadget mode

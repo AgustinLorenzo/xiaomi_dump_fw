@@ -5,5 +5,5 @@ Source: package/system/fwtool
 Section: utils
 Maintainer: Felix Fietkau <nbd@nbd.name>
 Architecture: aarch64_cortex-a53
-Installed-Size: 4103
+Installed-Size: 4107
 Description:  Utility for appending and extracting firmware metadata and signatures

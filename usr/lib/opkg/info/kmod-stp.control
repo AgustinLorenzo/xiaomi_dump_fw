@@ -6,5 +6,5 @@ License: GPLv2
 Section: kernel
 Status: unknown hold not-installed
 Architecture: aarch64_cortex-a53
-Installed-Size: 182
+Installed-Size: 183
 Description:  Kernel module for Ethernet Spanning Tree Protocol support.

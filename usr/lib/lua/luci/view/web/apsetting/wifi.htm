@@ -213,11 +213,13 @@ local hardware = string.lower( XQSysUtil.getHardware() )
             </select>
         </span>
         <em class="t"></em>
-    </div> -->
-    <!-- {/if} -->
+    </div>
+    {/if}
+    {if ($wifitype != 0)}
     <div class="form-contral">
         <button type="submit" class="btn btn-primary btn-l hidden"><span><%:保存%></span></button>
     </div>
+    {/if}
 </script>
 <script type="text/tmpl" id="tplWifi">
     <input type="hidden" value="{$wifiIndex}" name="wifiIndex">
@@ -744,9 +746,9 @@ local hardware = string.lower( XQSysUtil.getHardware() )
                 pwd1 =  $( 'input[name=pwd]', topContainer ).val(),
                 encryption1 = $( 'select[name=encryption]', topContainer ).val(),
                 hidden1 = $('input[name=hidden]', topContainer ).prop('checked') ? '1' : '0';
-                channel1 = $( 'input[name=channel]', form1 ).val(),
-                bandwidth1 = $( 'input[name=bandwidth]', form1 ).val(),
-                txpwr1 = $( 'input[name=txpwr]', form1 ).val(),
+                channel1 = $( 'select[name=channel]', form1 ).val(),
+                bandwidth1 = $( 'select[name=bandwidth]', form1 ).val(),
+                txpwr1 = $( 'select[name=txpwr]', form1 ).val(),
                 pwd1 = $.pwddecode( pwd1 ),
 
                 on2 = on1,

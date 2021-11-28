@@ -1176,7 +1176,7 @@ local maxMeshCount = XQFunction.getMaxMeshNodeCount()
                 if(isStopSearch) {
                   isStopSearch.abort(); //停止搜索节点请求 接口scan_mesh_node
                 }
-                clearTimeout(timeout);
+                clearInterval(timeout);
                 $('#mesh-select,#mesh-search-lists,#mesh-overMaxLength,#mesh-search-loading,#mesh_list_length0,#mesh-add-success,#mesh-add-failer,#mesh-local,#mesh-Off-5G,#mesh-add-loading').hide();
                 meshModeDialog.close();
             });
@@ -1187,7 +1187,7 @@ local maxMeshCount = XQFunction.getMaxMeshNodeCount()
                 if(isStopSearch) {
                   isStopSearch.abort();//停止搜索节点请求 接口scan_mesh_node
                 }
-                clearTimeout(timeout);
+                clearInterval(timeout);
 
             })
             $('body').delegate('#show_locate_select', 'click', function (e) {
@@ -1229,7 +1229,7 @@ local maxMeshCount = XQFunction.getMaxMeshNodeCount()
                         // 0:添加成功； 1：正在连接mesh节点  2：正在同步Mesh网络配置  3：正在扩展Mesh网络  4：失败
 
                         if (rsp.code == 0) {
-                            setTimeout(function () {
+                            timeout = setInterval(function () {
                                 getMeshStatus(iteValue);
                             }, 10000)
                         }
@@ -1252,11 +1252,13 @@ local maxMeshCount = XQFunction.getMaxMeshNodeCount()
 
                             $('#mesh-add-success').siblings('.switch-step').hide();
                             $('#mesh-add-success').show();
+                            clearInterval(timeout)
 
                         } else if (rsp.status == 4) {
 
                             $('#mesh-add-failer').siblings('.switch-step').hide();
                             $('#mesh-add-failer').show();
+                            clearInterval(timeout)
 
                         } else {
                             if (rsp.status === 3) {
@@ -1264,9 +1266,6 @@ local maxMeshCount = XQFunction.getMaxMeshNodeCount()
                             } else if (rsp.status === 2) {
                                 $('#mesh-add-loading').find('p').html('正在同步Mesh节点配置...')
                             }
-                            timeout =  setTimeout(function () {
-                                getMeshStatus(iteValue);
-                            }, 10000)
 
                         }
 

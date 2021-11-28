@@ -6,5 +6,5 @@ License: GPLv2
 Section: kernel
 Status: unknown hold not-installed
 Architecture: aarch64_cortex-a53
-Installed-Size: 1342
+Installed-Size: 1344
 Description:  Kernel module for CRC-CCITT support

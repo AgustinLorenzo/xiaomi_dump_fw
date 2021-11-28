@@ -4,5 +4,5 @@ Depends: libc, libubus, libblobmsg-json, ubusd, libubox, libiw, libuci, libpthre
 Source: package/miwifi/topology_monitor
 Section: net
 Architecture: all
-Installed-Size: 19482
+Installed-Size: 19486
 Description:  xiaomi mesh topology monitor.

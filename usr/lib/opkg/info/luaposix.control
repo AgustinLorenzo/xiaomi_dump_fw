@@ -7,6 +7,6 @@ LicenseFiles: COPYING
 Section: lang
 Maintainer: Maxim Storchak <m.storchak@gmail.com>
 Architecture: aarch64_cortex-a53
-Installed-Size: 33227
+Installed-Size: 33229
 Description:  luaposix is a general POSIX library for Lua providing access
  to various low level libc functions.

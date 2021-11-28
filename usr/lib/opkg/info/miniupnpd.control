@@ -5,5 +5,5 @@ Source: feeds/packages/net/miniupnpd
 Section: net
 Maintainer: Daniel Dickinson <openwrt@cshore.neomailbox.net>
 Architecture: aarch64_cortex-a53
-Installed-Size: 63247
+Installed-Size: 63246
 Description:  Lightweight UPnP daemon

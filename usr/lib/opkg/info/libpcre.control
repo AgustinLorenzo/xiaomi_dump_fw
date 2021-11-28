@@ -7,5 +7,5 @@ LicenseFiles: LICENCE
 Section: libs
 Maintainer: Thomas Heil <heil@terminal-consulting.de>
 Architecture: aarch64_cortex-a53
-Installed-Size: 76940
+Installed-Size: 76944
 Description:  A Perl Compatible Regular Expression library

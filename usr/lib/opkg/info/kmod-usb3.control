@@ -6,5 +6,5 @@ License: GPLv2
 Section: kernel
 Status: unknown hold not-installed
 Architecture: aarch64_cortex-a53
-Installed-Size: 78512
+Installed-Size: 78513
 Description:  Kernel support for USB3 (XHCI) controllers

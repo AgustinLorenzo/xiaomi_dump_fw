@@ -6,5 +6,5 @@ License: GPL-2.0
 Section: net
 Maintainer: Felix Fietkau <nbd@nbd.name>
 Architecture: aarch64_cortex-a53
-Installed-Size: 38187
+Installed-Size: 38188
 Description:  cfg80211 interface configuration utility

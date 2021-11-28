@@ -4,5 +4,5 @@ Depends: libc, libcurl, libstdcpp, libpthread, librt, zlib, libubus, libblobmsg-
 Source: package/miwifi/messagingagent
 Section: opt
 Architecture: aarch64_cortex-a53
-Installed-Size: 92025
+Installed-Size: 92024
 Description:  messaging agent

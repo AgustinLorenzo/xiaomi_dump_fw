@@ -5,5 +5,5 @@ Source: feeds/luci/luci
 Section: luci
 Maintainer: LuCI Development Team <luci@lists.subsignal.org>
 Architecture: aarch64_cortex-a53
-Installed-Size: 103
+Installed-Size: 105
 Description:  Standard OpenWrt set including full admin with ppp support and the default OpenWrt theme

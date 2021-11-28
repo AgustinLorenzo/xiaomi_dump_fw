@@ -10,5 +10,18 @@ if [ "$enable" = "1" ]; then
 fi
 uci -q batch <<EOF
     delete network.lan.ipv6
-	commit network
+    commit network
 EOF
+
+
+check_rule() {
+    config_get name "$1" name
+    [ "$name" = "Allow-ICMPv6-Forward" ] && {
+#        config_set "$1" dest "lan"
+        uci set firewall.$1.dest="lan"
+        uci commit firewall
+    }
+}
+
+config_load firewall
+config_foreach check_rule rule

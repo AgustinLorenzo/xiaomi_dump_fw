@@ -4,5 +4,5 @@ Depends: libc, xiaoqiang-util
 Source: package/miwifi/system/uboot-qca
 Section: boot
 Architecture: aarch64_cortex-a53
-Installed-Size: 103
+Installed-Size: 105
 Description:  U-boot for IPQ807x based platforms

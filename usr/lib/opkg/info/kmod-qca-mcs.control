@@ -5,5 +5,5 @@ Source: qca_qsdk/qca_qsdk_spf10.0/feeds/qca-mcs/qca-mcs-lkm
 Section: kernel
 Maintainer: Qualcomm Atheros, Inc.
 Architecture: aarch64_cortex-a53
-Installed-Size: 26454
+Installed-Size: 26456
 Description:  This package installs the IGMP/MLD Snooping Module

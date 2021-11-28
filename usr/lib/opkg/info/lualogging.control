@@ -4,5 +4,5 @@ Depends: libc, lua
 Source: package/lualogging
 Section: lang
 Architecture: aarch64_cortex-a53
-Installed-Size: 3992
+Installed-Size: 3995
 Description:  lualogging

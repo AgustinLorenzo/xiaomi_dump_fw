@@ -5,6 +5,6 @@ Source: package/utils/e2fsprogs
 License: GPL-2.0
 Section: libs
 Architecture: aarch64_cortex-a53
-Installed-Size: 4005
+Installed-Size: 4007
 Description:  This package contains libcom_err, the common error description library
  bundled with e2fsprogs.

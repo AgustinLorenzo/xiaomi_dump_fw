@@ -4,5 +4,5 @@ Depends: kernel (=4.4.60-1-5fafac9592dacdd4ddea8e68ff0daa95), kmod-ipt-conntrack
 Source: qca_qsdk/qca_qsdk_spf10.0/feeds/shortcut-fe/shortcut-fe
 Section: kernel
 Architecture: aarch64_cortex-a53
-Installed-Size: 32508
+Installed-Size: 32509
 Description:  Kernel driver for SFE

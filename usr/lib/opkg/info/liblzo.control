@@ -5,6 +5,6 @@ Source: package/libs/lzo
 License: GPL-2.0+
 Section: libs
 Architecture: aarch64_cortex-a53
-Installed-Size: 34730
+Installed-Size: 34732
 Description:  LZO is a data compression library which is suitable for data de-/compression
  in real-time. This means it favours speed over compression ratio.

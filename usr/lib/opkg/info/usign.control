@@ -6,5 +6,5 @@ License: ISC
 Section: base
 Maintainer: Felix Fietkau <nbd@nbd.name>
 Architecture: aarch64_cortex-a53
-Installed-Size: 10586
+Installed-Size: 10589
 Description:  OpenWrt signature verification utility

@@ -7,6 +7,6 @@ LicenseFiles: COPYING
 Section: net
 Maintainer: Felix Fietkau <nbd@nbd.name>
 Architecture: aarch64_cortex-a53
-Installed-Size: 33631
+Installed-Size: 33633
 Description:  ethtool is a small utility for examining and tuning your ethernet-based
  network interface

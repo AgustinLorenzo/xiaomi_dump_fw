@@ -4,5 +4,5 @@ Depends: libc, libpthread, qca-qmi-framework
 Source: qca_qsdk/qca_qsdk_spf10.0/feeds/qca-platform-utils/qca-time-services
 Section: QCA
 Architecture: aarch64_cortex-a53
-Installed-Size: 9880
+Installed-Size: 9882
 Description:  QCA Time Services software

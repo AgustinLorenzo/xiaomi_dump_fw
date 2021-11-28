@@ -4,5 +4,5 @@ Depends: libc, lua, librt, libpolarssl
 Source: package/miwifi/lua_crypto_lib
 Section: opt
 Architecture: aarch64_cortex-a53
-Installed-Size: 9463
+Installed-Size: 9466
 Description:  lua rsa lib form polarssl

@@ -34,6 +34,7 @@
 /lib/upgrade/platform.sh
 /usr/sbin/vas_security.lua
 /etc/shells
+/usr/sbin/miot_ip_conflict.lua
 /bin/flash_check.sh
 /lib/config_post_ota/parentalctl_post_ota.sh
 /lib64
@@ -97,6 +98,7 @@
 /usr/share/xiaoqiang/xiaoqiang-defaults.txt
 /usr/sbin/wifiap_mode.sh
 /etc/iwevent.d/01-feedpush.sh
+/etc/opkg/keys/a6f65c1d881ef700
 /etc/hotplug.d/iface/10-phy_check.sh
 /etc/os-release
 /sbin/ethstatus
@@ -136,7 +138,6 @@
 /usr/sbin/crontab_rom.sh
 /lib/upgrade/nand.sh
 /etc/rc.button/failsafe
-/etc/opkg/keys/a1174740835a460
 /lib/upgrade/fwtool.sh
 /etc/services
 /usr/sbin/get_router_kv.lua

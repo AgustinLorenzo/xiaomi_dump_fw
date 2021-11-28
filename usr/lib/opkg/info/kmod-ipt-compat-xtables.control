@@ -5,5 +5,5 @@ Source: feeds/packages/net/xtables-addons
 Section: kernel
 Maintainer: Jo-Philipp Wich <jow@openwrt.org>
 Architecture: aarch64_cortex-a53
-Installed-Size: 803
+Installed-Size: 807
 Description:  API compatibilty layer netfilter module

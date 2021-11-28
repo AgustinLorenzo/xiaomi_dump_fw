@@ -6,5 +6,5 @@ License: GPLv2
 Section: kernel
 Status: unknown hold not-installed
 Architecture: aarch64_cortex-a53
-Installed-Size: 2670
+Installed-Size: 2671
 Description:  Kernel module for LEDs on GPIO lines

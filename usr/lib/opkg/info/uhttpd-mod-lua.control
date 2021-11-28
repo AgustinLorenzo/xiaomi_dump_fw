@@ -6,5 +6,5 @@ License: ISC
 Section: net
 Maintainer: Felix Fietkau <nbd@nbd.name>
 Architecture: aarch64_cortex-a53
-Installed-Size: 4014
+Installed-Size: 4016
 Description:  The Lua plugin adds a CGI-like Lua runtime interface to uHTTPd.

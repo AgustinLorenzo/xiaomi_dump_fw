@@ -2740,8 +2740,8 @@ enable_qcawificfg80211() {
 		config_get son_event_bcast qcawifi son_event_bcast
 		[ -n "$son_event_bcast" ] && "$device_if" "$ifname" son_event_bcast "${son_event_bcast}"
 
-		config_get root_distance "$vif" root_distance
-		[ -n "$root_distance" ] && "$device_if" "$ifname" set_whc_dist "$root_distance"
+		#config_get root_distance "$vif" root_distance
+		#[ -n "$root_distance" ] && "$device_if" "$ifname" set_whc_dist "$root_distance"
 
 		config_get caprssi "$vif" caprssi
 		[ -n "$caprssi" ] && "$device_if" "$ifname" caprssi "${caprssi}"

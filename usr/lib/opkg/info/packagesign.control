@@ -4,5 +4,5 @@ Depends: libc, libstdcpp, libopenssl, gtest, boost-thread, boost-filesystem, lib
 Source: package/miwifi/packagesign
 Section: opt
 Architecture: aarch64_cortex-a53
-Installed-Size: 17869
+Installed-Size: 17873
 Description:  package sign tool

@@ -4,5 +4,5 @@ Depends: libc, uci, libubus, libblobmsg-json, ubusd, libubox, libmosquitto, libp
 Source: package/miwifi/xq_info_sync_mqtt
 Section: net
 Architecture: aarch64_cortex-a53
-Installed-Size: 56452
+Installed-Size: 56638
 Description:  xiaomi Router sync with AP/LAN/RE replay
