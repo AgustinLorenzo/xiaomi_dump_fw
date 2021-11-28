@@ -5,5 +5,5 @@ Source: qca_qsdk/qca_qsdk_spf10.0/feeds/whc/qca-whc-init
 Section: QCA
 Maintainer: Qualcomm Atheros
 Architecture: aarch64_cortex-a53
-Installed-Size: 2104
+Installed-Size: 2101
 Description:  This Package contains the script helper files for the Whole Home Coverage init scripts

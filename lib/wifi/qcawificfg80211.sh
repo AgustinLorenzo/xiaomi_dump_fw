@@ -2955,7 +2955,6 @@ enable_qcawificfg80211() {
 			max_power=30
 			wifitool "$ifname" setUnitTestCmd 67 3 16 1 1
 			iwpriv "$ifname" 11ngvhtintop 1
-			iwpriv "$ifname" enablertscts 0x11
 		else
 			max_power=30
 		fi

@@ -6,5 +6,5 @@ License: GPL-2.0
 Section: base
 Maintainer: John Crispin <john@phrozen.org>
 Architecture: aarch64_cortex-a53
-Installed-Size: 16074
+Installed-Size: 16075
 Description:  OpenWrt filesystem tools

@@ -4,5 +4,5 @@ Depends: libc, curl, libstdcpp, libpthread, libthriftnb, boost-thread, boost-fil
 Source: package/miwifi/datacenter
 Section: data
 Architecture: aarch64_cortex-a53
-Installed-Size: 1326895
+Installed-Size: 1326885
 Description:  the datacenter slim version

@@ -6,5 +6,5 @@ License: GPLv2
 Section: kernel
 Status: unknown hold not-installed
 Architecture: aarch64_cortex-a53
-Installed-Size: 10110
+Installed-Size: 10109
 Description:  Kernel modules for PPPoL2TP (PPP over L2TP) support

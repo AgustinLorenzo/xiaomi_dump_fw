@@ -5,5 +5,5 @@ Source: qca_qsdk/qca_qsdk_spf10.0/feeds/hyfi/qca-hyfi-bridging/qca-hyfi-iptv-hel
 Section: QCA
 Maintainer: Qualcomm Atheros, Inc.
 Architecture: aarch64_cortex-a53
-Installed-Size: 3941
+Installed-Size: 3942
 Description:  This package installs the QCA Hy-Fi Netfilter for IPTV implementations on Wireless interface

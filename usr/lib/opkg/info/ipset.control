@@ -6,5 +6,5 @@ License: GPL-2.0
 Section: net
 Maintainer: Jo-Philipp Wich <jo@mein.io>
 Architecture: aarch64_cortex-a53
-Installed-Size: 37165
+Installed-Size: 37164
 Description:  IPset administration utility

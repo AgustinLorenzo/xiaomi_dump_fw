@@ -46,7 +46,6 @@
 /etc/config/diag.R2200
 /etc/config/smartvpn
 /lib/preinit/10_indicate_preinit
-/etc/opkg/keys/d895232f539d887e
 /usr/libexec/login.sh
 /usr/sbin/dhcp_apclient.sh
 /usr/sbin/sysapi
@@ -99,6 +98,7 @@
 /etc/iwevent.d/01-feedpush.sh
 /etc/hotplug.d/iface/10-phy_check.sh
 /etc/os-release
+/etc/opkg/keys/efb26340e23d4431
 /sbin/ethstatus
 /usr/sbin/sysapi.firewall
 /usr/sbin/jason.sh

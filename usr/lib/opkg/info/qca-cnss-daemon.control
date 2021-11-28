@@ -4,5 +4,5 @@ Depends: libc, libnl, libpthread, qca-qmi-framework
 Source: qca_qsdk/qca_qsdk_spf10.0/feeds/qca/utils/qca-cnss-daemon
 Section: QCA
 Architecture: aarch64_cortex-a53
-Installed-Size: 19988
+Installed-Size: 19987
 Description:  QCA Linux QMI sotware
