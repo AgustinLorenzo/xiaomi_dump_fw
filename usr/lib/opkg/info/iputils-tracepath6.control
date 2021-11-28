@@ -6,6 +6,6 @@ License: GPL-2.0+
 Section: net
 Maintainer: Jo-Philipp Wich <jo@mein.io>
 Architecture: aarch64_cortex-a53
-Installed-Size: 5343
+Installed-Size: 5338
 Description:  Program tracepath6 from iputils.
  Traces path to a network host discovering MTU along this path (IPv6).

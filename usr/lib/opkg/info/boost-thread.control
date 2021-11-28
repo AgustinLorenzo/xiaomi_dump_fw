@@ -6,5 +6,5 @@ License: Boost Software License <http://www.boost.org/users/license.html>
 Section: libs
 Maintainer: Carlos M. Ferreira <carlosmf.pt@gmail.com>
 Architecture: aarch64_cortex-a53
-Installed-Size: 39472
+Installed-Size: 39470
 Description:  This package contains the Boost thread library.

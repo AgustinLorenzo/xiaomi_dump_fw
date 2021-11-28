@@ -6,6 +6,6 @@ License: GPL-2.0
 Section: utils
 Maintainer: Marko Ratkaj <marko.ratkaj@sartura.hr>
 Architecture: aarch64_cortex-a53
-Installed-Size: 231717
+Installed-Size: 231716
 Description:  The sysstat utilities are a collection of performance monitoring tools for
  Linux. These include sar, sadf, mpstat, iostat, pidstat and sa tools.

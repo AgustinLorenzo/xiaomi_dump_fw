@@ -5,5 +5,5 @@ Source: feeds/packages/net/xtables-addons
 Section: net
 Maintainer: Jo-Philipp Wich <jow@openwrt.org>
 Architecture: aarch64_cortex-a53
-Installed-Size: 1961
+Installed-Size: 1959
 Description:  IP4MARK iptables extension

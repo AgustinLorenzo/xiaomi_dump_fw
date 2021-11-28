@@ -1,10 +1,10 @@
 Package: kmod-crypto-wq
 Version: 4.4.60-1
-Depends: kernel (=4.4.60-1-5fafac9592dacdd4ddea8e68ff0daa95), kmod-crypto-core
+Depends: kernel (=4.4.60-1-31c7bfdfc1d9c788120c273563f8251e), kmod-crypto-core
 Source: package/kernel/linux
 License: GPLv2
 Section: kernel
 Status: unknown hold not-installed
 Architecture: aarch64_cortex-a53
-Installed-Size: 195
+Installed-Size: 193
 Description:  CryptoAPI work queue handling

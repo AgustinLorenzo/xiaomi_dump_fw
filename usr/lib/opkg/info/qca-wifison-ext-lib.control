@@ -5,5 +5,5 @@ Source: qca_qsdk/qca_qsdk_spf10.0/feeds/qca-lib/qca-wifison-ext-lib
 Section: QCA
 Maintainer: Qualcomm Atheros, Inc.
 Architecture: aarch64_cortex-a53
-Installed-Size: 11159
+Installed-Size: 11157
 Description:  This Package contains the Wifison Event Functionality Library

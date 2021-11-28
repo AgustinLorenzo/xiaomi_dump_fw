@@ -7,7 +7,7 @@ LicenseFiles: LICENSE
 Section: net
 Maintainer: Philip Prindeville <philipp@redfish-solutions.com>
 Architecture: aarch64_cortex-a53
-Installed-Size: 863502
+Installed-Size: 863501
 Description:  provides a means for relaying DHCP and BOOTP requests from a subnet to which
  no DHCP server is directly connected to one or more DHCP servers on other
  subnets.

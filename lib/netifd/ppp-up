@@ -31,3 +31,8 @@ else
 	}
 	logger stat_points_privacy pppoe_up="1"
 fi
+
+# $4: wan ip address, get by pppd process
+[ -n "$4" ] && {
+   lua /usr/sbin/cr_ip_conflict.lua &
+}

@@ -130,7 +130,7 @@ uci -q batch <<-EOF >/dev/null
     commit network
 
     set dhcp.lan.ignore=1;
-    commit dchp
+    commit dhcp
 EOF
 
     nvram set vlan1ports="$cmd_vlan1_bridgeap_port"
@@ -152,7 +152,7 @@ uci -q batch <<-EOF >/dev/null
     commit network
 
     set dhcp.lan.ignore=1;
-    commit dchp
+    commit dhcp
 EOF
     nvram set vlan1ports="$cmd_vlan1_bridgeap_port"
     nvram set vlan2ports="$cmd_vlan2_bridgeap_port"
@@ -174,7 +174,7 @@ uci -q batch <<-EOF >/dev/null
     commit network
 
     set dhcp.lan.ignore=1;
-    commit dchp
+    commit dhcp
 EOF
     nvram set mode=AP
     nvram commit

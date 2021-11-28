@@ -5,5 +5,5 @@ Source: qca_qsdk/qca_qsdk_spf10.0/feeds/qca/utils/qcmbr-10.4
 Section: QCA
 Maintainer: Qualcomm Atheros
 Architecture: aarch64_cortex-a53
-Installed-Size: 18838
+Installed-Size: 18835
 Description:  - QCA ART Driver & tools

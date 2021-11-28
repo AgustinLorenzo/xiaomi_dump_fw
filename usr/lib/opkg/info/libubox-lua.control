@@ -6,5 +6,5 @@ License: ISC
 Section: libs
 Maintainer: Felix Fietkau <nbd@nbd.name>
 Architecture: aarch64_cortex-a53
-Installed-Size: 4258
+Installed-Size: 4257
 Description:  Lua binding for the OpenWrt Basic utility library

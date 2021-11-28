@@ -4,3 +4,4 @@
 /usr/share/miniupnpd/firewall.include
 /etc/uci-defaults/99-miniupnpd
 /etc/init.d/miniupnpd
+/lib/config_post_ota/upnpd_post_ota_cfg.sh

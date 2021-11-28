@@ -5,7 +5,7 @@ Source: package/network/utils/iptables
 License: GPL-2.0
 Section: net
 Architecture: aarch64_cortex-a53
-Installed-Size: 26180
+Installed-Size: 26176
 Description:  IP firewall administration tool.
  
  Matches:

@@ -7,5 +7,5 @@ LicenseFiles: COPYING
 Section: utils
 Maintainer: Marko Ratkaj <marko.ratkaj@sartura.hr>
 Architecture: aarch64_cortex-a53
-Installed-Size: 127808
+Installed-Size: 127806
 Description:  File type determination utility

@@ -5,5 +5,5 @@ Source: package/libs/libnl
 License: LGPL-2.1
 Section: libs
 Architecture: aarch64_cortex-a53
-Installed-Size: 160871
+Installed-Size: 160828
 Description:  This package contains a library for applications dealing with netlink sockets

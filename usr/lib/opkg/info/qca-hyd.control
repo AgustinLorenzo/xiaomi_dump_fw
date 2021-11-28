@@ -5,6 +5,6 @@ Source: qca_qsdk/qca_qsdk_spf10.0/feeds/hyfi/qca-hyfi-networking/qca-hyd
 Section: QCA
 Maintainer: Qualcomm Atheros
 Architecture: aarch64_cortex-a53
-Installed-Size: 323311
+Installed-Size: 323314
 Description:  This package installs the Hy-Fi Path-Selection daemon
  * miwifi extract from prebuilt

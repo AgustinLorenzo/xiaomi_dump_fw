@@ -4,5 +4,5 @@ Depends: libc, libstdcpp, libconfig, curl, glog, boost, ubox, ubus, libblobmsg-j
 Source: package/miwifi/statisticsservice
 Section: opt
 Architecture: aarch64_cortex-a53
-Installed-Size: 17649
+Installed-Size: 17648
 Description:  statistics service

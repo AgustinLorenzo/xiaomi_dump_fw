@@ -4,5 +4,5 @@ Depends: libc, luci
 Source: package/miwifi/webpages
 Section: util
 Architecture: aarch64_cortex-a53
-Installed-Size: 508795
+Installed-Size: 508781
 Description:  webinit src code.

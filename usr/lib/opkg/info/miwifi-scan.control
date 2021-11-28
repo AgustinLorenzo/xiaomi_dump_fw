@@ -4,5 +4,5 @@ Depends: libc, libjson-c, libiw, libmbedtls, libuci, libpthread
 Source: package/miwifi/miwifi-scan
 Section: net
 Architecture: all
-Installed-Size: 43546
+Installed-Size: 43542
 Description:  A script to do wifi scan.

@@ -5,5 +5,5 @@ Source: feeds/luci/luci
 Section: luci
 Maintainer: LuCI Development Team <luci@lists.subsignal.org>
 Architecture: aarch64_cortex-a53
-Installed-Size: 2972
+Installed-Size: 2970
 Description:  Support for PPP/PPPoE/PPPoA/PPtP

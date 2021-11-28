@@ -6,5 +6,5 @@ License: ISC
 Section: net
 Maintainer: Jo-Philipp Wich <jo@mein.io>
 Architecture: aarch64_cortex-a53
-Installed-Size: 52263
+Installed-Size: 52262
 Description:  This package provides a config-compatible C implementation of the UCI firewall.

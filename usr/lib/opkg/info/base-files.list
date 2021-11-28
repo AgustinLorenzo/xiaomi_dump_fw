@@ -84,6 +84,7 @@
 /usr/sbin/kill_plugin_process.sh
 /usr/lib/lua/json.lua
 /usr/sbin/setchanauto.sh
+/etc/opkg/keys/bc30a5b312bbdc6a
 /etc/shadow
 /etc/rc.common
 /sbin/setmac
@@ -98,7 +99,6 @@
 /usr/share/xiaoqiang/xiaoqiang-defaults.txt
 /usr/sbin/wifiap_mode.sh
 /etc/iwevent.d/01-feedpush.sh
-/etc/opkg/keys/a6f65c1d881ef700
 /etc/hotplug.d/iface/10-phy_check.sh
 /etc/os-release
 /sbin/ethstatus

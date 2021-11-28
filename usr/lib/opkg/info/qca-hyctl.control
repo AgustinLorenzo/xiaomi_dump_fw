@@ -5,5 +5,5 @@ Source: qca_qsdk/qca_qsdk_spf10.0/feeds/hyfi/qca-hyfi-bridging/qca-hyctl
 Section: QCA
 Maintainer: Qualcomm Atheros, Inc.
 Architecture: aarch64_cortex-a53
-Installed-Size: 9970
+Installed-Size: 9967
 Description:  This package installs the Hy-Fi control command line utility

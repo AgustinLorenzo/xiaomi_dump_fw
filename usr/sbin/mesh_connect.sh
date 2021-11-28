@@ -143,8 +143,8 @@ do_re_init() {
 	local mgmt_5g=$6
 	#[ "$mgmt_5g" = "none" ] || pswd_5g=$(printf "%s" $5 | base64 -d)
 	[ "$mgmt_5g" = "none" ] || pswd_5g="$5"
-	local bh_ssid=$(printf "%s" $7 | base64 -d)
-	local bh_pswd=$(printf "%s" $8 | base64 -d)
+	local bh_ssid=$(printf "%s" "$7" | base64 -d)
+	local bh_pswd=$(printf "%s" "$8" | base64 -d)
 	local bh_mgmt=$9
 
 	#local ssid=$(grep "ssid=\"" /var/run/wpa_supplicant-${ifname}.conf | awk -F\" '{print $2}')
@@ -182,8 +182,8 @@ do_re_init_bsd() {
 	local whc_mgmt=$3
 	#[ "$whc_mgmt" = "none" ] || whc_pswd=$(printf "%s" $2 | base64 -d)
 	[ "$whc_mgmt" = "none" ] || whc_pswd="$2"
-	local bh_ssid=$(printf "%s" $4 | base64 -d)
-	local bh_pswd=$(printf "%s" $5 | base64 -d)
+	local bh_ssid=$(printf "%s" "$4" | base64 -d)
+	local bh_pswd=$(printf "%s" "$5" | base64 -d)
 	local bh_mgmt=$6
 
 	#local ssid=$(grep "ssid=\"" /var/run/wpa_supplicant-${ifname}.conf | awk -F\" '{print $2}')
@@ -393,8 +393,8 @@ do_cap_init_bsd() {
 
 	local ifname_5g=$(uci -q get misc.backhauls.backhaul_5g_ap_iface)
 
-	local bh_ssid=$(printf "%s" $6 | base64 -d)
-	local bh_pswd=$(printf "%s" $7 | base64 -d)
+	local bh_ssid=$(printf "%s" "$6" | base64 -d)
+	local bh_pswd=$(printf "%s" "$7" | base64 -d)
 	local init_done=0
 
 	local device_5g=$(uci -q get misc.wireless.if_5G)
@@ -442,8 +442,8 @@ do_cap_init_bsd() {
 			whc_pswd=$(uci -q get wireless.$iface_2g.sae_password)
 		fi
 
-		whc_ssid=$(printf "%s" $whc_ssid | base64 | xargs)
-		whc_pswd=$(printf "%s" $whc_pswd | base64 | xargs)
+		whc_ssid=$(printf "%s" "$whc_ssid" | base64 | xargs)
+		whc_pswd=$(printf "%s" "$whc_pswd" | base64 | xargs)
 
 		case "$channel" in
 			52|56|60|64|100|104|108|112|116|120|124|128|132|136|140|149|153|157|161|165)
@@ -484,8 +484,8 @@ do_cap_init() {
 
 	local ifname_5g=$(uci -q get misc.backhauls.backhaul_5g_ap_iface)
 
-	local bh_ssid=$(printf "%s" $6 | base64 -d)
-	local bh_pswd=$(printf "%s" $7 | base64 -d)
+	local bh_ssid=$(printf "%s" "$6" | base64 -d)
+	local bh_pswd=$(printf "%s" "$7" | base64 -d)
 	local init_done=0
 
 	local channel=$(uci -q get wireless.$device_5g.channel)
@@ -534,10 +534,10 @@ do_cap_init() {
 			pswd_5g=$(uci -q get wireless.$iface_5g.sae_password)
 		fi
 
-		ssid_2g=$(printf "%s" $ssid_2g | base64 | xargs)
-		pswd_2g=$(printf "%s" $pswd_2g | base64 | xargs)
-		ssid_5g=$(printf "%s" $ssid_5g | base64 | xargs)
-		pswd_5g=$(printf "%s" $pswd_5g | base64 | xargs)
+		ssid_2g=$(printf "%s" "$ssid_2g" | base64 | xargs)
+		pswd_2g=$(printf "%s" "$pswd_2g" | base64 | xargs)
+		ssid_5g=$(printf "%s" "$ssid_5g" | base64 | xargs)
+		pswd_5g=$(printf "%s" "$pswd_5g" | base64 | xargs)
 
 		case "$channel" in
 			52|56|60|64|100|104|108|112|116|120|124|128|132|136|140|149|153|157|161|165)

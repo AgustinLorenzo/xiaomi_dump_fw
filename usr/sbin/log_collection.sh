@@ -16,7 +16,6 @@ BDATA_FILE_PATH="/tmp/bdata.txt"
 
 LOG_DIR="/data/usr/log/"
 LOGREAD_FILE_PATH="/data/usr/log/messages"
-LOGREAD0_FILE_PATH="/data/usr/log/messages.0"
 LOG_WIFI_AYALYSIS="/data/usr/log/wifi_analysis.log"
 LOG_WIFI_AYALYSIS0="/data/usr/log/wifi_analysis.log.0.gz"
 PANIC_FILE_PATH="/data/usr/log/panic.message"
@@ -105,16 +104,13 @@ echo "==========bdata" >> $BDATA_FILE_PATH
 bdata show >> $BDATA_FILE_PATH
 
 
-log_exec()
-{
+log_exec(){
     echo "========== $1" >>$LOG_TMP_FILE_PATH
     eval "$1" >> $LOG_TMP_FILE_PATH
 }
 
-flog_exec()
-{
+flog_exec(){
     echo "========== $1" >>$2
-
     eval "$1" >> $2
 }
 
@@ -125,61 +121,16 @@ list_messages_gz(){
     done
 }
 
-if [ "$hardware" = "R1D" ] || [ "$hardware" = "R2D" ]; then
-    /sbin/wifi_rate.sh 6 1 >> $LOG_TMP_FILE_PATH
-    local wps_proc_status
-    for count in `seq 0 3`; do
-        i=$(($count%2))
-        wps_proc_status=`nvram get wps_proc_status`
-
-        if [ "$wps_proc_status" = "0" ]; then
-            log_exec "acs_cli -i wl$i dump bss"
-        else
-            echo "========== wps is running!" >>$LOG_TMP_FILE_PATH
-        fi
-        log_exec "iwinfo wl$i info"
-        log_exec "iwinfo wl$i assolist"
-        log_exec "wl -i wl$i dump wlc"
-        log_exec "wl -i wl$i dump bsscfg"
-        log_exec "wl -i wl$i dump scb"
-        log_exec "wl -i wl$i dump ampdu"
-        log_exec "wl -i wl$i dump dma"
-        log_exec "wl -i wl$i chanim_stats"
-        log_exec "wl -i wl$i counters"
-        log_exec "wl -i wl$i dump stats"
-        log_exec "wl -i wl$i curpower"
-        sleep 1
-    done
-elif [ "$hardware" = "R3D" ]; then
-    for i in `seq 0 1`; do
+log_exec "cat /proc/meminfo >> $LOG_TMP_MEMINFO"
+for i in `seq 0 1`; do
         # wifi
         log_exec "athstats -i wifi$i >> $LOG_TMP_FILE_PATH"
-    done
-    for i in 0 1 13 14; do
-        # wl
-        log_exec "iwinfo wl$i info >> $LOG_TMP_FILE_PATH"
-        log_exec "iwinfo wl$i assolist >> $LOG_TMP_FILE_PATH"
-        log_exec "iwinfo wl$i txpowerlist >> $LOG_TMP_FILE_PATH"
-        log_exec "iwinfo wl$i freqlist >> $LOG_TMP_FILE_PATH"
-        log_exec "wlanconfig wl$i list >> $LOG_TMP_FILE_PATH"
-        log_exec "80211stats -a -i wl$i >> $LOG_TMP_FILE_PATH"
-	log_exec "iwpriv wl$i txrx_fw_stats 1"
-	log_exec "iwpriv wl$i txrx_fw_stats 3"
-	log_exec "iwpriv wl$i txrx_fw_stats 19"
-	log_exec "iwpriv wl$i txrx_fw_stats 20"
-    done
-    /usr/sbin/getneighbor.sh ${LOG_TMP_FILE_PATH} > /dev/null 2>&1
-elif [ "$hardware" = "R3600" ]; then
-	log_exec "cat /proc/meminfo >> $LOG_TMP_MEMINFO"
-    for i in `seq 0 1`; do
-        # wifi
-        log_exec "athstats -i wifi$i >> $LOG_TMP_FILE_PATH"
-    done
-    list="0 1"
-    netmode="`uci -q get xiaoqiang.common.NETMODE`"
-    ifconfig wl14 >/dev/null 2>&1
-    [ $? = 0 ] && list="$list 14"
-    [ "$netmode" = "whc_cap" -o "$netmode" = "whc_re" ] && {
+done
+list="0 1"
+netmode="`uci -q get xiaoqiang.common.NETMODE`"
+ifconfig wl14 >/dev/null 2>&1
+[ $? = 0 ] && list="$list 14"
+[ "$netmode" = "whc_cap" -o "$netmode" = "whc_re" ] && {
         bh_radio_list="`uci get misc.backhauls.backhaul`"
         for bh_radio in $bh_radio_list; do
             bh_vap_if="`uci get misc.backhauls.backhaul_${bh_radio}_ap_iface`"
@@ -194,12 +145,12 @@ elif [ "$hardware" = "R3600" ]; then
             }
         done
         list="$list $bh_vap_list"
-    }
-    echo "========== list:$list" >> $LOG_TMP_FILE_PATH
+}
+echo "========== list:$list" >> $LOG_TMP_FILE_PATH
 
-    # timeout -t 3 cnss_diag -p -c  | grep -e ANI_EDCCA_PHYID -e OFDM_DL
-    # /usr/sbin/getneighbor.sh ${LOG_TMP_FILE_PATH} > /dev/null 2>&1
-    for i in $list; do
+# timeout -t 3 cnss_diag -p -c  | grep -e ANI_EDCCA_PHYID -e OFDM_DL
+# /usr/sbin/getneighbor.sh ${LOG_TMP_FILE_PATH} > /dev/null 2>&1
+for i in $list; do
         # wl
         log_exec "iwinfo wl$i info >> $LOG_TMP_FILE_PATH"
         log_exec "iwinfo wl$i assolist >> $LOG_TMP_FILE_PATH"
@@ -213,10 +164,10 @@ elif [ "$hardware" = "R3600" ]; then
     	log_exec "iwpriv wl$i txrx_stats 10"
         log_exec "iwpriv wl$i txrx_stats 262" #wds table
         log_exec "hostapd_cli -p /var/run/hostapd-wifi$i -i wl$i get_config | grep -v \"passphrase=\""
-    done
+done
 
-    # /usr/sbin/getneighbor.sh ${LOG_TMP_FILE_PATH} > /dev/null 2>&1
-    [ "$netmode" = "whc_cap" -o "$netmode" = "whc_re" ] && {
+# /usr/sbin/getneighbor.sh ${LOG_TMP_FILE_PATH} > /dev/null 2>&1
+[ "$netmode" = "whc_cap" -o "$netmode" = "whc_re" ] && {
         [ "$netmode" = "whc_re" -a -n "$bh_sta_list" ] && {
             echo "========== bh_sta_list:$bh_sta_list" >> $LOG_TMP_FILE_PATH
             for i in $bh_sta_list; do
@@ -232,133 +183,18 @@ elif [ "$hardware" = "R3600" ]; then
         ### log info for whc serives and state
         flog_exec "  @@@@ whc info log @@@@" "$WHC_LOG"
         flog_exec "#whc general show: " "$WHC_LOG"
-        whcal role >> $WHC_LOG
-        whcal status >> $WHC_LOG
-        whcal isre && {
-            whcal getmetric; echo "metric $?" >> $WHC_LOG
-        }
-        flog_exec "#hyctl show: " "$WHC_LOG"
-        hyctl show >> $WHC_LOG
-        flog_exec "#hyctl getfdb br-lan: " "$WHC_LOG"
-        hyctl getfdb br-lan 5000 >> "$WHC_LOG"
-        flog_exec "#hyctl gethatbl br-lan: " "$WHC_LOG"
-        hyctl gethatbl br-lan 5000 >> "$WHC_LOG"
-        flog_exec "#hyctl gethdtbl br-lan: " "$WHC_LOG"
-        hyctl gethdtbl br-lan 5000 >> "$WHC_LOG"
-
-        flog_exec "#brctl showmacs detail info: " "$WHC_LOG"
-        brctl showmacs br-lan >> $WHC_LOG
-        flog_exec "#brctl showstp detail info: " "$WHC_LOG"
-        brctl showstp br-lan >> $WHC_LOG
-
-        flog_exec "###hyd info:td s2, pc s A,pc s D, hy ha, hy hd, he s, stadb s, stadb s phy, bandmon s, \
-estimator s, steeralg s, steerexec s, ps s, ps p, ps f" "$WHC_LOG"
-        (echo "@hyt_td_s2:"; echo td s2; sleep 3) | hyt >> $WHC_LOG
-        (echo "@pc_s_A:";echo pc s A; sleep 2) | hyt >> $WHC_LOG
-        (echo "@pc_s_D:";echo pc s D; sleep 4) | hyt >> $WHC_LOG
-        (echo "@hy_ha_hd:"; echo hy ha; sleep 3; echo hy hd; sleep 2) | hyt >> $WHC_LOG
-        (echo "@he_s:"; echo he u; sleep 1; echo he s; sleep 3 ) | hyt >> $WHC_LOG
-        (echo "@ps_s_p_f:"; echo ps s; sleep 1; echo ps p; sleep 1; echo ps f; sleep 1) | hyt >> $WHC_LOG
-        (echo "@steerexec_s:"; echo steerexec s; sleep 3 ) | hyt >> $WHC_LOG
-        (echo "@stadb_s:"; echo stadb s; sleep 3 ) | hyt >> $WHC_LOG
-        (echo "@stadb_s_phy:"; echo stadb s phy; sleep 3 ) | hyt >> $WHC_LOG
-        (echo "@bandmon_s:"; echo bandmon s; sleep 1) | hyt >> $WHC_LOG
-        (echo "@estimator_s"; echo estimator s; sleep 1) | hyt >> $WHC_LOG
-
-
-        flog_exec "### swconfig info" "$WHC_LOG"
-        swconfig dev switch0 show >> $WHC_LOG
-    }
-elif [ "$hardware" = "D01" ]; then
-    for i in `seq 0 1`; do
-        # wifi
-        log_exec "athstats -i wifi$i >> $LOG_TMP_FILE_PATH"
-    done
-
-    list="0 1 13"
-    ifconfig wl14 >/dev/null 2>&1
-    [ $? = 0 ] && list="$list 14"
-    whcal isre && list="$list 01 11"
-    echo "list:$list" >> $LOG_TMP_FILE_PATH
-
-    for i in $list; do
-        echo "  @@@@ iwinfo wl$i @@@@" >> $LOG_TMP_FILE_PATH
-        echo "  @@@@ iwinfo wl$i @@@@" > /dev/console
-        # wl
-        log_exec "iwinfo wl$i info >> $LOG_TMP_FILE_PATH"
-        log_exec "iwinfo wl$i assolist >> $LOG_TMP_FILE_PATH"
-        log_exec "iwinfo wl$i txpowerlist >> $LOG_TMP_FILE_PATH"
-        log_exec "iwinfo wl$i freqlist >> $LOG_TMP_FILE_PATH"
-        log_exec "wlanconfig wl$i list >> $LOG_TMP_FILE_PATH"
-        log_exec "80211stats -a -i wl$i >> $LOG_TMP_FILE_PATH"
-	log_exec "iwpriv wl$i txrx_fw_stats 1"
-	log_exec "iwpriv wl$i txrx_fw_stats 3"
-	log_exec "iwpriv wl$i txrx_fw_stats 19"
-	log_exec "iwpriv wl$i txrx_fw_stats 20"
-    done
-    # TODO other wifi 
-    /usr/sbin/getneighbor.sh ${LOG_TMP_FILE_PATH} > /dev/null 2>&1
-
-
-    ### log info for whc serives and state
-    flog_exec "  @@@@ whc info log @@@@" "$WHC_LOG"
-    flog_exec "#hyctl show: " "$WHC_LOG"
-    hyctl show >> $WHC_LOG
-    flog_exec "#hyctl gethatbl br-lan: " "$WHC_LOG"
-    hyctl gethatbl br-lan 5000 >> "$WHC_LOG"
+	mesh_cmd role >> $WHC_LOG
 
     flog_exec "#brctl showmacs detail info: " "$WHC_LOG"
     brctl showmacs br-lan >> $WHC_LOG
     flog_exec "#brctl showstp detail info: " "$WHC_LOG"
     brctl showstp br-lan >> $WHC_LOG
 
-    flog_exec "###hyd info:td s2, pc s D, hy ha, hy hd, he s, stadb s phy, bandmon s, \
-estimator s, steeralg s, steerexec s, ps s, ps p, ps f" "$WHC_LOG"
-    (echo "@hyt_td_s2:"; echo td s2; sleep 3) | hyt >> $WHC_LOG
-    (echo "@pc_s_D:";echo pc s D; sleep 2) | hyt >> $WHC_LOG
-    (echo "@hy_ha_hd:"; echo hy ha; sleep 3; echo hy hd; sleep 2) | hyt >> $WHC_LOG
-    (echo "@he_s:"; echo he u; sleep 1; echo he s; sleep 3 ) | hyt >> $WHC_LOG
-    (echo "@ps_s_p_f:"; echo ps s; sleep 1; echo ps p; sleep 1; echo ps f; sleep 1) | hyt >> $WHC_LOG
-    (echo "@stadb_s_phy:"; echo stadb s phy; sleep 3 ) | hyt >> $WHC_LOG
-    (echo "@bandmon_s:"; echo bandmon s; sleep 1) | hyt >> $WHC_LOG
-    (echo "@estimator_s"; echo estimator s; sleep 1) | hyt >> $WHC_LOG
-
-
     flog_exec "### swconfig info" "$WHC_LOG"
     swconfig dev switch0 show >> $WHC_LOG
+}
 
-
-    # plchost info
-    flog_exec "### plc info"  "$WHC_LOG"
-    flog_exec "#plchost -r" "$WHC_LOG"
-    timeout -t 5 plchost -i br-lan -r 2>&1 >> $WHC_LOG
-    flog_exec "#plchost -m" "$WHC_LOG"
-    timeout -t 5 plchost -i br-lan -m 2>&1 >> $WHC_LOG
-    flog_exec "#plchost -I" "$WHC_LOG"
-    timeout -t 5 plchost -i br-lan -I 2>&1 >> $WHC_LOG
-    flog_exec "#plctool -m" "$WHC_LOG"
-    timeout -t 5 plctool -i br-lan -m 2>&1 >> $WHC_LOG
-
-else
-#On R1CM, The follow cmd will print result to dmesg.
-    for i in `seq 0 3`; do
-            log_exec "iwinfo wl$i info"
-            log_exec "iwinfo wl$i assolist"
-            log_exec "iwinfo wl$i txpowerlist"
-            log_exec "iwinfo wl$i freqlist"
-            log_exec "iwpriv wl$i stat"
-            log_exec "iwpriv wl$i show stat"
-            log_exec "iwpriv wl$i show stainfo"
-            log_exec "iwpriv wl$i rf"
-            log_exec "iwpriv wl$i bbp"
-    done
-    /usr/sbin/getneighbor.sh ${LOG_TMP_FILE_PATH} > /dev/null 2>&1
-
-fi
-
-
-
-#On R1D, the follow print to UART.
+#The follow print to UART.
 echo "==========dmesg:" >> $LOG_TMP_FILE_PATH
 dmesg >> $LOG_TMP_FILE_PATH
 sleep 1
@@ -416,7 +252,6 @@ move_files="$LOG_TMP_MEMINFO $LOG_TMP_FILE_PATH $IPTABLES_SAVE $TRAFFICD_LOG $PL
 dup_files="$DHCP_LEASE $DNSMASQ_CONF $MACFILTER_FILE_PATH $CRONTAB $QOS_CONF $WIFISHARE_CONF"
 
 [ -e "$LOGREAD_FILE_PATH" ] || LOGREAD_FILE_PATH=
-[ -e "$LOGREAD0_FILE_PATH" ] || LOGREAD0_FILE_PATH=
 [ -e "$PANIC_FILE_PATH" ] || PANIC_FILE_PATH=
 [ -e "$LOG_WIFI_AYALYSIS" ] || LOG_WIFI_AYALYSIS=
 [ -e "$LOG_WIFI_AYALYSIS0" ] || LOG_WIFI_AYALYSIS0=
@@ -427,21 +262,19 @@ dup_files="$DHCP_LEASE $DNSMASQ_CONF $MACFILTER_FILE_PATH $CRONTAB $QOS_CONF $WI
 
 
 if [ "$redundancy_mode" = "1" ]; then
-    redundancy_files="$LOGREAD_FILE_PATH $LOGREAD0_FILE_PATH $PANIC_FILE_PATH $LOG_WIFI_AYALYSIS $LOG_WIFI_AYALYSIS0 $GZ_LOGS"
+    redundancy_files="$LOG_DIR $PANIC_FILE_PATH $LOG_WIFI_AYALYSIS $LOG_WIFI_AYALYSIS0 $GZ_LOGS"
 else
     redundancy_files="$LOG_DIR $PANIC_FILE_PATH $TMP_WIFI_LOG"
 fi
 
-[ "$hardware" = "R3600" ] && {
-    redundancy_files="$redundancy_files "/tmp/log/" "/tmp/run/""
-    move_files="$move_files $WHC_LOG"
+redundancy_files="$redundancy_files "/tmp/log/" "/tmp/run/""
+move_files="$move_files $WHC_LOG"
 
-    for ff in hyd-*.conf lbd.conf plc.conf resolv.conf; do
+for ff in hyd-*.conf lbd.conf plc.conf resolv.conf; do
         conf_files="$conf_files `ls /tmp/$ff 2>/dev/null`"
-    done
+done
 
-    dup_files="$dup_files $conf_files"
-}
+dup_files="$dup_files $conf_files"
 
 echo logfile=$LOG_ZIP_FILE_PATH
 echo movefile=$move_files

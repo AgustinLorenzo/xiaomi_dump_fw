@@ -1,6 +1,6 @@
 Package: kmod-qca-nss-macsec
 Version: 4.4.60+miwifi_git-1
-Depends: kernel (=4.4.60-1-5fafac9592dacdd4ddea8e68ff0daa95), libpthread, libc
+Depends: kernel (=4.4.60-1-31c7bfdfc1d9c788120c273563f8251e), libpthread, libc
 Source: qca_qsdk/qca_qsdk_spf10.0/feeds/nss-host/qca-nss-macsec
 Section: kernel
 Architecture: aarch64_cortex-a53

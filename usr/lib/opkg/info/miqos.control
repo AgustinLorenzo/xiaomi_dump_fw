@@ -4,7 +4,7 @@ Depends: libc, kmod-sched, tc, ip
 Source: package/miwifi/miqos
 Section: net
 Architecture: all
-Installed-Size: 55149
+Installed-Size: 55154
 Description:  A script to do traffing shaping with the HTB algorithm.
  Wshaper attempts to:
  * Maintain low latency for interfactive traffic at all times

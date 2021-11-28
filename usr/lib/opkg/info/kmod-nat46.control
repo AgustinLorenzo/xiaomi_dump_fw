@@ -1,6 +1,6 @@
 Package: kmod-nat46
 Version: 4.4.60+6-1
-Depends: kernel (=4.4.60-1-5fafac9592dacdd4ddea8e68ff0daa95), kmod-ipv6
+Depends: kernel (=4.4.60-1-31c7bfdfc1d9c788120c273563f8251e), kmod-ipv6
 Source: qca_qsdk/qca_qsdk_spf10.0/feeds/routing/nat46
 License: GPL-2.0
 Section: kernel

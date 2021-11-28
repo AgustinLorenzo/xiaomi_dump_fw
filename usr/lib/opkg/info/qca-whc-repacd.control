@@ -5,6 +5,6 @@ Source: qca_qsdk/qca_qsdk_spf10.0/feeds/whc/qca-whc-repacd
 Section: QCA
 Maintainer: Qualcomm Atheros, Inc.
 Architecture: aarch64_cortex-a53
-Installed-Size: 92011
+Installed-Size: 92007
 Description:  This package installs the Whole Home Coverage Range Extender Placement and
  Auto-configuration scripts

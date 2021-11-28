@@ -14,7 +14,7 @@ config perm_rule
 	option action		allow
 	option ext_ports	1024-65535
 	option int_addr		0.0.0.0/0	# Does not override secure_mode
-	option int_ports	1024-65535
+	option int_ports	1-65535
 	option comment		"Allow high ports"
 
 config perm_rule

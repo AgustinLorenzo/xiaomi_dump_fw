@@ -250,5 +250,6 @@ off() {
     local mode_chg=$(set_mode off)
     $CMD wan off
     $CMD wan reload_network $mode_old
+    /etc/init.d/odhcpd stop
     [ "$mode_chg" == "0" ] && restart_lan
 }

@@ -7,5 +7,5 @@ License: MIT
 LicenseFiles: LICENSE libtomcrypt/LICENSE libtommath/LICENSE
 Section: net
 Architecture: aarch64_cortex-a53
-Installed-Size: 86561
+Installed-Size: 86558
 Description:  A small SSH2 server/client designed for small memory environments.

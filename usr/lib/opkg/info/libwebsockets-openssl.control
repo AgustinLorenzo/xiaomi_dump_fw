@@ -8,5 +8,5 @@ LicenseFiles: LICENSE
 Section: libs
 Maintainer: Karl Palsson <karlp@etactica.com>
 Architecture: aarch64_cortex-a53
-Installed-Size: 66731
+Installed-Size: 66728
 Description:  libwebsockets (OpenSSL)

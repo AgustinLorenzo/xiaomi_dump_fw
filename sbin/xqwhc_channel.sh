@@ -36,6 +36,13 @@ if [ "$netmode" = "whc_re" ]; then
 	local bit_rate=`iwinfo $ap_ifname_5g info | grep 'Bit Rate' | awk -F: '{print $2}' | awk '{gsub(/^\s+|\s+$/, "");print}'`
 	if [ "$new_channel" != "$current_channel" -a "$bit_rate" != "unknown" ] ; then
 		iwconfig $ap_ifname_5g channel $new_channel
+		sleep 1
+		current_channel="`iwlist $ap_ifname_5g channel | grep -Eo "\(Channel.*\)" | grep -Eo "[0-9]+"`"
+		if [ "$current_channel" != "$new_channel" ] ; then
+			iwconfig $ap_ifname_5g channel $current_channel
+			sleep 1
+			iwconfig $ap_ifname_5g channel $new_channel
+		fi
 	fi
 fi
 }

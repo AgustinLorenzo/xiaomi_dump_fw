@@ -4,5 +4,5 @@ Depends: libc, libcurl, liblua, libjson-c, libpolarssl, libuci, procps, zlib
 Source: package/miwifi/system/memtester
 Section: data
 Architecture: aarch64_cortex-a53
-Installed-Size: 7974
+Installed-Size: 7970
 Description:  memtester

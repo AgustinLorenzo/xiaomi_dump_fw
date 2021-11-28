@@ -5,5 +5,5 @@ Source: package/network/utils/iptables
 License: GPL-2.0
 Section: net
 Architecture: aarch64_cortex-a53
-Installed-Size: 12264
+Installed-Size: 12263
 Description:  IPv6 header matching modules

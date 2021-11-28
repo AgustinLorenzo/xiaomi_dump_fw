@@ -5,5 +5,5 @@ Source: feeds/packages/libs/eventlog
 Section: libs
 Maintainer: W. Michael Petullo <mike@flyn.org>
 Architecture: aarch64_cortex-a53
-Installed-Size: 6465
+Installed-Size: 6463
 Description:  A new API to format and send structured log messages.

@@ -5,5 +5,5 @@ Source: qca_qsdk/qca_qsdk_spf10.0/feeds/hyfi/qca-hyfi-bridging/qca-libhyfi-bridg
 Section: QCA
 Maintainer: Qualcomm Atheros, Inc.
 Architecture: aarch64_cortex-a53
-Installed-Size: 5051
+Installed-Size: 5050
 Description:  This package installs the Hy-Fi Bridging API Library

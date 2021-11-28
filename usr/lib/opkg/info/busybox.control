@@ -8,6 +8,6 @@ Section: base
 Essential: yes
 Maintainer: Felix Fietkau <nbd@openwrt.org>
 Architecture: aarch64_cortex-a53
-Installed-Size: 258575
+Installed-Size: 258579
 Description:  The Swiss Army Knife of embedded Linux.
  It slices, it dices, it makes Julian Fries.

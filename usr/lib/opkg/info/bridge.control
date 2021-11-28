@@ -4,6 +4,6 @@ Depends: libc
 Source: package/network/utils/bridge-utils
 Section: net
 Architecture: aarch64_cortex-a53
-Installed-Size: 9924
+Installed-Size: 9923
 Description:  Manage ethernet bridging: a way to connect networks together to 
  form a larger network.

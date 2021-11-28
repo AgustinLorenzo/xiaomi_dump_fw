@@ -6,5 +6,5 @@ License: GPL-2.0
 Section: net
 Maintainer: Hans Dedecker <dedeckeh@gmail.com>
 Architecture: aarch64_cortex-a53
-Installed-Size: 26050
+Installed-Size: 26048
 Description:  Embedded DHCPv6-client for OpenWrt

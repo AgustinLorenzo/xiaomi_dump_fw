@@ -4,5 +4,5 @@ Depends: libc, libuci, libnl-tiny
 Source: package/network/config/swconfig
 Section: base
 Architecture: aarch64_cortex-a53
-Installed-Size: 7751
+Installed-Size: 7749
 Description:  Switch configuration utility
