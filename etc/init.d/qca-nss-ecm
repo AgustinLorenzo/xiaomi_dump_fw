@@ -42,7 +42,6 @@ get_front_end_mode() {
 		;;
 	*)
 		echo 'uci_option_acceleration_engine is invalid'
-		exit
 		;;
 	esac
 }
@@ -103,17 +102,13 @@ unload_ecm() {
 }
 
 start() {
-	local vpn_intf=$(uci -q get network.vpn)
-	if [ -n "$vpn_intf" ]; then
-		return
-	fi
+	local ecm_mode=$(get_front_end_mode)
+	local vpn_up=$(ubus call network.interface.vpn status 2>/dev/null | grep -Eq '"up": true' && echo 1 || echo 0)
 	
-	ecm_mode=$(get_front_end_mode)
-
-	local ipv6_enabled=$(uci -q get ipv6.settings.enabled)
-	local ipv6_mode=$(uci -q get ipv6.settings.mode)
-	[ "$ipv6_enabled" == "1" -a "$ipv6_mode" == "nat" -a "$ecm_mode" != "4" ] && ecm_mode="3"
-
+	[ "$vpn_up" == "1" ] && {
+#		[ "$ecm_mode" == "0" -o "$ecm_mode" == "1" ] &&	ecm_mode=3
+		return
+	}
 	if [ "$ecm_mode" == "3" ]; then
 		/etc/init.d/shortcut-fe start &>/dev/null
 	elif [ "$ecm_mode" == "0" -o "$ecm_mode" == "1" ]; then

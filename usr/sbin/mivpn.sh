@@ -41,6 +41,12 @@ setMiVpnOff(){
 			vpn_debug "add $dnsserver to vpn"
 			ip rule add to $dnsserver table vpn
 		done
+
+		network_get_dnsserver dnsservers wan
+		for dnsserver in $dnsservers; do
+			vpn_debug "add $dnsserver to vpn"
+			ip rule add to $dnsserver table vpn
+		done
 		
 		vpn_debug "add $subnet to vpn"	
 		network_get_subnet subnet lan
@@ -118,6 +124,12 @@ setMiVpnOn(){
 	network_is_up vpn
 	[ $? == 0 ] && {	
 		network_get_dnsserver dnsservers vpn
+		for dnsserver in $dnsservers; do
+			vpn_debug "add $dnsserver to vpn"
+			ip rule add to $dnsserver table vpn
+		done	
+
+		network_get_dnsserver dnsservers wan
 		for dnsserver in $dnsservers; do
 			vpn_debug "add $dnsserver to vpn"
 			ip rule add to $dnsserver table vpn

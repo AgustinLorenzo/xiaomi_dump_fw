@@ -25,10 +25,12 @@
 /usr/lib/lua/luci/view/web/inc/wanspeed.htm
 /usr/lib/lua/luci/view/web/inc/devcenter.htm
 /www/xiaoqiang/web/img/icons/eye2.png
+/usr/lib/lua/luci/view/web/apsetting/wifi.htm
 /www/xiaoqiang/web/img/login_d_pic.png
 /www/xiaoqiang/web/img/guide_pppoesending.png
 /usr/lib/lua/luci/view/web/apindex.htm
 /www/xiaoqiang/web/img/guide_bd_nowanselect_rp.png
 /usr/lib/lua/luci/view/web/setting/qos.htm
 /usr/lib/lua/luci/view/web/inc/devcenter.js.htm
+/www/xiaoqiang/web/img/dialog_icon_radar.png
 /usr/lib/lua/luci/view/web/inc/hwnat.js.htm

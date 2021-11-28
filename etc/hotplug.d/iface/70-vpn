@@ -15,7 +15,35 @@ vpn_debug()
 	ip route add to $(fix_subnet $subnet) dev br-lan table vpn
 }
 
+del_tcpmss() {
+	local vpn_type=$(uci -q get network.vpn.proto)
+	if [ "$vpn_type" = "pptp" ]; then
+		iptables -t mangle -F set_tcpmss 2>/dev/null
+	else
+		iptables -t mangle -D FORWARD -o "${vpn_type}-vpn" -p tcp -m tcp --tcp-flags SYN,RST SYN -m comment --comment "!fw3: Zone wan MTU fixing" -j TCPMSS --clamp-mss-to-pmtu
+		iptables -t mangle -D FORWARD -i "${vpn_type}-vpn" -p tcp -m tcp --tcp-flags SYN,RST SYN -m comment --comment "!fw3: Zone wan MTU fixing" -j TCPMSS --clamp-mss-to-pmtu
+	fi
+
+	local ipv6_enable=$(uci -q get ipv6.settings.enabled)
+	local ipv6_mode=$(uci -q get ipv6.settings.mode)
+	[ "$ipv6_enable" == "1" -a "$ipv6_mode" != "off" ] && {
+		#if [ "$vpn_type" = "pptp" ]; then
+		#ip6tables -t mangle -F set_tcpmss 2>/dev/null
+		#else
+		ip6tables -t mangle -D FORWARD -o "${vpn_type}-vpn" -p tcp -m tcp --tcp-flags SYN,RST SYN -m comment --comment "!fw3: Zone wan MTU fixing" -j TCPMSS --clamp-mss-to-pmtu
+		ip6tables -t mangle -D FORWARD -i "${vpn_type}-vpn" -p tcp -m tcp --tcp-flags SYN,RST SYN -m comment --comment "!fw3: Zone wan MTU fixing" -j TCPMSS --clamp-mss-to-pmtu
+		#fi
+	}
+}
+
 [ "$ACTION" = "ifdown" ] && [ "$INTERFACE" = "vpn" ] && {
+	del_tcpmss
+
+#	ecm_mode=$(uci -q get ecm.global.acceleration_engine)
+#	[ "$ecm_mode" == "auto" -o "$ecm_mode" == "nss" ] && {
+		/etc/init.d/qca-nss-ecm restart
+#	}
+
 	#if boot not finish, don't add vpn route until it finished
 	bootcheck=$( cat /proc/xiaoqiang/boot_status )
 	[ "$bootcheck" == "3" ] || return
@@ -44,7 +72,7 @@ vpn_debug()
 	wan_device=$(uci get network.wan.ifname 2>/dev/null);
 	[ "$wanproto" == "pppoe" ] && wan_device="pppoe-wan"
 	[ -z $wan_device ] && wan_device="eth1"
-	
+
 	ip route del default dev $wan_device
 	ip route del default dev $wan_device metric 50
 
@@ -59,7 +87,7 @@ vpn_debug()
 		vpn_debug "add default route gateway $_nexthop metric 50."
 		route add -net 0.0.0.0 netmask 0.0.0.0 gw $_nexthop metric 50
 	}
-	
+
 	hasdefaultroute=$(route -n | awk -v _nexthop=$_nexthop '{if($1=="0.0.0.0" && $2==_nexthop && $5=="0")  { printf("yes") ; exit;}; }' 2>/dev/null)
 	[ "$hasdefaultroute" != "yes" ] && { 
 		vpn_debug "add default route gateway dev $wan_device."
@@ -74,6 +102,11 @@ vpn_debug()
 }
 
 [ "$ACTION" = "ifup" ] && [ "$INTERFACE" = "vpn" ] && {
+#	ecm_mode=$(uci -q get ecm.global.acceleration_engine)
+#	[ "$ecm_mode" == "auto" -o "$ecm_mode" == "nss" ] && {
+		/etc/init.d/qca-nss-ecm restart
+#	}
+
 	#if boot not finish, don't add vpn route until it finished
 	bootcheck=$( cat /proc/xiaoqiang/boot_status )
 	[ "$bootcheck" == "3" ] || return
@@ -84,6 +117,12 @@ vpn_debug()
 	. /lib/functions/network.sh
 
 	network_get_dnsserver dnsservers vpn
+	for dnsserver in $dnsservers; do
+		vpn_debug "add $dnsserver to vpn"
+		ip rule add to $dnsserver table vpn
+	done
+
+	network_get_dnsserver dnsservers wan
 	for dnsserver in $dnsservers; do
 		vpn_debug "add $dnsserver to vpn"
 		ip rule add to $dnsserver table vpn

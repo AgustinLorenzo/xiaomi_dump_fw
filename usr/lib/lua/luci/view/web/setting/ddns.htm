@@ -377,7 +377,7 @@ local macdefault = string.upper(xqlanwanutil.getDefaultMacAddress())
                                 id: list[i].id,
                                 lastupdate: formatTime(list[i].lastupdate),
                                 wanip: list[i].wanip,
-                                status: (list[i].enabled == 0) ? 1 : list[i].status,
+                                status: list[i].status,
                                 error: list[i].error ? list[i].error : '',
                                 servicename: list[i].servicename
                             });

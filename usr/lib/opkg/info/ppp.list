@@ -6,6 +6,7 @@
 /lib/netifd/ppp-up
 /usr/sbin/vpntool
 /etc/hotplug.d/iface/60-wan
+/etc/hotplug.d/iface/61-br_lan
 /etc/ppp/ip-up.d/02-special_dial
 /etc/ppp/ppp.d/none
 /usr/sbin/pppoe-catch

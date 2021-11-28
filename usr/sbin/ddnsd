@@ -17,6 +17,7 @@ start() {
 	uci set ddns.ddns.status=on 2>/dev/null && uci commit ddns 2>/dev/null
 	if [ $? -eq 0 ]
 	then
+		rm -rf /var/run/ddns/*
 		start_daemon_for_all_ddns_sections "wan"
 		sleep 1
 		ps www|grep -v grep |grep -q dynamic_dns_updater.sh
@@ -45,6 +46,20 @@ restart() {
 		
 		# new method for 1806 ddns edit
 		/usr/lib/ddns/dynamic_dns_updater.sh -- stop
+		for server in `awk '/^config.*service/{print$3}' /etc/config/ddns|tr "\'\"" " " `
+		do
+			local ddns_enabled=$(uci -q get ddns.$server.enabled)
+			local ddns_laststatus=$(uci -q get ddns.$server.laststatus)
+			if [ "$ddns_enabled" == "0" ]; then
+				[ -z $ddns_laststatus -o "$ddns_laststatus" == "loading" ] && {
+					uci -q set ddns.$server.laststatus="off"
+				}
+			else
+				uci -q set ddns.$server.laststatus="loading"
+			fi
+		done
+
+		rm -rf /var/run/ddns/*
 		uci set ddns.ddns.status=on 2>/dev/null && uci commit ddns 2>/dev/null
 		/usr/lib/ddns/dynamic_dns_updater.sh -- start
 		return 0

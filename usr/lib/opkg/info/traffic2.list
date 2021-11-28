@@ -3,7 +3,6 @@
 /etc/init.d/trafficd
 /etc/iwevent.d/02-notify_trafficd.sh
 /usr/sbin/trafficd
-/sbin/notice_tbus_device.sh
 /etc/traffic.d/device/02-chk_newsta_onre_call.sh
 /etc/config/bind
 /etc/traffic.d/linkstatus/02-wan_dog.sh

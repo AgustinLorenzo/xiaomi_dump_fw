@@ -197,6 +197,11 @@ restart(){
 on(){
     uci set miqos.settings.enabled=1
     uci commit miqos
+    uci set firewall.miqos='include'
+    uci set firewall.miqos.path='/lib/firewall.sysapi.loader miqos'
+    uci set firewall.miqos.reload='1'
+    uci commit firewall
+
 	if [ -f "/etc/config/ecm" ]; then
 		local ecm_mode=$(uci -q get ecm.global.acceleration_engine)
 		if [ $ecm_mode != 'none' ]; then
@@ -230,6 +235,9 @@ off(){
     #set -x
     uci set miqos.settings.enabled=0
     uci commit miqos
+    uci delete firewall.miqos
+    uci commit firewall
+
 	if [ -f "/etc/config/ecm" ]; then
 		local ecm_mode=$(uci -q get ecm.global.acceleration_engine)
 		if [ $ecm_mode != 'none' ]; then

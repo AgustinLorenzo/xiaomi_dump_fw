@@ -21,7 +21,7 @@ usage()
     echo "-- domain_file : must specify, writable, domain list output"
     echo "-- ip_file : must specify, writable, ip list output"
     echo "-- ipset_name : must specify"
-    echo "-- dnsserver : optional, default is 8.8.8.8"
+    echo "-- dnsserver : optional, default is empty"
     echo ""
 }
 
@@ -36,10 +36,6 @@ echo "gen arg list: "$*"!!!!!!!!!"
 [ -z $ip_file ] && {
     usage
     return 1
-}
-
-[ -z $dnsserver ] && {
-    dnsserver="8.8.8.8"
 }
 
 [ -z $ipset_name ] && {
@@ -57,8 +53,8 @@ format2domain -f $rule_file -o $domain_file_formated -i $ip_file
 sort $domain_file_formated | uniq > $domain_file_sorted
 cat $domain_file_sorted | while read line
 do
-    echo "server=/$line/$dnsserver"
-    echo "ipset=/$line/$ipset_name"
+    [ -n "$dnsserver" ] && echo "server=/$line/$dnsserver"
+    [ -n "$ipset_name" ] && echo "ipset=/$line/$ipset_name"
 done > $domain_file
 
 rm $domain_file_formated

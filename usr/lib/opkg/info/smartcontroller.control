@@ -4,5 +4,5 @@ Depends: libc, libstdcpp, libpthread, libevent2, libthriftnb, boost-thread, boos
 Source: package/miwifi/smartcontroller
 Section: opt
 Architecture: aarch64_cortex-a53
-Installed-Size: 213108
+Installed-Size: 213110
 Description:  the smart controller demaon

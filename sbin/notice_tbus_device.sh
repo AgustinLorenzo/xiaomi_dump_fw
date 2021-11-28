@@ -76,17 +76,17 @@ wifiap_interface_find_by_device()
 	fi
 
 
-timeout -t 2 tbus list | grep -v netapi | grep -v master | while read a
+tbus -t 2 list | grep -v netapi | grep -v master | while read a
 do
      #call tbus function to notice device change wifi passwd
     [ "${ifname_2g}" == "" ] && [ "${ifname_5g}" == "" ] && return 1
     if [ "${ifname_2g}" == "" ];  then
-	timeout -t 2 tbus call $a notice  "{\"ssid_5g\":\"${ssid_base64_5g}\",\"passwd_5g\":\"${key_base64_5g}\"}"
+	tbus -t 2 call $a notice  "{\"ssid_5g\":\"${ssid_base64_5g}\",\"passwd_5g\":\"${key_base64_5g}\"}"
     fi
     if [ "$ifname_5g" == "" ]; then
-	timeout -t 2 tbus call $a notice  "{\"ssid\":\"${ssid_base64}\",\"passwd\":\"${key_base64}\"}"
+	tbus -t 2 call $a notice  "{\"ssid\":\"${ssid_base64}\",\"passwd\":\"${key_base64}\"}"
     else
-        timeout -t 2 tbus call $a notice  "{\"ssid\":\"${ssid_base64}\",\"passwd\":\"${key_base64}\",\"ssid_5g\":\"${ssid_base64_5g}\",\"passwd_5g\":\"${key_base64_5g}\"}"
+        tbus -t 2 call $a notice  "{\"ssid\":\"${ssid_base64}\",\"passwd\":\"${key_base64}\",\"ssid_5g\":\"${ssid_base64_5g}\",\"passwd_5g\":\"${key_base64_5g}\"}"
     fi
 done
 }

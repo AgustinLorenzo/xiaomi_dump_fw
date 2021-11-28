@@ -58,14 +58,16 @@ exit 0
 fi
 ;;
 stop)
-if [ -n "$INTERFACE" ]; then
+if [ -n "$NETWORK" ]; then
 stop_daemon_for_all_ddns_sections "$NETWORK"
 exit 0
-else
-stop_daemon_for_all_ddns_sections
+fi
+if [ -n "$SECTION_ID" ]; then
+stop_section_processes "$SECTION_ID"
 exit 0
 fi
-exit 1
+stop_daemon_for_all_ddns_sections
+exit 0
 ;;
 reload)
 killall -1 dynamic_dns_updater.sh 2>/dev/null
@@ -100,7 +102,7 @@ ERR_LAST=$?
 [ -z "$ip_source" ]	  && ip_source="network"
 [ -z "$is_glue" ]	  && is_glue=0
 [ "$ip_source" = "network" -a -z "$ip_network" -a $use_ipv6 -eq 0 ] && ip_network="wan"
-[ "$ip_source" = "network" -a -z "$ip_network" -a $use_ipv6 -eq 1 ] && ip_network="wan6"
+[ "$ip_source" = "network" -a -z "$ip_network" -a $use_ipv6 -eq 1 ] && ip_network="wan_6"
 [ "$ip_source" = "web" -a -z "$ip_url" -a $use_ipv6 -eq 0 ] && ip_url="http://checkip.dyndns.com"
 [ "$ip_source" = "web" -a -z "$ip_url" -a $use_ipv6 -eq 1 ] && ip_url="http://checkipv6.dyndns.com"
 [ "$ip_source" = "interface" -a -z "$ip_interface" ] && ip_interface="eth1"
@@ -194,10 +196,17 @@ export https_proxy="http://$proxy"
 }
 get_registered_ip REGISTERED_IP "NO_RETRY"
 ERR_LAST=$?
-[ $ERR_LAST -eq 0 -o $ERR_LAST -eq 127 ] || get_registered_ip REGISTERED_IP
+[ $ERR_LAST -eq 0 -o $ERR_LAST -eq 127 ] || {
+get_registered_ip REGISTERED_IP "NO_RETRY"
+if [ $? -ne 0 ]; then
+uci -q set ddns.$SECTION_ID.laststatus="error"
+uci -q commit ddns
+write_log 3 "Name does not resolve"
+exit 1
+fi
+}
 [ $use_ipv6 -eq 1 ] && expand_ipv6 "$REGISTERED_IP" REGISTERED_IP
 write_log 3 "Starting main loop at $(eval $DATE_PROG)"
-FIRST=1
 while : ; do
 get_local_ip LOCAL_IP
 [ $use_ipv6 -eq 1 ] && expand_ipv6 "$LOCAL_IP" LOCAL_IP
@@ -235,10 +244,6 @@ uci -q set ddns.$SECTION_ID.laststatus="error"
 uci -q commit ddns
 write_log 3 "IP update not accepted by DDNS Provider"
 fi
-elif [ $FIRST -eq 1 -a "$LOCAL_IP" == "$REGISTERED_IP" ]; then
-FIRST=0
-uci -q set ddns.$SECTION_ID.laststatus="ok"
-uci -q commit ddns
 fi
 [ $VERBOSE -le 2 ] && {
 write_log 7 "Waiting $CHECK_SECONDS seconds (Check Interval)"

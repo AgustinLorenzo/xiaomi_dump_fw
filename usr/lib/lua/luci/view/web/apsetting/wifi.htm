@@ -70,13 +70,13 @@ local hardware = string.lower( XQSysUtil.getHardware() )
 
          <div class="mod-set mod-wifi">
             <div class="hd">
-                <h3><%:Wi-Fi6 (802.11ax)模式%></h3>
+                <h3><%:Wi-Fi 5 兼容模式%></h3>
                 <div class="switch">
                     <a href="#WIFI6switch" id="WIFI6switch" class="btn-switch btn-switch-on" data-on="1"></a>
                 </div>
             </div>
             <div class="bd">
-                <p><%:Wi-Fi 6是新一代的Wi-Fi技术，支持OFDMA，BSS color，TWT等多种新功能，可使所连接的Wi-Fi终端体验更佳。但开启该功能后，某些老终端可能出现扫描不到Wi-Fi信号或者连接不上Wi-Fi等兼容性问题。
+                <p><%:某些老设备对Wi-Fi6支持不好，可能扫描不到信号或者连接不上等。开启此开关后，将会切换到Wi-Fi5模式，解决兼容问题。但同时会关闭Wi-Fi6的相关功能，如OFDMA，BSS Coloring等。
                 %></p>
             </div>
         </div>
@@ -167,7 +167,7 @@ local hardware = string.lower( XQSysUtil.getHardware() )
         <input type="hidden" name="bandwidth" value="{$bandwidth}">
         <input type="hidden" name="txpwr" value="{$txpwr}">
     <!-- {else} -->
-  <!--   <div class="form-item-select">
+  <!--   <div class="form-item-select itemChannel">
         <label class="k"><%:无线信道%></label>
         <span class="v">
         <select name="channel" class="beautify channel"  data-id="{$wifitype}">
@@ -186,21 +186,20 @@ local hardware = string.lower( XQSysUtil.getHardware() )
         </span>
         <em class="t"></em>
     </div>
-    <div class="form-item-select itemBandwidth" {if ($channel == "0")}style="display:none;"{/if}>
+    <div class="form-item-select itemBandwidth" >
         <label class="k"><%:频段带宽%></label>
         <span class="v">
-            {if ($channel == "0")}
-            <select name="bandwidth" class="beautify" id="bandwidth" >
-                <option value="0"><%:自动%></option>
-            </select>
-            {else}
-            <select name="bandwidth" class="beautify" >
-                <option value="0" {if ("0" == $bandwidth)}selected="selected"{/if}><%:自动%></option>
-                {for(var i=0, len=$channelInfo["bandList"].length; i<len; i++)}
-                    <option value="{$channelInfo["bandList"][i]}" {if ($channelInfo["bandList"][i] == $bandwidth)}selected="selected"{/if}>{$channelInfo["bandList"][i]}M</option>
+            <select name="bandwidth" class="beautify bandwidth" id="bandwidth" >
+                {if ($channelInfo["bandList"].length >= 3)}
+                    <option value="0" {if ($bandwidth  == "0" )}selected="selected"{/if}><%:160/80/40/20MHz%></option>
+                {/if}
+                {if ($channelInfo["bandList"].length == 2)}
+                    <option value="0" {if ($bandwidth  == "0" )}selected="selected"{/if}><%:40/20MHz%></option>
+                {/if}
+                {for(var i=0, len=$channelInfo["bandList"].length; i<len && i<3; i++)}
+                    <option value="{$channelInfo["bandList"][i]}" {if ($channelInfo["bandList"][i] == $bandwidth)}selected="selected"{/if}>{$channelInfo["bandList"][i]}MHz</option>
                 {/for}
             </select>
-            {/if}
         </span>
         <em class="t"></em>
     </div>
@@ -215,10 +214,10 @@ local hardware = string.lower( XQSysUtil.getHardware() )
         </span>
         <em class="t"></em>
     </div> -->
+    <!-- {/if} -->
     <div class="form-contral">
         <button type="submit" class="btn btn-primary btn-l hidden"><span><%:保存%></span></button>
     </div>
-    <!-- {/if} -->
 </script>
 <script type="text/tmpl" id="tplWifi">
     <input type="hidden" value="{$wifiIndex}" name="wifiIndex">
@@ -269,7 +268,7 @@ local hardware = string.lower( XQSysUtil.getHardware() )
         <input type="hidden" name="bandwidth" value="{$bandwidth}">
         <input type="hidden" name="txpwr" value="{$txpwr}">
     {else}
-    <div class="form-item-select">
+    <div class="form-item-select itemChannel">
         <label class="k"><%:无线信道%></label>
         <span class="v">
         <select name="channel" class="beautify channel"  data-id="{$wifitype}">
@@ -288,21 +287,20 @@ local hardware = string.lower( XQSysUtil.getHardware() )
         </span>
         <em class="t"></em>
     </div>
-    <div class="form-item-select itemBandwidth" {if ($channel == "0")}style="display:none;"{/if}>
+    <div class="form-item-select itemBandwidth" >
         <label class="k"><%:频段带宽%></label>
         <span class="v">
-            {if ($channel == "0")}
-            <select name="bandwidth" class="beautify" id="bandwidth" >
-                <option value="0"><%:自动%></option>
-            </select>
-            {else}
-            <select name="bandwidth" class="beautify" >
-                <option value="0" {if ("0" == $bandwidth)}selected="selected"{/if}><%:自动%></option>
-                {for(var i=0, len=$channelInfo["bandList"].length; i<len; i++)}
-                    <option value="{$channelInfo["bandList"][i]}" {if ($channelInfo["bandList"][i] == $bandwidth)}selected="selected"{/if}>{$channelInfo["bandList"][i]}M</option>
+            <select name="bandwidth" class="beautify bandwidth" id="bandwidth" >
+                {if ($channelInfo["bandList"].length >= 3)}
+                    <option value="0" {if ($bandwidth  == "0" )}selected="selected"{/if}><%:160/80/40/20MHz%></option>
+                {/if}
+                {if ($channelInfo["bandList"].length == 2)}
+                    <option value="0" {if ($bandwidth  == "0" )}selected="selected"{/if}><%:40/20MHz%></option>
+                {/if}
+                {for(var i=0, len=$channelInfo["bandList"].length; i<len && i<3; i++)}
+                    <option value="{$channelInfo["bandList"][i]}" {if ($channelInfo["bandList"][i] == $bandwidth)}selected="selected"{/if}>{$channelInfo["bandList"][i]}MHz</option>
                 {/for}
             </select>
-            {/if}
         </span>
         <em class="t"></em>
     </div>
@@ -392,7 +390,7 @@ local hardware = string.lower( XQSysUtil.getHardware() )
                 }
                 var wifiinfo = rsp.info;
 
-                if ( wifiinfo[0].ax == 0 || wifiinfo[0].ax == "0") {
+                if ( wifiinfo[0].ax == 1 || wifiinfo[0].ax == "1") {
                          $('#WIFI6switch')
                         .removeClass('btn-switch-on')
                         .addClass('btn-switch-off')
@@ -413,7 +411,7 @@ local hardware = string.lower( XQSysUtil.getHardware() )
                     if ( encryption == 'none' ) {
                         password = '';
                     }
-                     if ( i == 0 && type == 'apcli0') { //apclii0 is 5G relay flag,apcli0 is 2.4G
+                     if ( i == 0 && type == 'wl11') { //apclii0 is 5G relay flag,apcli0 is 2.4G
                              relayWifi = 0;
                           }
 
@@ -425,7 +423,7 @@ local hardware = string.lower( XQSysUtil.getHardware() )
                             .attr('data-on', '0');
 
                         }
-                         if (type == 'apclii0') { //apclii0 is 5G relay flag,apcli0 is 2.4G
+                         if (type == 'wl12') { //apclii0 is 5G relay flag,apcli0 is 2.4G
                             relayWifi = 0;
                      }
                     }
@@ -459,6 +457,7 @@ local hardware = string.lower( XQSysUtil.getHardware() )
                 $.formInit();
                 $.pub('wifi:bindEventEncryption');
                 $.pub('wifi:bindEventChannel');
+                $.pub('wifi:bindEventBandwidth');
             }, 100 );
         });
     });
@@ -498,15 +497,13 @@ local hardware = string.lower( XQSysUtil.getHardware() )
                 $itemBandwidth = $( this ).closest('.form').find('.itemBandwidth'),
                 tips = $(this.parentNode).next('.t'),
                 pddk,
-                item = '<option value="0"><%:自动%></option>', 
+                item,
+                bandtext,
                 bdlist = [];
                 var wifiname = $( this ).closest('.form').attr('id');
 
 
-            if ( channelVal === '0' ) {
-                $itemBandwidth.hide();
-                return;
-            }
+
 
             pddk = $.parseJSON( global.wifi.pddk[id] );
             for (var i = 0; i < pddk.length; i++) {
@@ -516,10 +513,60 @@ local hardware = string.lower( XQSysUtil.getHardware() )
                     break;
                 }
             }
-            for ( var i = 0; i <  bdlist.length; i++ ) {
-                item += '<option value="'+bdlist[i]+'">'+ bdlist[i] +'M</option>';
+            if (bdlist.length >= 3)
+            {
+                bandtext = '160/80/40/20MHz';
+                item = '<option value="0"><%:160/80/40/20MHz%></option>';
+            }
+     /*       
+            else if (bdlist.length == 3)
+            {
+                bandtext = '80MHz';
+                item = '';
+            }
+    */
+            else if (bdlist.length == 2)
+            {
+                bandtext = '40/20MHz';
+                item = '<option value="0"><%:40/20MHz%></option>';
+            }
+            else
+            {
+                bandtext = '20MHz';
+                item = '';
             }
 
+            for ( var i = 0; (i <  bdlist.length) && (i < 3); i++ ) {
+                item += '<option value="'+bdlist[i]+'">'+ bdlist[i] +'MHz</option>';
+            }
+
+            //$.alert(bdlist.length+''+bandtext);
+
+            if ($bandwidth.val() == '0' && (channelVal <= 161 && channelVal >= 149))
+            {
+                    $.alert('<%:160MHz频宽只适用于36至64信道，系统会给你切换频宽至80MHz%>');
+                    $bandwidth.html( item ).val("80")
+                    $itemBandwidth
+                        .find( '.dummy' )
+                        .text("80MHz");
+            }
+            else if (channelVal == 165)
+            {
+                    $bandwidth.html( item )
+                    $itemBandwidth
+                        .find( '.dummy' )
+                        .text(bandtext);
+            }
+            else
+            {
+                    var bandwidthSelect = $bandwidth.val()
+                    $bandwidth.html( item ).val(bandwidthSelect);
+            }
+            /*
+            if ( channelVal === '0' ) {
+                $itemBandwidth.hide();
+                return;
+            }
             if(wifiname === 'wifiset24'){
                 $bandwidth.html( item ).val( '20' );
                 $itemBandwidth
@@ -531,14 +578,41 @@ local hardware = string.lower( XQSysUtil.getHardware() )
                     .find( '.dummy' )
                     .text("<%:自动%>");
             }
-           
+           */        
             $itemBandwidth.show();
-
+        /*
             var channelIsBad = /36|40|44|48|52|56|60|64/.test( channelVal );
 
             if ( channelIsBad ) {
                 tips.html('<%:你手工选择的当前信道有可能造成部分机型较旧的设备无法连接%>');
             } else {
+                tips.html('');
+            }
+        */
+
+        });
+    } );
+
+    $.sub( 'wifi:bindEventBandwidth', function(){
+        $( '.bandwidth' ).on( 'change', function( e ){
+            var val = $( this ).val(),
+                tips = $(this.parentNode).next('.t0'),
+                $channel = $( this ).closest('.form').find('[name=channel]'),
+                $itemChannel = $( this ).closest('.form').find('.itemChannel');
+
+                // tips0 = $(this.parentNode).next('.t0');
+
+            if (val === '0') {
+                //tips.html('<%:推荐使用自动(80M)频宽，以获得更好的覆盖及抗干扰性能%>').show();
+                if ($channel.val()  >= 149)
+                {
+                    $.alert('<%:160MHz频宽只适用于36至64信道，系统会自动给你进行信道切换%>');
+                    $channel.val('36');
+                    $itemChannel
+                        .find( '.dummy' )
+                        .text("36");
+                }
+            }else{
                 tips.html('');
             }
 
@@ -564,6 +638,33 @@ local hardware = string.lower( XQSysUtil.getHardware() )
                     hidden = $('input[name=hidden]', formOjb ).prop('checked') ? '1' : '0';
                     pwd = $.pwddecode( pwd );
 
+                var isDFS;
+
+                    if (wifiIndex == 1)
+                    {
+                        if ((global.wifi.configs[2].channel >= 52 && global.wifi.configs[2].channel <= 64)
+                            || ( global.wifi.configs[2].bandwidth == 0))
+                        {
+                            isDFS = 1;
+                        }
+                        else
+                        {
+                            isDFS = 0;
+                        }           
+                    }
+                    else
+                    {
+                        if ((channel >= 52 && channel <= 64) || (bandwidth == 0))
+                        {
+                            isDFS = 1;
+                        }
+                        else
+                        {
+
+                            isDFS = 0;
+                        }
+                    }
+
                 var requestData = {
                     wifiIndex: wifiIndex,
                     on: on,
@@ -573,7 +674,8 @@ local hardware = string.lower( XQSysUtil.getHardware() )
                     channel: channel,
                     bandwidth: bandwidth,
                     hidden: hidden,
-                    txpwr: txpwr
+                    txpwr: txpwr,
+                    isDFS: isDFS,
                 };
 
                 $.pub( 'wifi:confirm', {
@@ -651,6 +753,16 @@ local hardware = string.lower( XQSysUtil.getHardware() )
                 channel2 = $( 'select[name=channel]', form2 ).val(),
                 bandwidth2 = $( 'select[name=bandwidth]', form2 ).val(),
                 txpwr2 = $( 'select[name=txpwr]', form2 ).val();                ;
+                var isDFS;
+
+                if ((channel2 >= 52 && channel2 <= 64) || (bandwidth2 == 0))
+                {
+                    isDFS = 1;
+                }
+                else
+                {
+                    isDFS = 0;
+                }
             var requestData = {
                 bsd: bsd,
                 on1: on1,
@@ -668,7 +780,8 @@ local hardware = string.lower( XQSysUtil.getHardware() )
                 bandwidth2: bandwidth2,
                 hidden2: hidden2,
                 txpwr2: txpwr2,
-                pwd2: pwd2
+                pwd2: pwd2,
+                isDFS: isDFS,
             };
             $.ajax({
                 url: '<%=luci.dispatcher.build_url("api", "xqnetwork", "set_all_wifi")%>',
@@ -678,7 +791,9 @@ local hardware = string.lower( XQSysUtil.getHardware() )
                 data: requestData,
                 success: function( rsp ){
                     if( rsp.code === 0 ){
-                        $.pub( 'wifi:success' );
+                        $.pub( 'wifi:success' , {
+                                        requestData : requestData,
+                                    });
                     } else {
                         if ( rsp.code !== 401) {
                             var msg = StringH.encode4Html( rsp.msg );
@@ -746,11 +861,24 @@ local hardware = string.lower( XQSysUtil.getHardware() )
 
         $('#WIFI6switch').on('click', function(e){
             e.preventDefault();
-            var ax = $(this).attr('data-on') == 1 ? 0 : 1;
+            var ax = $(this).attr('data-on');
             var self = this;
 
+            var isDFS;
+
+            if ((global.wifi.configs[2].channel >= 52 && global.wifi.configs[2].channel <= 64)
+                || ( global.wifi.configs[2].bandwidth == 0))
+            {
+                isDFS = 1;
+            }
+            else
+            {
+                isDFS = 0;
+            }
+
             var requestData = {
-                ax: ax
+                ax: ax,
+                isDFS: isDFS,
             };
             $.ajax({
                 url: '<%=luci.dispatcher.build_url("api", "xqnetwork", "set_wifi_ax")%>',
@@ -760,7 +888,7 @@ local hardware = string.lower( XQSysUtil.getHardware() )
                 data: requestData,
                 success: function( rsp ){
                     if( rsp.code === 0 ){
-                        if(ax == 0) {
+                        if(ax == 1) {
                             $(self)
                             .removeClass('btn-switch-on')
                             .addClass('btn-switch-off')
@@ -771,8 +899,10 @@ local hardware = string.lower( XQSysUtil.getHardware() )
                             .addClass('btn-switch-on')
                             .attr('data-on', '1');
                             }
-                        
-                        $.pub( 'wifi:success' );
+
+                        $.pub( 'wifi:success', {
+                            requestData : requestData,
+                        });
                     } else {
                         if ( rsp.code !== 401) {
                             var msg = StringH.encode4Html( rsp.msg );
@@ -791,50 +921,58 @@ local hardware = string.lower( XQSysUtil.getHardware() )
             e.preventDefault();
             var txbf = $(this).attr('data-on') == 1 ? 0 : 3;
             var self = this;
-               
-            var requestData = {
-                wifiIndex: 2,
-                txbf: txbf
-            };
-            $.pub( 'wifi:confirm', {
-                    ok : function(){
-                        $.ajax({
-                                url: '<%=luci.dispatcher.build_url("api", "xqnetwork", "set_wifi")%>',
-                                dataType: 'json',
-                                timeout: 5000,
-                                type: 'POST',
-                                data: requestData,
-                                success: function( rsp ){
-                                    if( rsp.code === 0 ){
-                                        if(txbf == 0) {
-                                            $(self)
-                                            .removeClass('btn-switch-on')
-                                            .addClass('btn-switch-off')
-                                            .attr('data-on', '0');
-                                        }else {
-                                            $(self)
-                                            .removeClass('btn-switch-off')
-                                            .addClass('btn-switch-on')
-                                            .attr('data-on', '1');
-                                            }
-                                        
-                                        $.pub( 'wifi:success' );
-                                    } else {
-                                        if ( rsp.code !== 401) {
-                                            var msg = StringH.encode4Html( rsp.msg );
-                                            $.alert( msg ).lock();
-                                        }
-                                    }
-                                },
-                                error: function() {
-                                    $.alert( '<%:网络异常，请检查是否联网%>' );
-                                }
-                            });
-                    },
-                    cancel : function(){}
-                } );
 
-        });  
+            if ((global.wifi.configs[2].channel >= 52 && global.wifi.configs[2].channel <= 64)
+                || ( global.wifi.configs[2].bandwidth == 0))
+            {
+                isDFS = 1;
+            }
+            else
+            {
+                isDFS = 0;
+            }
+
+            var requestData = {
+                txbf: txbf,
+                isDFS: isDFS,
+            };
+            $.ajax({
+                url: '<%=luci.dispatcher.build_url("api", "xqnetwork", "set_wifi_txbf")%>',
+                dataType: 'json',
+                timeout: 5000,
+                type: 'POST',
+                data: requestData,
+                success: function( rsp ){
+                    if( rsp.code === 0 ){
+                        if(txbf == 0) {
+                            $(self)
+                            .removeClass('btn-switch-on')
+                            .addClass('btn-switch-off')
+                            .attr('data-on', '0');
+                        }else {
+                            $(self)
+                            .removeClass('btn-switch-off')
+                            .addClass('btn-switch-on')
+                            .attr('data-on', '1');
+                            }
+
+                        $.pub( 'wifi:success', {
+                            requestData : requestData,
+                        });
+                    } else {
+                        if ( rsp.code !== 401) {
+                            var msg = StringH.encode4Html( rsp.msg );
+                            $.alert( msg ).lock();
+                        }
+                    }
+                },
+                error: function() {
+                    $.alert( '<%:网络异常，请检查是否联网%>' );
+                }
+            });
+
+        });
+
 
 
 
@@ -864,8 +1002,11 @@ local hardware = string.lower( XQSysUtil.getHardware() )
                             .addClass('btn-switch-on')
                             .attr('data-on', '1');
                             }
-                        
-                        $.pub( 'wifi:success' );
+                        /*
+                        $.pub( 'wifi:success', {
+                            requestData : requestData,
+                        });
+                        */
                     } else {
                         if ( rsp.code !== 401) {
                             var msg = StringH.encode4Html( rsp.msg );
@@ -885,6 +1026,16 @@ local hardware = string.lower( XQSysUtil.getHardware() )
             e.preventDefault();
             var on = $(this).attr('data-on');
             var self = this;
+            if ((global.wifi.configs[2].channel >= 52 && global.wifi.configs[2].channel <= 64)
+                || ( global.wifi.configs[2].bandwidth == 0))
+            {
+                isDFS = 1;
+            }
+            else
+            {
+                isDFS = 0;
+            }
+
             if( on == 0 ){
                 var formOjb = $('#wifiset24');
                 // var on1 = $( 'input[name=on]:checked', formOjb ).val(),
@@ -906,7 +1057,8 @@ local hardware = string.lower( XQSysUtil.getHardware() )
                     bandwidth1: bandwidth1,
                     hidden1: hidden1,
                     txpwr1: txpwr1,
-                    pwd1: pwd1
+                    pwd1: pwd1,
+                    isDFS: isDFS,
                 };
                 $.ajax({
                     url: '<%=luci.dispatcher.build_url("api", "xqnetwork", "set_all_wifi")%>',
@@ -920,7 +1072,9 @@ local hardware = string.lower( XQSysUtil.getHardware() )
                             .removeClass('btn-switch-off')
                             .addClass('btn-switch-on')
                             .attr('data-on', '1');
-                            $.pub( 'wifi:success' );
+                            $.pub( 'wifi:success', {
+                            requestData : requestData,
+                        });
                         } else {
                             if ( rsp.code !== 401) {
                                 var msg = StringH.encode4Html( rsp.msg );
@@ -952,7 +1106,26 @@ local hardware = string.lower( XQSysUtil.getHardware() )
     });
 
     $.sub( 'wifi:success', function( evt, data ){
-        $.loadingDialog({
+        var requestData =  data.requestData;
+        if (requestData && requestData.isDFS)
+        {
+            $.radarDialog({
+              width:500,
+            title : '<%:修改 Wi-Fi 设置%>',
+            content : '<div class="dialog_con_radar"></div><div class="radar_tips"><%:设置成功正在重启，遵照国家法律法规，路由器正在做退避雷达信号探测，Wi-Fi信号要%><span>69</span><%:s后才能开启，请稍候...%></div>',
+            cancel: false
+            }).lock().time( 69*1000 );
+            setTimeout( function(){
+                window.location.reload( true );
+            }, 69*1000 );
+            setInterval(function(){
+              var n = $('.radar_tips').find('span').html();
+              $('.radar_tips').find('span').html(--n);
+            },1000)
+        }
+        else
+        {
+            $.loadingDialog({
             title : '<%:修改 Wi-Fi 设置%>',
             content : '<%:设置成功正在重启，需要30秒请等待...%>',
             cancel: false
@@ -960,6 +1133,7 @@ local hardware = string.lower( XQSysUtil.getHardware() )
         setTimeout( function(){
             window.location.reload( true );
         }, 30*1000 );
+        }
     } );
 
     $.sub( 'wifi:confirm', function( evt, data ){
@@ -991,7 +1165,9 @@ local hardware = string.lower( XQSysUtil.getHardware() )
             data: requestData,
             success: function( rsp ) {
                 if( rsp.code === 0 ){
-                    $.pub( 'wifi:success' );
+                    $.pub( 'wifi:success', {
+                            requestData : requestData,
+                        });
                 } else {
                     if ( rsp.code !== 401) {
                         var msg = StringH.encode4Html( rsp.msg );

@@ -6,5 +6,5 @@ License: GPL-2.0
 Section: utils
 Maintainer: Jo-Philipp Wich <jo@mein.io>
 Architecture: aarch64_cortex-a53
-Installed-Size: 7055
+Installed-Size: 7056
 Description:  Command line frontend for the wireless information library.

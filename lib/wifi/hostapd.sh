@@ -524,7 +524,7 @@ hostapd_set_bss_options() {
 		config_get model_name "$vif" model_name "$hardware"
 		config_get model_number "$vif" model_number "0002"
 		config_get serial_number "$vif" serial_number "12345"
-		config_get wps_pin "$vif" wps_pin "12345670"
+		# config_get wps_pin "$vif" wps_pin "12345670"
 		# for miwifi
 		config_get wps_state "$vif" wscconfigstatus $wps_configured_state
 		config_get_bool wps_independent "$vif" wps_independent 1
@@ -546,7 +546,7 @@ hostapd_set_bss_options() {
 		[ "$ext_registrar" -gt 0 -a -n "$bridge" ] && append "$var" "upnp_iface=$bridge" "$N"
 
 		append "$var" "eap_server=1" "$N"
-		append "$var" "ap_pin=$wps_pin" "$N"
+		#append "$var" "ap_pin=$wps_pin" "$N"
 		append "$var" "wps_state=$wps_state" "$N"
 		append "$var" "ap_setup_locked=0" "$N"
 		append "$var" "device_type=$device_type" "$N"

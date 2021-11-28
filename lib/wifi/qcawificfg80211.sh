@@ -1062,8 +1062,22 @@ enable_qcawificfg80211() {
 				fi
 			;;
 			80) htmode=HT80;;
-			160) htmode=HT160;;
-			*) htmode=HT80;;
+			160) 
+				htmode=HT160
+			;;
+			*) 
+			    if [ "$channel" = 149 \
+                -o "$channel" = 153 \
+                -o "$channel" = 157 \
+                -o "$channel" = 161 ]; then
+					htmode=HT80
+				else
+					htmode=HT160
+				fi
+			    if [ "$channel" = 165 ]; then
+					htmode=HT20
+				fi
+			;;
 		esac
 	fi
 
@@ -1963,15 +1977,6 @@ enable_qcawificfg80211() {
 				;;
 		esac
 		"$device_if" "$ifname" wds "$wds" >/dev/null 2>&1
-
-		config_get ext_nss "$device" ext_nss
-		case "$ext_nss" in
-			1|on|enabled) "$device_if" "$phy" ext_nss 1 >/dev/null 2>&1
-				;;
-			0|on|enabled) "$device_if" "$phy" ext_nss 0 >/dev/null 2>&1
-				;;
-			*) ;;
-		esac
 
 		config_get ext_nss_sup "$vif" ext_nss_sup
 		case "$ext_nss_sup" in
@@ -2930,6 +2935,16 @@ enable_qcawificfg80211() {
 		config_get vif_txpower "$vif" txpower
 		# use vif_txpower (from wifi-iface) instead of txpower (from wifi-device) if
 		# the latter doesn't exist
+		config_get ext_nss "$device" ext_nss
+        [ "$bw" = "160" ] && ext_nss=0
+        case "$ext_nss" in
+            1|on|enabled) "$device_if" "$phy" ext_nss 1 >/dev/null 2>&1
+                ;;
+            0|on|enabled) "$device_if" "$phy" ext_nss 0 >/dev/null 2>&1
+                ;;
+            *) ;;
+        esac
+
 
 		# for miwifi
 		if [ "$bdmode" = "24G" ]; then
@@ -3761,6 +3776,11 @@ EOF
 	option bw 20
 EOF
 	fi
+    if [ $devidx = 0 ]; then
+        cat <<EOF
+    option bw 80
+EOF
+    fi
 	cat <<EOF
 
 config wifi-iface
@@ -3775,7 +3795,7 @@ config wifi-iface
 EOF
 	if [ $devidx = 0 ]; then
 		cat <<EOF
-	option channel_block_list '36,40,44,48,52,56,60,64'
+	option channel_block_list '52,56,60,64'
 EOF
 	fi
 	devidx=$(($devidx + 1))

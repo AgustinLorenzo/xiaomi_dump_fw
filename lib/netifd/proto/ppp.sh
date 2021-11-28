@@ -314,9 +314,20 @@ proto_pptp_init_config() {
 proto_pptp_setup() {
 	local config="$1"
 	local iface="$2"
+	local wan_type=$(uci -q get network.wan.proto)
+	local wan_mtu=1500
 	
-    json_get_var mru mru
-    mru="${mru:-1410}"	
+	case "$wan_type" in
+		"pppoe") 
+			wan_mtu=$(uci -q get network.wan.mru)
+			[ -z "$wan_mtu" ] && wan_mtu=1480
+			;;
+		*) 
+			wan_mtu=$(uci -q get network.wan.mtu)
+			[ -z "$wan_mtu" ] && wan_mtu=1500
+			;;
+	esac
+	mru=`expr $wan_mtu - 40`
 
 	local ip serv_addr server interface
 	json_get_vars interface server

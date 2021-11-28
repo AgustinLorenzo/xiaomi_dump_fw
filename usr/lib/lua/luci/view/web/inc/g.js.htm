@@ -394,7 +394,7 @@ var rebootWait = function ( opt ) {
                 inputWrap.html( newinput ).find('input')[0].value = inputValue;
                 me.className = meclass + ' bt-showpwd-off';
             }
-             
+
             setTimeout( function() {
                delInputEvent();
                 addInputEvent();
@@ -629,6 +629,33 @@ $.sub( 'loading:stop', function(){
     }
 })(jQuery);
 
+// dialog block loading
+(function( $ ){
+  $.radarDialog = function( config ){
+    var mix = ObjectH.mix,
+      _config = config || {
+        title: '',
+        content: ''
+      },
+      conf = mix( _config, {
+        width: 500,
+        padding:'25px 30px',
+        title: config.title,
+        content: '<div>{$content}</div>'.tmpl({content: config.content}),
+        cancel: false
+      }, true ),
+      dialog = $.dialog( conf );
+
+    var oldcontent = dialog.content;
+    dialog.content = function( cont ){
+      var _cont = '<p style="padding-bottom:30px;">{$content}</p><div class="loading-bar"></div>'.tmpl({content: cont});
+      return oldcontent.call( dialog, _cont);
+    };
+    return dialog;
+  }
+})(jQuery);
+
+
 // dialog alert
 (function( $ ){
     $.alert = function( content, ok ){
@@ -762,7 +789,7 @@ $(function(){
                         msgHTML.push(msgMap[rsp.messages[i].type].tmpl(rsp.messages[i].data));
                     };
                 }
-                
+
                 $('#noticebar .content').html( msgHTML.join('') );
 
                 if ( rsp.count > 0 ) {

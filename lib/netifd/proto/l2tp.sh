@@ -67,7 +67,20 @@ proto_l2tp_setup() {
 	keepalive="${keepalive:+lcp-echo-interval $interval lcp-echo-failure ${keepalive%%[, ]*}}"
 	username="${username:+user \"$username\" password \"$password\"}"
 	ipv6="${ipv6:++ipv6}"
-	mtu="${mtu:-1410}"
+
+	local wan_type=$(uci -q get network.wan.proto)
+	local wan_mtu=1500
+	case "$wan_type" in
+		"pppoe") 
+			wan_mtu=$(uci -q get network.wan.mru)
+			[ -z "$wan_mtu" ] && wan_mtu=1480
+			;;
+		*) 
+			wan_mtu=$(uci -q get network.wan.mtu)
+			[ -z "$wan_mtu" ] && wan_mtu=1500
+			;;
+	esac
+	mtu=`expr $wan_mtu - 40`         
 	mtu="${mtu:+mtu $mtu mru $mtu}"
 
 	mkdir -p /tmp/l2tp
@@ -115,6 +128,8 @@ proto_l2tp_teardown() {
         while [ -d /sys/class/net/l2tp-${interface} ]; do
 		sleep 1
 	done
+
+	/etc/init.d/xl2tpd stop
 }
 
 [ -n "$INCLUDE_ONLY" ] || {

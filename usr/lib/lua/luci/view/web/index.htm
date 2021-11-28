@@ -784,7 +784,7 @@ $.sub('status:newget', function(){
                         // if(res.hardware.platform == 'R3600'){
                         //     $('#routermodel').text(mapModel[res.hardware.platform]);
                         // }else{
-                            $('#routermodel').text(mapModel[res.hardware.platform] + '('+ res.hardware.platform +')');
+                            $('#routermodel').text(mapModel[res.hardware.platform]);
                         // }
                        
                         $('#routerversion').text('MiWiFi ' + mapChannel[res.hardware.channel] + ' ' + res.hardware.version);
@@ -868,7 +868,7 @@ $.sub('status:get', function(){
             'R1800': '<%:小米AIoT路由器 AX1800%>'
         };
 
-        $('#routermodel').text(mapModel[data.platform] + '('+ data.platform +')');
+        $('#routermodel').text(mapModel[data.platform]);
         $('#routerversion').text('MiWiFi ' + mapChannel[data.channel] + ' ' + data.version);
         $('#routermac').text(data.mac);
         $('#routersn').text(data.sn);

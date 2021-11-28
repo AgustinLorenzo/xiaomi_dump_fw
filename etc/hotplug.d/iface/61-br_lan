@@ -1,0 +1,14 @@
+#!/bin/sh
+
+logger -p notice -t "hotplug.d" "61-br-lan: run because of $INTERFACE $ACTION"
+
+
+mode=$(uci -q get ipv6.settings.mode)
+[ "$mode" = "static" ] && [ "$INTERFACE" = "lan" ] && [ "$ACTION" = "ifup" ] && {
+        ip6_addr=$(ip addr show dev br-lan | grep inet6 | grep -v fe80:: |grep deprecated| awk 'NR==1 {print $2}')
+        ip6_conf=$(uci -q get network.lan.ip6addr)
+        if [ -n $ip6_addr -a "$ip6_addr" = "$ip6_conf" ]; then
+            ip address change $ip6_addr dev br-lan preferred_lft forever
+        fi
+}
+

@@ -20,13 +20,17 @@ START=72
 have_cm() {
 	[ -d "/sys/kernel/debug/ecm" ] && echo 1 && return
 	[ -d "/sys/module/shortcut_fe_cm" ] && echo 1 && return
-	
-	local vpn_intf=$(uci -q get network.vpn)
-	if [ -n "$vpn_intf" ]; then
+
+	local vpn_up=$(ubus call network.interface.vpn status 2>/dev/null | grep -Eq '"up": true' && echo 1 || echo 0)
+	[ "$vpn_up" == "1" ] && return
+
+	local ipv6_enabled=$(uci -q get ipv6.settings.enabled)
+	local ipv6_mode=$(uci -q get ipv6.settings.mode)
+	[ "$ipv6_enabled" == "1" -a "$ipv6_mode" == "nat" ] && {
 		stop
 		echo 1 && return
-	fi
-	
+	}
+
 	echo 0
 }
 
@@ -36,8 +40,8 @@ load_sfe_cm() {
 
 	#shortcut-fe-drv.ko is not needed because other connection manager is not enabled
 	[ -d /sys/module/shortcut_fe_drv ] && rmmod shortcut_fe_drv
-	[ -d /sys/module/shortcut_fe ] || insmod shortcut-fe
-	[ -d /sys/module/shortcut_fe_ipv6 ] || insmod shortcut-fe-ipv6
+	[ -d /sys/module/shortcut_fe ] || insmod /lib/modules/$kernel_version/shortcut-fe
+	[ -d /sys/module/shortcut_fe_ipv6 ] || insmod /lib/modules/$kernel_version/shortcut-fe-ipv6
 	
 	[ -e "/lib/modules/$kernel_version/shortcut-fe-cm.ko" ] && {
 		[ -d /sys/module/shortcut_fe_cm ] || insmod /lib/modules/$kernel_version/shortcut-fe-cm.ko

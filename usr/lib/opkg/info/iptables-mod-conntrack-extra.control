@@ -5,7 +5,7 @@ Source: package/network/utils/iptables
 License: GPL-2.0
 Section: net
 Architecture: aarch64_cortex-a53
-Installed-Size: 11219
+Installed-Size: 11220
 Description:  Extra iptables extensions for connection tracking.
  
  Matches:

@@ -9,7 +9,7 @@ config defaults
 	option disable_ipv6	1
 
 config zone
-	option name		lan
+	option name		'lan'
 	list   network		'lan'
 	option network	'lan'
 	option input		ACCEPT
@@ -106,72 +106,34 @@ config rule 'Forbidden_Wan_RA'
 	list icmp_type	'router-advertisement'
 	option family	ipv6
 	option target	'REJECT'
+
+
 # include a file with users custom iptables rules
 #
 #nat
 config include 'webinitrdr'
 	option path '/lib/firewall.sysapi.loader webinitrdr'
-	option reload "1"
-	option enabled "1"
+	option reload '1'
+	option enabled '1'
 
 #nat
 config include 'dnsmiwifi'
 	option path '/lib/firewall.sysapi.loader dnsmiwifi'
-	option reload "1"
-	option enabled "1"
+	option reload 	'1'
+	option enabled 	'1'
 
 config include 'macfilter'
 	option path '/lib/firewall.sysapi.loader macfilter'
-	option reload "1"
-	option enabled "1"
-
-config include 'miqos'
-	option path '/lib/firewall.sysapi.loader miqos'
-	option reload "1"
-
-config include 'xqfp'
-	option path '/lib/firewall.sysapi.loader xqfp'
-	option reload "1"
-
-config include 'firewalluser'
-	option path /etc/firewall.user
-	option reload 1
-
-config include 'dmz_bypass_ctf'
-	option path '/lib/firewall.sysapi.loader dmz_bypass_ctf'
 	option reload '1'
-
-config include 'rr_rule'
-       option path '/lib/firewall/rr.load reload'
-       option reload '1'
+	option enabled '1'
 
 config include 'ipv6_masq'
        option path '/lib/firewall.sysapi.loader ipv6_masq'
        option reload '1'
 
-config rule 'xunleiwantcpports'
-	option name 'xunlei wan accept tcp port 1080 4662 2080 2062'
-	option src 'wan'
-	option dest_port '1080 4662 2080 2062'
-	option proto 'tcp'
-	option family		ipv4
-	option target 'ACCEPT'
-
-config rule 'xunleiwanudpports'
-	option name 'xunlei wan accept udp port 4661 3027 888 666 2037 2061 2048 2066'
-	option src 'wan'
-	option dest_port '4661 3027 888 666 2037 2061 2048 2066'
-	option proto 'udp'
-	option family		ipv4
-	option target 'ACCEPT'
-
-config rule 'xunleiN_TCPports'
-    option name 'xunlei_port_limit_localhost 9000'
-    option src '*'
-    option dest_port '9000'
-    option proto 'tcp'
-	option family		ipv4
-    option target 'REJECT'
+config include 'set_tcpmss'
+	option path '/lib/firewall.sysapi.loader set_tcpmss'
+	option reload '1'
 
 config rule 'guest_8999'
 	option name 'Hello wifi 8999'
@@ -230,23 +192,3 @@ config rule 'ready_minet_out'
        option src_port '786'
        option proto 'tcp'
        option target 'ACCEPT'
-
-##disable nxdomain redirect
-#config redirect 'nxdomain'
-#       option name 'nxdomain'
-#       option src 'lan'
-#       option src_dport '80'
-#       option src_dip '198.51.100.9' # rfc5735
-#       option dest_port '8190'
-#       option proto 'tcp'
-#       option target DNAT
-#	   option family		ipv4
-#
-
-config rule 'ptdownload'
-       option name 'ingress port for PT download'
-       option src 'wan'
-       option dest_port '51413'
-       option proto 'tcpudp'
-       option target 'ACCEPT'
-	   option family		ipv4

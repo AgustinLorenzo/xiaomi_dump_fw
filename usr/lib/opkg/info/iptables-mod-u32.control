@@ -5,7 +5,7 @@ Source: package/network/utils/iptables
 License: GPL-2.0
 Section: net
 Architecture: aarch64_cortex-a53
-Installed-Size: 2987
+Installed-Size: 2988
 Description:  U32 iptables extensions.
  
  Matches:

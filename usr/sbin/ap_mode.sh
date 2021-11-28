@@ -168,7 +168,7 @@ bridgeap_open_r3600() {
     echo "#######################bridgeap_open_r3600###############"
 uci -q batch <<-EOF >/dev/null
     delete network.wan
-	delete network.wan6
+	delete network.wan_6
     delete network.vpn
     set network.lan.ifname='eth1 eth2 eth3 eth4'
     commit network
@@ -179,7 +179,6 @@ EOF
     nvram set mode=AP
     nvram commit
 }
-
 
 #
 #config backupfile /etc/config/.network.mode.router is create by dhcp_apclient.sh:router_config_backup()
@@ -447,13 +446,14 @@ case $OPT in
 
         bridgeap_open;
         /etc/init.d/dnsmasq stop
+        /usr/sbin/dhcp_apclient.sh restart
         /etc/init.d/network restart
         /etc/init.d/dnsmasq start
-        /usr/sbin/dhcp_apclient.sh restart
         /usr/sbin/vasinfo_fw.sh off
         /etc/init.d/trafficd stop
         /etc/init.d/xqbc restart
         /etc/init.d/tbusd stop
+	/etc/init.d/xiaoqiang_sync start
         [ -f /etc/init.d/hwnat ] && /etc/init.d/hwnat off
 
         bridgeap_check_gw_start
@@ -468,12 +468,13 @@ case $OPT in
         bridgeap_check_gw_stop
         bridgeap_close;
         /etc/init.d/dnsmasq stop
+        /usr/sbin/dhcp_apclient.sh restart
         /etc/init.d/network restart
         /etc/init.d/dnsmasq start
-        /usr/sbin/dhcp_apclient.sh restart
         /usr/sbin/vasinfo_fw.sh post_ota
         /etc/init.d/trafficd restart
         /etc/init.d/xqbc restart
+	/etc/init.d/xiaoqiang_sync stop
         /etc/init.d/tbusd start
         [ -f /etc/init.d/minet ] && /etc/init.d/minet restart
 
@@ -504,10 +505,10 @@ case $OPT in
         [ "$lan_ipaddr_ori" = "$lan_ipaddr_now" ] && exit 0;
         matool --method setKV --params "ap_lan_ip" "$lan_ipaddr_now"
 
-        bridgeap_logger "gateway changed, lan ip changed from $lan_ipaddr_ori to $lan_ipaddr_now."
-        /etc/init.d/network restart
         bridgeap_logger "gateway changed, try lan restart"
         bridgeap_lan_restart
+        bridgeap_logger "gateway changed, lan ip changed from $lan_ipaddr_ori to $lan_ipaddr_now."
+        /etc/init.d/network restart
         exit 0;
      ;;
 

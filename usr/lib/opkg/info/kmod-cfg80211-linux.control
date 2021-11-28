@@ -1,10 +1,10 @@
 Package: kmod-cfg80211-linux
 Version: 4.4.60-1
-Depends: kernel (=4.4.60-1-685217311214bd18a76fad2cfb7ce2b4), iw
+Depends: kernel (=4.4.60-1-5fafac9592dacdd4ddea8e68ff0daa95), iw
 Source: package/kernel/linux
 License: GPLv2
 Section: kernel
 Status: unknown hold not-installed
 Architecture: aarch64_cortex-a53
-Installed-Size: 116116
+Installed-Size: 116114
 Description:  cfg80211 is the Linux wireless LAN (802.11) configuration API.

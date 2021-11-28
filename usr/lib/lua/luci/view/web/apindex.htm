@@ -237,7 +237,7 @@ $.sub('status:get', function(){
             'R3600': '<%:小米AIoT路由器 AX3600%>'
         };
 
-        $('#routermodel').text(mapModel[data.platform] + '('+ data.platform +')');
+        $('#routermodel').text(mapModel[data.platform]);
         $('#routerversion').text('MiWiFi ' + mapChannel[data.channel] + ' ' + data.version);
         $('#routermac').text(data.mac);
         $('#routersn').text(data.sn);
@@ -325,7 +325,7 @@ $.sub('status:newget', function(){
                         //信息
                      
                        
-                        $('#routermodel').text(mapModel[res.hardware.platform] + '('+ res.hardware.platform +')');
+                        $('#routermodel').text(mapModel[res.hardware.platform]);
                         
                        
                         $('#routerversion').text('MiWiFi ' + mapChannel[res.hardware.channel] + ' ' + res.hardware.version);

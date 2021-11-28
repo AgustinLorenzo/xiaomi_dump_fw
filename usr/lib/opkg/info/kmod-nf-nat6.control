@@ -1,10 +1,10 @@
 Package: kmod-nf-nat6
 Version: 4.4.60-1
-Depends: kernel (=4.4.60-1-685217311214bd18a76fad2cfb7ce2b4), kmod-nf-conntrack6, kmod-nf-ipt6, kmod-nf-nat
+Depends: kernel (=4.4.60-1-5fafac9592dacdd4ddea8e68ff0daa95), kmod-nf-conntrack6, kmod-nf-ipt6, kmod-nf-nat
 Source: package/kernel/linux
 License: GPLv2
 Section: kernel
 Status: unknown hold not-installed
 Architecture: aarch64_cortex-a53
-Installed-Size: 5232
+Installed-Size: 5233
 Description:  Netfilter IPV6-NAT

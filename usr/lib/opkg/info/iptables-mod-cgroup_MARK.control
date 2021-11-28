@@ -5,5 +5,5 @@ Source: feeds/packages/net/xtables-addons
 Section: net
 Maintainer: Jo-Philipp Wich <jow@openwrt.org>
 Architecture: aarch64_cortex-a53
-Installed-Size: 2000
+Installed-Size: 2002
 Description:  cgroup_MARK iptables extension
