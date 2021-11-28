@@ -92,6 +92,9 @@ get_scan_result()
 	local sscore=$cscore
 	local schannel=$cchannel
 
+	#remove channel 12 and 13
+	numchannel=$(expr $numchannel - 2)
+
 	for i in `seq ${numchannel}`
 	do
 		line=$((14+$i))

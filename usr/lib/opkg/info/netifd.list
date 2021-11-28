@@ -6,6 +6,7 @@
 /lib/netifd/dhcp.script
 /usr/share/udhcpc/default.script
 /lib/network/config.sh
+/etc/odhcp6c.user
 /sbin/netifd
 /sbin/devstatus
 /etc/hotplug.d/net/20-smp-tune

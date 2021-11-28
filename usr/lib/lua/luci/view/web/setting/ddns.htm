@@ -377,15 +377,15 @@ local macdefault = string.upper(xqlanwanutil.getDefaultMacAddress())
                                 id: list[i].id,
                                 lastupdate: formatTime(list[i].lastupdate),
                                 wanip: list[i].wanip,
-                                status: list[i].status,
+                                status: (list[i].enabled == 0) ? 1 : list[i].status,
                                 error: list[i].error ? list[i].error : '',
                                 servicename: list[i].servicename
                             });
                             trarr.push(tr);
-                            if(list[i].status == 2 || list[i].status == 0){
+                            if(list[i].status == 2 && list[i].enabled == 1){
                                 setTimeout(function(){
                                     $.pub('ddns:get');
-                                }, 1000);
+                                }, 2000);
                             }
                         }
                         $('#serviceTbody').html(trarr.join(''));

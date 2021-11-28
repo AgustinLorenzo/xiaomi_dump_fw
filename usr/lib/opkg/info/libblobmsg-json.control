@@ -6,5 +6,5 @@ License: ISC
 Section: libs
 Maintainer: Felix Fietkau <nbd@nbd.name>
 Architecture: aarch64_cortex-a53
-Installed-Size: 3905
+Installed-Size: 3904
 Description:  blobmsg <-> json conversion library

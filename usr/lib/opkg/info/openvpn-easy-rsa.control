@@ -5,5 +5,5 @@ Source: package/network/services/openvpn-easy-rsa
 License: GPL-2.0
 Section: net
 Architecture: aarch64_cortex-a53
-Installed-Size: 17291
+Installed-Size: 17296
 Description:  CLI utility to build and manage a PKI CA.

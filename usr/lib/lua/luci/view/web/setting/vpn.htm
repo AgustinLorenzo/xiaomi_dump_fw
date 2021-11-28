@@ -344,7 +344,7 @@ var modelVpn = (function(){
         dlgform,
         currentId,
         ajaxdone = true;
-    var vpnConnectStatus = -1;
+    var vpnConnectStatus = 0;
     function vpnInfo(){
         var xhr = $.getJSON('<%=luci.dispatcher.build_url("api", "xqsystem", "vpn")%>', {}, function(rsp){
             if (rsp.code == 0) {
@@ -928,12 +928,14 @@ var modelVpn = (function(){
                     });
                 });
             }else{
-                $.getJSON('<%=luci.dispatcher.build_url("api", "misystem", "mi_vpn")%>', {'open': open}, function(rsp){
-                    if( rsp.code == 0 ){
-                        miVPNInfo();
-                    }else{
-                        $.alert( rsp.msg );
-                    }
+                checkConnected(function(){
+                    $.getJSON('<%=luci.dispatcher.build_url("api", "misystem", "mi_vpn")%>', {'open': open}, function(rsp){
+                        if( rsp.code == 0 ){
+                            miVPNInfo();
+                        }else{
+                            $.alert( rsp.msg );
+                        }
+                    });
                 });
             }
         });

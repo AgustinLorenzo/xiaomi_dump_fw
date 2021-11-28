@@ -781,8 +781,6 @@ local hardware = string.lower( XQSysUtil.getHardware() )
         $('#nat .item-more-group').find('input').prop('disabled', true);
         $('#nat input[name="dns1"]').val('');
         $('#nat input[name="dns2"]').val('');
-
-
     }
     // ipv6 form and top_info
     $.sub('fillipv6form', function( evt, data ){
@@ -790,14 +788,10 @@ local hardware = string.lower( XQSysUtil.getHardware() )
             ipv6 = rsp.info.ipv6_info,
             wantype = rsp.info.ipv6_info.wanType;
 
-
-
             //set form to native auto
             setto_ipv6_native_auto();
 
         if(wantype !== "none" && wantype !== "off"){
-
-
             $('input[name=mtu]').attr('minValue', 1280);
             // $('input[name=mtu]').attr('maxValue', 1492);
             $('#ipv6switch').removeClass('btn-switch-off')
@@ -813,20 +807,22 @@ local hardware = string.lower( XQSysUtil.getHardware() )
                 setTimeout(function(){
                     $('#ipv6Set .dummy').html('Native');
                 },200);
+
                 var isauto = ipv6.peerdns;
                 if ( isauto == 0 ){ //shoudong 
                     $(".setipv6more[value=1]").prop("checked", true);
                     $('#native .item-more-group').find('input').prop('disabled', false);
                     $('#nat .item-more-group').find('input').prop('disabled', false);
-                    ipv6.dns = ipv6.dns?ipv6.dns:[null,null];
-                    // ipv6.dns[0] = ipv6.dns[0]?ipv6.dns[0]:'';
-                    // ipv6.dns[1] = ipv6.dns[1]?ipv6.dns[1]:'';
-                    $( '#native input[name="dns1"]' ).val( ipv6.dns[0] );
-                    $( '#native input[name="dns2"]' ).val( ipv6.dns[1] );
-                    $( '#nat input[name="dns1"]' ).val( ipv6.dns[0] );
-                    $( '#nat input[name="dns2"]' ).val( ipv6.dns[1]);
-                }
-               
+                    ipv6.dns_conf = ipv6.dns_conf?ipv6.dns_conf:[null,null];
+                    $( '#native input[name="dns1"]' ).val( ipv6.dns_conf[0] );
+                    $( '#native input[name="dns2"]' ).val( ipv6.dns_conf[1] );
+                    $( '#nat input[name="dns1"]' ).val( ipv6.dns_conf[0] );
+                    $( '#nat input[name="dns2"]' ).val( ipv6.dns_conf[1] );
+                    $.formInit();
+                    //$.selectBeautify({ container:'#nat'});
+                    //$.selectBeautify({ container:'#native'});
+                }               
+
                 // toplist
                 var statusHTML = StringH.tmpl( $('#tmplDHCP_ipv6').html(), {
                     ip: ipv6['ip6addr']?ipv6['ip6addr']:[],
@@ -843,14 +839,14 @@ local hardware = string.lower( XQSysUtil.getHardware() )
                 $('#ipv6select').val(1);
                 $.pub('ipv6select', [{index: '1'}] );
                 
-                ipv6.dns = ipv6.dns?ipv6.dns:[null,null];
+                ipv6.dns_conf = ipv6.dns_conf?ipv6.dns_conf:[null,null];
                 // static ipv6 form
                 $( '#static-ipv6 input[name="ipaddr"]' ).val( ipv6.ip6addr );
                 $( '#static-ipv6 input[name="gw"]' ).val( ipv6.ip6gw );
                 $( '#static-ipv6 input[name="prefix"]' ).val( ipv6.lan_ip6prefix );
                 $( '#static-ipv6 input[name="assign"]' ).val( ipv6.assign);
-                $( '#static-ipv6 input[name="dns1"]' ).val( ipv6.dns[0]  );
-                $( '#static-ipv6 input[name="dns2"]' ).val( ipv6.dns[1] );
+                $( '#static-ipv6 input[name="dns1"]' ).val( ipv6.dns_conf[0] );
+                $( '#static-ipv6 input[name="dns2"]' ).val( ipv6.dns_conf[1] );
                
                 $.formInit();
                 // $.selectBeautify({ container: '#ipv6select'});
@@ -878,6 +874,21 @@ local hardware = string.lower( XQSysUtil.getHardware() )
                     $('#ipv6Set .dummy').html('NAT6');
                 },200);
 
+                var isauto = ipv6.peerdns;
+                if ( isauto == 0 ){ //shoudong 
+                    $(".setipv6more[value=1]").prop("checked", true);
+                    $('#native .item-more-group').find('input').prop('disabled', false);
+                    $('#nat .item-more-group').find('input').prop('disabled', false);
+                    ipv6.dns_conf = ipv6.dns_conf?ipv6.dns_conf:[null,null];
+                    $( '#native input[name="dns1"]' ).val( ipv6.dns_conf[0] );
+                    $( '#native input[name="dns2"]' ).val( ipv6.dns_conf[1] );
+                    $( '#nat input[name="dns1"]' ).val( ipv6.dns_conf[0] );
+                    $( '#nat input[name="dns2"]' ).val( ipv6.dns_conf[1] );
+					
+                    $.formInit();
+                    //$.selectBeautify({ container:'#nat'});
+                    //$.selectBeautify({ container:'#native'});   
+                }
                 //nat toplist
                 var statusHTML = StringH.tmpl( $('#tmplNAT6_ipv6').html(),{
                     ip: ipv6['ip6addr']?ipv6['ip6addr']:[],

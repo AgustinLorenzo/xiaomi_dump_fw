@@ -66,7 +66,7 @@ point_lan_ifnum() {
 }
 
 mode=$(uci -q get ipv6.settings.mode)
-[ "$INTERFACE" = "wan6" ] && [ "$mode" = "native" -o "$mode" = "nat" ] && {
+[ "$INTERFACE" = "wan6" -o "$INTERFACE" = "wan_6" ] && [ "$mode" = "native" -o "$mode" = "nat" ] && {
     #flush all deprecated address
     ip -6 address flush scope global deprecated dynamic
     ip6_addr=$(ip addr show dev br-lan | grep inet6 | grep -v fe80:: | awk 'NR==1 {print $2}')
@@ -103,10 +103,19 @@ mode=$(uci -q get ipv6.settings.mode)
 	wan6_gw=$(echo $res | awk 'NR==1 {print $5}')
 	wan6_itf=$(echo $res | awk 'NR==1 {print $7}')
 	[ -z $wan6_gw -o -z $wan6_itf ] && return
-	
+
 	if [ "$ACTION" == "ifup" ]; then
-		ip -6 route add default via $wan6_gw dev $wan6_itf
+		ip -6 route | grep "default via" 2>&- >&-
+		if [ $? -ne 0 ]; then
+		        ip -6 route add default via $wan6_gw dev $wan6_itf
+		else
+		        ip -6 route change default via $wan6_gw dev $wan6_itf
+		fi
+	elif [ "$ACTION" == "ifupdate" ]; then
+                ip -6 route change default via $wan6_gw dev $wan6_itf
 	elif [ "$ACTION" == "ifdown" ]; then
-		ip -6 route del default via $wan6_gw dev $wan6_itf
+		wan6_old=$(ip -6 route | grep "default via" | awk 'NR==1 {print $3}')
+		[ -z $wan6_old ] && return
+		ip -6 route del default via $wan6_old
 	fi
 }

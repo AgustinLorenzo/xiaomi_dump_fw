@@ -21,11 +21,14 @@ if [ $ecm_type == "nss" -o $ecm_type == "auto" ]; then
 	if [ $chk -lt 1 ]; then
 		iptables -I FORWARD -m physdev --physdev-is-bridged -j ACCEPT
 	fi
+	ipv6_enable=$(uci -q get ipv6.settings.enabled)
 	chk6=$(ip6tables -L FORWARD 2>/dev/null | grep -c 'PHYSDEV')
-	if [ $chk6 -lt 1 ]; then
+	if [ $chk6 -lt 1 -a "$ipv6_enable" == "1" ]; then
 		ip6tables -I FORWARD -m physdev --physdev-is-bridged -j ACCEPT
+	elif [ "$ipv6_enable" == "0" ]; then
+		ip6tables -D FORWARD -m physdev --physdev-is-bridged -j ACCEPT 2>/dev/null
 	fi
 else
-	iptables -D FORWARD -m physdev --physdev-is-bridged -j ACCEPT
-	ip6tables -D FORWARD -m physdev --physdev-is-bridged -j ACCEPT
+	iptables -D FORWARD -m physdev --physdev-is-bridged -j ACCEPT 2>/dev/null
+	ip6tables -D FORWARD -m physdev --physdev-is-bridged -j ACCEPT 2>/dev/null
 fi

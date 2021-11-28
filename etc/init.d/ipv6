@@ -4,7 +4,7 @@
 
 START=58
 
-EXTRA_COMMANDS=" native static nat off set_mode set_dns "
+EXTRA_COMMANDS=" native static nat off set_mode set_dns start_ipv6"
 EXTRA_HELP="
     start/stop
     off
@@ -141,6 +141,8 @@ nat() {
 
 off() {
     set_mode off
+    uci -q set firewall.@defaults[0].disable_ipv6=1
+    uci -q commit firewall
     $CMD wan off
     $CMD wan reload_network
 }

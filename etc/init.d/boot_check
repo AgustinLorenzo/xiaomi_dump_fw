@@ -150,6 +150,7 @@ start() {
 		nvram set flag_last_success=$system_current
 	fi
 
+	nvram commit
 	# daemon: monitor reset button status
    	# upload log.zip
 	if [ -f "/data/usr/log/log.zip" ]; then

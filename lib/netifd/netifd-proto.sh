@@ -107,6 +107,20 @@ proto_add_dns_server() {
 	append PROTO_DNS "$address"
 }
 
+proto_init_dns_server_ex() {
+	PROTO_DNS_CON=
+}
+
+proto_add_dns_server_ex() {
+	local address="$1"
+
+	append PROTO_DNS_CON "$address"
+}
+
+proto_update_dns_server_ex() {
+	_proto_push_array "dns" "$PROTO_DNS_CON" _proto_push_string
+}
+
 proto_add_dns_search() {
 	local address="$1"
 

@@ -7,5 +7,5 @@ License: GPL-2.0
 Section: net
 Maintainer: Felix Fietkau <nbd@nbd.name>
 Architecture: aarch64_cortex-a53
-Installed-Size: 185382
+Installed-Size: 185380
 Description:  Open source VPN solution using OpenSSL

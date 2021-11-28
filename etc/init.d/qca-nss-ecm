@@ -42,6 +42,8 @@ get_front_end_mode() {
 		;;
 	*)
 		echo 'uci_option_acceleration_engine is invalid'
+		exit
+		;;
 	esac
 }
 
@@ -106,11 +108,17 @@ start() {
 		return
 	fi
 	
-	if [ $(get_front_end_mode) == '3' ]; then
+	ecm_mode=$(get_front_end_mode)
+
+	local ipv6_enabled=$(uci -q get ipv6.settings.enabled)
+	local ipv6_mode=$(uci -q get ipv6.settings.mode)
+	[ "$ipv6_enabled" == "1" -a "$ipv6_mode" == "nat" -a "$ecm_mode" != "4" ] && ecm_mode="3"
+
+	if [ "$ecm_mode" == "3" ]; then
 		/etc/init.d/shortcut-fe start &>/dev/null
-	elif [ $(get_front_end_mode) != '4' ]; then
+	elif [ "$ecm_mode" == "0" -o "$ecm_mode" == "1" ]; then
 		load_ecm
-		
+
 		/etc/firewall.d/qca-nss-ecm
 
 		# If the acceleration engine is NSS, enable wifi redirect.

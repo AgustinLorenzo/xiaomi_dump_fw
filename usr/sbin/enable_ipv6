@@ -221,23 +221,49 @@ EOF
     peerdns="1"
     [ -n "$dnslist" ] && peerdns="0"
 
-    if [ "$peerdns" == "1" ]; then
-        uci -q batch <<EOF
-        delete network.${iface}6.dns
-        delete network.${iface}6.peerdns
-        commit network
+	if [ "$proto_type" == "pppoe" ]; then
+		ifstatus wan_6 2>&- >&-
+		if [ $? -eq 0 ]; then
+			. /lib/netifd/netifd-proto.sh
+			ubus call network.interface remove
+			ZONE=$(fw3 -q network wan 2>/dev/null)
+
+			json_init
+			json_add_string name "wan_6"
+			json_add_string ifname "@wan"
+			json_add_string proto "dhcpv6"
+			[ -n "$ZONE" ] && json_add_string zone "$ZONE"
+			json_add_boolean peerdns $peerdns
+			if [ "$peerdns" == "0" ]; then
+				proto_init_dns_server_ex
+				var0=${dnslist//,/ }
+				for dns in $var0; do
+					proto_add_dns_server_ex $dns
+				done
+				proto_update_dns_server_ex
+			fi
+			json_close_object
+			ubus call network add_dynamic "$(json_dump)"
+		fi
+	else
+		if [ "$peerdns" == "1" ]; then
+			uci -q batch <<EOF
+			delete network.${iface}6.dns
+			delete network.${iface}6.peerdns
+			commit network
 EOF
 
-    else
-        #close "peer dns" to use customized DNS
-        uci -q set network.${iface}6.peerdns="0"
-        #split dns server list
-        var=${dnslist//,/ }
-        for elem in $var; do
-            uci -q add_list network.${iface}6.dns="$elem"
-        done
-        uci commit network
-    fi
+		else
+			#close "peer dns" to use customized DNS
+			uci -q set network.${iface}6.peerdns="0"
+			#split dns server list
+			var=${dnslist//,/ }
+			for elem in $var; do
+				uci -q add_list network.${iface}6.dns="$elem"
+			done
+			uci commit network
+		fi
+	fi
 
     ;;
 
@@ -300,12 +326,19 @@ EOF
     fi
     #flush all deprecated address
     #ip -6 address flush scope global deprecated dynamic
+	
+    if [ "$ip6_enabled" == "1" -a "$mode" == "nat" ]; then
+        [ -d "/sys/kernel/debug/ecm" ] && /etc/init.d/qca-nss-ecm restart
+    else
+        ecm_mode=$(uci -q get ecm.global.acceleration_engine)
+        if [ "$ecm_mode" != "sfe-cm" ]; then
+		[ -d "/sys/kernel/debug/ecm" ] || /etc/init.d/qca-nss-ecm restart
+        fi
+    fi
 
     #restart firewall
     /etc/init.d/dnsmasq stop
     /etc/init.d/dnsmasq start
-    sleep 5
-    /etc/init.d/firewall restart
     ;;
 
 *)

@@ -6,5 +6,5 @@ License: GPLv2
 Section: kernel
 Status: unknown hold not-installed
 Architecture: aarch64_cortex-a53
-Installed-Size: 1372
+Installed-Size: 1370
 Description:  MD5 digest CryptoAPI module

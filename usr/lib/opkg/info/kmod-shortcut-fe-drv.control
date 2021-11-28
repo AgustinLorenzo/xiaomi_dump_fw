@@ -4,5 +4,5 @@ Depends: kernel (=4.4.60-1-685217311214bd18a76fad2cfb7ce2b4), kmod-shortcut-fe
 Source: qca_qsdk/qca_qsdk_spf10.0/feeds/shortcut-fe/simulated-driver
 Section: kernel
 Architecture: aarch64_cortex-a53
-Installed-Size: 6229
+Installed-Size: 6231
 Description:  Simulated sfe driver for ECM

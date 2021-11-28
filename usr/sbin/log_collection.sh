@@ -182,9 +182,12 @@ elif [ "$hardware" = "R3600" ]; then
         log_exec "iwinfo wl$i freqlist >> $LOG_TMP_FILE_PATH"
         log_exec "wlanconfig wl$i list >> $LOG_TMP_FILE_PATH"
         log_exec "iwconfig wl$i >> $LOG_TMP_FILE_PATH"
+        log_exec "iwpriv wl$i get_chutil >> $LOG_TMP_FILE_PATH"
+        log_exec "iwpriv wl$i get_channf >> $LOG_TMP_FILE_PATH"
     log_exec "iwpriv wl$i txrx_stats 9"
     log_exec "iwpriv wl$i txrx_stats 10"
     done
+	timeout -t 3 cnss_diag -p -c  | grep -e ANI_EDCCA_PHYID -e OFDM_DL
     #/usr/sbin/getneighbor.sh ${LOG_TMP_FILE_PATH} > /dev/null 2>&1
 elif [ "$hardware" = "D01" ]; then
     for i in `seq 0 1`; do

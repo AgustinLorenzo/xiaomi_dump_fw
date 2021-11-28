@@ -6,5 +6,5 @@ License: GPLv2
 Section: kernel
 Status: unknown hold not-installed
 Architecture: aarch64_cortex-a53
-Installed-Size: 39305
+Installed-Size: 39304
 Description:  Kernel support for USB2 (EHCI) controllers

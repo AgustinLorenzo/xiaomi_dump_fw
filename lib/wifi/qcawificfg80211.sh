@@ -2934,10 +2934,7 @@ enable_qcawificfg80211() {
 		# for miwifi
 		if [ "$bdmode" = "24G" ]; then
 			max_power=30
-			wifitool "$ifname" setUnitTestCmd 67 2 16 0x34
 			wifitool "$ifname" setUnitTestCmd 67 3 16 1 1
-			wifitool "$ifname" setUnitTestCmd 67 4 16 1 -5 35
-			wifitool "$ifname" setUnitTestCmd 67 5 12 1 -5 35 10
 			iwpriv "$ifname" 11ngvhtintop 1
 		else
 			max_power=30
