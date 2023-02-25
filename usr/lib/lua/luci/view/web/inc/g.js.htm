@@ -5,6 +5,7 @@ local remote_addr = luci.http.getenv("REMOTE_ADDR")
 local mac = luci.sys.net.ip4mac(remote_addr)
 local romChannel = XQSysUtil.getChannel()
 local romVersion = XQSysUtil.getRomVersion()
+local betaFlag = XQSysUtil.getBeta()
 local xqCountryCode = require "xiaoqiang.XQCountryCode"
 
 local uci = require("luci.model.uci").cursor()
@@ -1358,6 +1359,40 @@ local maxMeshCount = XQFunction.getMaxMeshNodeCount()
             // user logined and has global header get notice
             if (typeof (GLOBALHEADER) !== 'undefined' && GLOBALHEADER === true) {
                 getNotice();
+            }
+
+            var betaFlag = '<%=betaFlag%>';
+            var romChannel = '<%=romChannel%>';
+            if(betaFlag == "1" || romChannel == "stable"){
+                TpWatermark('only for test','170','300','-20','#333','25','.07');
+            }
+            function TpWatermark(CON,H,W,R,C,S,O){
+                if (document.getElementById('tp-watermark') != null) {
+                    return
+                }
+                var TpLine = parseInt(document.body.clientWidth/W) * 2; // 一行显示几列
+                var StrLine = '';
+                for(var i = 0; i < TpLine; i++){
+                    StrLine += '<span style="display: inline-block; line-height:' + H + 'px; width:' + W + 'px; text-align: center; transform:rotate(' + R + 'deg); color:' + C + '; font-size:'+ S + 'px; opacity:' + O + ';">'+ CON +'</span>'
+                }
+                var DivLine = document.createElement("div");
+                DivLine.innerHTML = StrLine;
+
+                var TpColumn = parseInt(document.body.clientHeight/H) * 2; // 一列显示几行
+                var StrColumn = '';
+                for(var i = 0; i < TpColumn; i++){
+                    StrColumn += '<div style="white-space: nowrap;">' + DivLine.innerHTML + '</div>';
+                }
+                var DivLayer = document.createElement("div");
+                DivLayer.innerHTML = StrColumn;
+                DivLayer.id = "tp-watermark"; // 给水印盒子添加类名
+                DivLayer.style.position = "fixed";
+                DivLayer.style.top = "0px"; // 整体水印距离顶部距离
+                DivLayer.style.left = "-100px"; // 改变整体水印的left值
+                DivLayer.style.zIndex = "99999"; // 水印页面层级
+                DivLayer.style.pointerEvents = "none";
+
+                document.body.appendChild(DivLayer); // 到页面中
             }
         });
     })(jQuery);

@@ -6,5 +6,5 @@ License: GPLv2
 Section: kernel
 Status: unknown hold not-installed
 Architecture: aarch64_cortex-a53
-Installed-Size: 7516
+Installed-Size: 7517
 Description:  DES/3DES cipher CryptoAPI module

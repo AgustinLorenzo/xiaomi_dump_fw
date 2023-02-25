@@ -5,6 +5,6 @@ Source: feeds/packages/libs/libglog
 Section: libs
 Maintainer: Amir Sabbaghi <amir@pichak.co>
 Architecture: aarch64_cortex-a53
-Installed-Size: 40445
+Installed-Size: 40447
 Description:  This repository contains a C++ implementation of the Google logging
  module.  Documentation for the implementation is in doc/.

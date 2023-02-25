@@ -17,7 +17,6 @@
 /bin/config_generate
 /usr/sbin/do_net_diagose.lua
 /var
-/etc/intercept_wlist
 /etc/init.d/skb_recycler
 /lib/preinit/00_preinit.conf
 /usr/sbin/autowancheck
@@ -84,7 +83,6 @@
 /usr/sbin/kill_plugin_process.sh
 /usr/lib/lua/json.lua
 /usr/sbin/setchanauto.sh
-/etc/opkg/keys/bc30a5b312bbdc6a
 /etc/shadow
 /etc/rc.common
 /sbin/setmac
@@ -104,6 +102,7 @@
 /sbin/ethstatus
 /usr/sbin/sysapi.firewall
 /usr/sbin/jason.sh
+/etc/opkg/keys/f20dbb28d237a817
 /lib/upgrade/boardupgrade.sh
 /usr/sbin/check_apcli_connected
 /etc/hotplug.d/dump/00-q6dump

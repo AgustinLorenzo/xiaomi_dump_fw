@@ -6,5 +6,5 @@ License: GPLv2
 Section: kernel
 Status: unknown hold not-installed
 Architecture: aarch64_cortex-a53
-Installed-Size: 75656
+Installed-Size: 75658
 Description:  Serial and Parallel ATA support

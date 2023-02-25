@@ -4,5 +4,5 @@ Depends: kernel (=4.4.60-1-31c7bfdfc1d9c788120c273563f8251e)
 Source: package/miwifi/enid
 Section: kernel
 Architecture: aarch64_cortex-a53
-Installed-Size: 4587
+Installed-Size: 4588
 Description:  MiWiFi Ethernet Neighbor Info Detect
