@@ -102,7 +102,6 @@
 /sbin/ethstatus
 /usr/sbin/sysapi.firewall
 /usr/sbin/jason.sh
-/etc/opkg/keys/f20dbb28d237a817
 /lib/upgrade/boardupgrade.sh
 /usr/sbin/check_apcli_connected
 /etc/hotplug.d/dump/00-q6dump
@@ -234,6 +233,7 @@
 /etc/init.d/boot
 /usr/sbin/phyhelper
 /etc/config/misc.R2200
+/etc/opkg/keys/8e72fe961f40ca95
 /lib/functions/boot.sh
 /usr/sbin/config_pre_ota.sh
 /sbin/urandom_seed

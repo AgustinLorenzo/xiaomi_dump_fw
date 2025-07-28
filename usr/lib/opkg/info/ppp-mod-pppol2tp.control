@@ -6,5 +6,5 @@ License: BSD-4-Clause
 Section: net
 Maintainer: Felix Fietkau <nbd@nbd.name>
 Architecture: aarch64_cortex-a53
-Installed-Size: 5049
+Installed-Size: 5048
 Description:  This package contains a PPPoL2TP (PPP over L2TP) plugin for ppp.

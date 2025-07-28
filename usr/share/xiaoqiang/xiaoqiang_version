@@ -1,6 +1,6 @@
 config core 'version'
 	# ROM ver
-	option ROM '1.1.21'
+	option ROM '1.1.25'
 	# channel
 	option CHANNEL 'release'
 	# hardware platform R1AC or R1N etc.
@@ -16,8 +16,8 @@ config core 'version'
 	# ROOTFS ver
 	option ROOTFS '0.0.1'
   #build time
-  option BUILDTIME 'Mon, 06 Feb 2023 11:54:14 +0000'
+  option BUILDTIME 'Mon, 23 Dec 2024 02:23:30 +0000'
   #build timestamp
-  option BUILDTS '1675684454'
+  option BUILDTS '1734920610'
   #build git tag
-   option GTAG 'commit 13a883e28c5f0a00d58c3a727038ed73a8ab11f6'
+   option GTAG 'commit f444e10669c19ca8600a01b7e4e59db09196ff29'

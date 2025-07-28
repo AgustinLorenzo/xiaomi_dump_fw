@@ -6,5 +6,5 @@ License: MIT
 Section: lang
 Maintainer: Oskari Rauta <oskari.rauta@gmail.com>
 Architecture: aarch64_cortex-a53
-Installed-Size: 12503
+Installed-Size: 12501
 Description:  LuaSQLite3 is a thin wrapper around the public domain SQLite3 database engine.
